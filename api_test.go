@@ -51,7 +51,7 @@ func TestAnthropicAdapter(t *testing.T) {
 	if len(tools) != 1 || tools[0].(map[string]any)["type"] != "web_search_20260209" {
 		t.Fatalf("intel must carry web search only: %v", got["tools"])
 	}
-	if got["model"] != "claude-sonnet-5-5" || got["output_config"].(map[string]any)["effort"] != "low" {
+	if got["model"] != "claude-sonnet-5-5" || got["output_config"].(map[string]any)["effort"] != "medium" {
 		t.Fatalf("model/effort not sent: %v", got)
 	}
 	want := (1000*2+100*10)/1e6 + 2*0.01

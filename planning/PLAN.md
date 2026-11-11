@@ -302,8 +302,8 @@ Run(요청) → JSON 결과, 사용량(입력·출력 토큰, 비용, 출처: �
 | `models.codex` | `"gpt-6.1-terra"` | |
 | `models.claude` | `"claude-sonnet-5-5"` | |
 | `models.gemini` | `"gemini-3.8-flash"` | |
-| `models.agy` | `"gemini-3.8-flash-low"` | 초안의 `-medium`에서 변경 (다른 어댑터의 low와 맞춤) |
-| `effort.codex`, `effort.claude` | `"low"` | Claude는 low, medium, high, xhigh, max |
+| `models.agy` | `"gemini-3.8-flash-medium"` | 추론 강도를 모델 이름에 담는다. 11/12 다른 어댑터와 함께 medium으로 맞춤 |
+| `effort.*` | `"medium"` | 11/12 low에서 변경. claude, codex, claude-api, openai-api, gemini-api 모두. Claude는 low, medium, high, xhigh, max |
 | `schedule.enabled` | `true` | |
 | `schedule.daily_at` | `"09:00"` | 현지 시각 |
 | `schedule.catch_up` | `true` | 꺼져 있어 놓친 점검을 다음 기회에 실행 |

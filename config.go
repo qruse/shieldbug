@@ -60,12 +60,12 @@ func defaultConfig() Config {
 		"claude":     "claude-sonnet-5-5",
 		"codex":      "gpt-6.1-terra",
 		"gemini":     "gemini-3.8-flash",
-		"agy":        "gemini-3.8-flash-low",
+		"agy":        "gemini-3.8-flash-medium",
 		"claude-api": "claude-sonnet-5-5",
 		"openai-api": "gpt-6.1-terra",
 		"gemini-api": "gemini-3.8-flash",
 	}
-	c.Effort = map[string]string{"claude": "low", "codex": "low", "claude-api": "low", "openai-api": "low"}
+	c.Effort = map[string]string{"claude": "medium", "codex": "medium", "claude-api": "medium", "openai-api": "medium", "gemini-api": "medium"}
 	c.Schedule.Enabled = true
 	c.Schedule.DailyAt = "09:00"
 	c.Intel.ModelSearch = true
