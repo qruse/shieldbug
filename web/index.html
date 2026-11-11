@@ -1,215 +1,268 @@
+{{define "bug"}}<svg class="bug" viewBox="64 44 384 420" aria-hidden="true">
+<g fill="none" stroke="#eafff5" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M181 135C178 105 153 100 145 73M331 135C334 105 359 100 367 73M124 263l-27-5M124 316l-27 9M139 365l-23 19M388 263l27-5M388 316l27 9M373 365l23 19"/><path d="M149 220l18-71 39-16 13-22h74l13 22 39 16 18 71c12 4 23 9 34 15v48c0 75-48 130-141 171-93-41-141-96-141-171v-48c11-6 22-11 34-15Z"/></g>
+<path d="M181 135C178 105 153 100 145 73M331 135C334 105 359 100 367 73M124 263l-27-5M124 316l-27 9M139 365l-23 19M388 263l27-5M388 316l27 9M373 365l23 19" fill="none" stroke="#0f3a2c" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="145" cy="73" r="11" fill="#0f3a2c"/><circle cx="367" cy="73" r="11" fill="#0f3a2c"/>
+<path d="M149 229l18-80 39-16 13-22h74l13 22 39 16 18 80Z" fill="#2fbf8a" stroke="#0f3a2c" stroke-width="18" stroke-linejoin="round"/>
+{{if eq . "red"}}
+<circle cx="207" cy="165" r="22" fill="#fff"/><circle cx="305" cy="165" r="22" fill="#fff"/>
+<circle cx="207" cy="166" r="7" fill="#0f3a2c"/><circle cx="305" cy="166" r="7" fill="#0f3a2c"/>
+<ellipse cx="256" cy="196" rx="10" ry="9" fill="#0f3a2c"/>
+{{else if eq . "yellow"}}
+<circle cx="207" cy="165" r="19" fill="#fff"/><circle cx="305" cy="165" r="19" fill="#fff"/>
+<circle cx="209" cy="169" r="10" fill="#0f3a2c"/><circle cx="303" cy="169" r="10" fill="#0f3a2c"/>
+<circle cx="206" cy="165" r="3" fill="#fff"/><circle cx="300" cy="165" r="3" fill="#fff"/>
+<path d="M236 196q10-8 20 0t20 0" fill="none" stroke="#0f3a2c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+{{else}}
+<circle cx="207" cy="165" r="19" fill="#fff"/><circle cx="305" cy="165" r="19" fill="#fff"/>
+<circle cx="211" cy="162" r="10" fill="#0f3a2c"/><circle cx="301" cy="162" r="10" fill="#0f3a2c"/>
+<circle cx="208" cy="158" r="3" fill="#fff"/><circle cx="304" cy="158" r="3" fill="#fff"/>
+{{if eq . "green"}}<circle cx="178" cy="196" r="10" fill="#ff8fa3" opacity=".55"/><circle cx="334" cy="196" r="10" fill="#ff8fa3" opacity=".55"/>
+<path d="M236 188q20 19 40 0" fill="none" stroke="#0f3a2c" stroke-width="9" stroke-linecap="round"/>{{else}}<path d="M241 190q15 13 30 0" fill="none" stroke="#0f3a2c" stroke-width="9" stroke-linecap="round"/>{{end}}
+{{end}}
+<path d="M256 216c-51 0-99 8-141 29v38c0 75 48 130 141 171 93-41 141-96 141-171v-38c-42-21-90-29-141-29Z" fill="#169468"/>
+<path d="M256 216c-51 0-99 8-141 29v38c0 75 48 130 141 171Z" fill="#1fae7a"/>
+<path d="M256 216c-51 0-99 8-141 29v38c0 75 48 130 141 171 93-41 141-96 141-171v-38c-42-21-90-29-141-29Zm0 2v225" fill="none" stroke="#0f3a2c" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+{{if eq . "yellow"}}<path d="M402 118c-10 14-14 21-14 28a14 14 0 0 0 28 0c0-7-4-14-14-28Z" fill="#8fd0ff" stroke="#0f3a2c" stroke-width="7" stroke-linejoin="round"/>{{end}}
+{{if eq . "red"}}<path d="M392 116l22-16M400 150l28-2M120 116l-22-16M112 150l-28-2" fill="none" stroke="#f04452" stroke-width="10" stroke-linecap="round"/>{{end}}
+</svg>{{end}}
+{{define "i-alert"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="12" cy="16.8" r="1.4" fill="currentColor"/></svg>{{end}}
+{{define "i-check"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 12.5l3.6 3.6 7.4-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>{{end}}
+{{define "i-globe"}}<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.3 3.5 5 3.5 8s-1.1 5.7-3.5 8c-2.4-2.3-3.5-5-3.5-8s1.1-5.7 3.5-8Z"/></svg>{{end}}
+{{define "i-spark"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9Z" fill="currentColor"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="currentColor"/></svg>{{end}}
+{{define "i-chev"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6.5l5.5 5.5-5.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>{{end}}
 <!doctype html>
 <html lang="{{.Lang}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shieldbug</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cg fill='none' stroke='%23eafff5' stroke-width='30' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54'/%3E%3Cpath d='M150 221l17-72 39-16 13-22h74l13 22 39 16 17 72c12 4 24 9 35 15v47c0 75-48 130-141 171-93-41-141-96-141-171v-47c11-6 23-11 35-15Z'/%3E%3C/g%3E%3Cpath d='M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54' fill='none' stroke='%230f3a2c' stroke-width='26' stroke-linecap='round'/%3E%3Ccircle cx='151' cy='84' r='14' fill='%230f3a2c'/%3E%3Ccircle cx='361' cy='84' r='14' fill='%230f3a2c'/%3E%3Cpath d='M150 230l17-81 39-16 13-22h74l13 22 39 16 17 81Z' fill='%232fbf8a' stroke='%230f3a2c' stroke-width='24' stroke-linejoin='round'/%3E%3Ccircle cx='207' cy='168' r='24' fill='%23ffffff'/%3E%3Ccircle cx='305' cy='168' r='24' fill='%23ffffff'/%3E%3Ccircle cx='211' cy='165' r='10' fill='%230f3a2c'/%3E%3Ccircle cx='301' cy='165' r='10' fill='%230f3a2c'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Z' fill='%23169468'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171Z' fill='%231fae7a'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Zm0 2v220' fill='none' stroke='%230f3a2c' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M149 229l18-80 39-16 13-22h74l13 22 39 16 18 80Z' fill='%232fbf8a' stroke='%230f3a2c' stroke-width='22' stroke-linejoin='round'/%3E%3Ccircle cx='207' cy='165' r='22' fill='%23fff'/%3E%3Ccircle cx='305' cy='165' r='22' fill='%23fff'/%3E%3Ccircle cx='211' cy='162' r='11' fill='%230f3a2c'/%3E%3Ccircle cx='301' cy='162' r='11' fill='%230f3a2c'/%3E%3Cpath d='M256 216c-51 0-99 8-141 29v38c0 75 48 130 141 171 93-41 141-96 141-171v-38c-42-21-90-29-141-29Z' fill='%23169468' stroke='%230f3a2c' stroke-width='22' stroke-linejoin='round'/%3E%3Cpath d='M256 218v225' stroke='%230f3a2c' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
+@font-face{font-family:Pretendard;font-weight:400;font-display:swap;src:url(/fonts/Pretendard-Regular.woff2) format("woff2")}
+@font-face{font-family:Pretendard;font-weight:600;font-display:swap;src:url(/fonts/Pretendard-SemiBold.woff2) format("woff2")}
+@font-face{font-family:Pretendard;font-weight:700;font-display:swap;src:url(/fonts/Pretendard-Bold.woff2) format("woff2")}
 :root{
-  --bg:#f3f6f4;--surface:#fff;--surface-2:#f7faf8;--ink:#12211a;--muted:#5d6e65;--faint:#8a9a91;--line:#e1e8e3;--line-2:#eef2ef;
-  --brand:#169468;--brand-strong:#0f7a55;--brand-soft:#e2f4ec;--on-brand:#fff;
-  --ok:#169468;--warn:#b7791f;--bad:#cf3f3f;--warn-soft:#fbf1e1;--bad-soft:#fbe7e7;--info-soft:#e8f0fb;--info:#3563b8;
-  --code:#f2f5f3;--shadow:0 1px 2px rgba(16,40,30,.05),0 4px 14px rgba(16,40,30,.04);
-  --r:14px;
+  --bg:#f2f4f6;--card:#fff;--fill:#f2f4f6;--fill-2:#f9fafb;
+  --ink:#191f28;--sub:#4e5968;--muted:#8b95a1;--line:#e5e8eb;
+  --brand:#1fae7a;--brand-press:#169468;--brand-ink:#0f7a55;--brand-soft:#e7f7f0;
+  --warn:#f59f00;--warn-ink:#c27c00;--warn-soft:#fff5e1;
+  --bad:#f04452;--bad-ink:#d22030;--bad-soft:#ffeef0;
+  --blue:#3182f6;--blue-soft:#e8f3ff;
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#0b110e;--surface:#121a16;--surface-2:#162019;--ink:#e6eee9;--muted:#95a79c;--faint:#6d7f74;--line:#22302a;--line-2:#1b2621;
-  --brand:#2fbf8a;--brand-strong:#4fd5a2;--brand-soft:#123326;--on-brand:#05170f;
-  --ok:#2fbf8a;--warn:#e3a33b;--bad:#f06a6a;--warn-soft:#33270f;--bad-soft:#3a1717;--info-soft:#14223a;--info:#8fb2f0;
-  --code:#0e1512;--shadow:none;
-}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--brand-strong);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Pretendard,system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
 
 /* header */
-header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;gap:18px;height:60px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:17px;letter-spacing:-.02em;color:var(--ink)}
-.brand:hover{text-decoration:none}
-.brand svg{width:30px;height:30px;flex:none}
-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
-nav a{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;color:var(--muted);white-space:nowrap;font-size:14px;font-weight:550}
-nav a:hover{background:var(--line-2);color:var(--ink);text-decoration:none}
-nav a.on{background:var(--brand-soft);color:var(--brand-strong);font-weight:650}
-.count{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--brand);color:var(--on-brand);font-size:11px;font-weight:700;display:inline-grid;place-items:center}
+header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.6) blur(12px)}
+.bar{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;letter-spacing:-.03em}
+.brand .bug{width:30px;height:30px}
 .sp{flex:1}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--surface-2)}
-.seg a{padding:4px 10px;border-radius:7px;font-size:12.5px;color:var(--muted);font-weight:550}
-.seg a.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
-.seg a:hover{text-decoration:none;color:var(--ink)}
+.lang{display:flex;gap:2px;font-size:13px;font-weight:600}
+.lang a{padding:5px 9px;border-radius:8px;color:var(--muted)}
+.lang a.on{color:var(--ink);background:var(--fill)}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px}
+nav::-webkit-scrollbar{display:none}
+nav a{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;color:var(--sub);white-space:nowrap;font-size:15px;font-weight:600;background:transparent;transition:background .15s}
+nav a:hover{background:var(--fill)}
+nav a.on{background:var(--ink);color:#fff}
+.count{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--bad);color:#fff;font-size:12px;font-weight:700;display:inline-grid;place-items:center;line-height:1}
+nav a.on .count{background:#fff;color:var(--ink)}
 
-main.wrap{padding-top:28px;padding-bottom:32px}
-.page-h{display:flex;align-items:baseline;gap:12px;margin:0 0 16px}
-.page-h h1{font-size:22px;letter-spacing:-.02em;margin:0}
-.page-h .meta{margin:0}
+main.wrap{padding-top:14px;padding-bottom:40px}
+.page-h{margin:14px 4px 18px}
+.page-h h1{font-size:26px;line-height:1.35;letter-spacing:-.03em;margin:0;font-weight:700}
+.page-h p{margin:6px 0 0;color:var(--sub);font-size:15px}
 
-/* surfaces */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;box-shadow:var(--shadow)}
+/* cards */
+.card{background:var(--card);border-radius:24px;padding:24px;margin-bottom:12px}
 .card-h{display:flex;align-items:center;gap:10px;margin:0 0 14px}
-.card-h h2{font-size:14px;margin:0;color:var(--muted);font-weight:650;letter-spacing:.01em}
-.card-h .sp+a,.card-h a.more{font-size:13px;font-weight:600}
-.meta{color:var(--muted);font-size:13px}
-.muted{color:var(--muted)}
-.empty{color:var(--muted);padding:6px 0;margin:0}
+.card-h h2{font-size:19px;margin:0;font-weight:700;letter-spacing:-.03em}
+.card-h .more{display:inline-flex;align-items:center;gap:2px;color:var(--muted);font-size:14px;font-weight:600}
+.card-h .more svg{width:16px;height:16px}
+.empty{color:var(--sub);margin:0}
+.hint{font-size:13.5px;color:var(--muted);margin:12px 0 0;line-height:1.55}
 
 /* hero */
-.hero{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center;padding:26px 28px}
-.ring{position:relative;width:168px;height:168px}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring .val{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
-.ring .num{font-size:48px;font-weight:780;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
-.ring .of{font-size:13px;color:var(--faint);margin-top:4px}
-.green{--c:var(--ok);--c-soft:var(--brand-soft)} .yellow{--c:var(--warn);--c-soft:var(--warn-soft)} .red{--c:var(--bad);--c-soft:var(--bad-soft)}
-.status{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 9px;border-radius:999px;background:var(--c-soft);color:var(--c);font-weight:700;font-size:13.5px}
-.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
-.summary{font-size:17px;line-height:1.6;margin:12px 0 10px;max-width:68ch}
-.hero .meta span+span::before{content:"·";margin:0 7px;color:var(--faint)}
-.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
-.sevs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.sevs .chip{font-size:12.5px}
+.green{--c:var(--brand);--c-ink:var(--brand-ink);--c-soft:var(--brand-soft)}
+.yellow{--c:var(--warn);--c-ink:var(--warn-ink);--c-soft:var(--warn-soft)}
+.red{--c:var(--bad);--c-ink:var(--bad-ink);--c-soft:var(--bad-soft)}
+.none{--c:var(--brand);--c-ink:var(--brand-ink);--c-soft:var(--brand-soft)}
+.hero{padding:28px 24px 24px}
+.hero-top{display:flex;align-items:center;gap:18px}
+.avatar{flex:none;width:92px;height:92px;border-radius:30px;background:var(--c-soft);display:grid;place-items:center}
+.avatar .bug{width:74px;height:74px}
+.hero h1{margin:0;font-size:28px;line-height:1.3;letter-spacing:-.035em;font-weight:700;color:var(--c-ink)}
+.hero .sub{margin:4px 0 0;color:var(--sub);font-size:15.5px}
+.meter{margin:22px 0 0}
+.meter-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.meter-top .lbl{color:var(--sub);font-size:14px;font-weight:600}
+.meter-top .num{font-size:30px;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.meter-top .num small{font-size:16px;color:var(--muted);font-weight:600;margin-left:2px}
+.track{height:10px;border-radius:5px;background:var(--fill);overflow:hidden}
+.track i{display:block;height:100%;border-radius:5px;background:var(--c)}
+.summary{margin:18px 0 0;padding:16px 18px;border-radius:16px;background:var(--fill-2);color:var(--sub);font-size:15.5px;line-height:1.65}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{display:block;padding:14px 16px;border-radius:16px;background:var(--fill-2)}
+.stat .k{font-size:13.5px;color:var(--sub);font-weight:600}
+.stat .v{font-size:22px;font-weight:700;letter-spacing:-.03em;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat.hot .v{color:var(--bad-ink)}
+.cta{margin-top:20px;display:flex;flex-direction:column;gap:8px}
 
 /* buttons */
-button,.btn{appearance:none;border:1px solid transparent;border-radius:10px;padding:10px 18px;font:inherit;font-size:14.5px;font-weight:650;cursor:pointer;background:var(--brand);color:var(--on-brand);display:inline-flex;align-items:center;gap:8px;line-height:1.2;transition:background .15s,transform .05s}
-button:hover{background:var(--brand-strong)}
-button:active{transform:translateY(1px)}
-button.ghost,.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
-button.ghost:hover,.btn.ghost:hover{background:var(--line-2);text-decoration:none}
-button.sm{padding:6px 12px;font-size:13px;border-radius:8px}
-button:disabled{opacity:.6;cursor:default}
-.progress{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
-.spin{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:s 1s linear infinite}
+button,.btn{appearance:none;border:0;border-radius:16px;padding:15px 20px;font:inherit;font-size:17px;font-weight:700;letter-spacing:-.02em;cursor:pointer;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.2;transition:background .15s,transform .08s}
+button:hover{background:var(--brand-press)}
+button:active{transform:scale(.98)}
+button:disabled{background:#a6dcc6;cursor:default;transform:none}
+.cta button,.cta .btn{width:100%}
+.btn.soft,button.soft{background:var(--fill);color:var(--sub)}
+.btn.soft:hover,button.soft:hover{background:var(--line)}
+button.sm,.btn.sm{padding:9px 14px;font-size:14.5px;border-radius:12px}
+.spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:s .9s linear infinite}
 @keyframes s{to{transform:rotate(360deg)}}
 
-/* chips */
-.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--line-2);color:var(--muted);white-space:nowrap;line-height:1.4}
-.chip.critical,.chip.high{background:var(--bad-soft);color:var(--bad)}
-.chip.medium{background:var(--warn-soft);color:var(--warn)}
-.chip.ok{background:var(--brand-soft);color:var(--brand-strong)}
-.chip.info{background:var(--info-soft);color:var(--info)}
-.tag{font-size:12px;color:var(--faint);font-weight:500}
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;counter-reset:st}
+.steps li{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:13.5px;font-weight:600;color:var(--muted)}
+.steps li:not(:last-child)::after{content:"";position:absolute;top:19px;left:calc(50% + 26px);right:calc(-50% + 26px);height:2px;border-radius:1px;background:var(--line)}
+.steps .dot{width:40px;height:40px;border-radius:50%;background:var(--fill);display:grid;place-items:center;color:var(--muted);font-weight:700;font-size:15px}
+.steps .dot svg{width:22px;height:22px}
+.steps .dot b{font-weight:700}
+.steps li.done{color:var(--sub)}
+.steps li.done .dot{background:var(--brand-soft);color:var(--brand-ink)}
+.steps li.done:not(:last-child)::after{background:#a6dcc6}
+.steps li.now{color:var(--ink)}
+.steps li.now .dot{background:var(--brand);color:#fff;box-shadow:0 0 0 6px var(--brand-soft)}
+.steps .dot .ok{display:none}
+.steps li.done .dot .ok{display:block}
+.steps li.done .dot b{display:none}
 
-/* layout */
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
-
-/* findings */
-.items{display:flex;flex-direction:column;gap:12px}
-.item{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px 16px 14px 18px;background:var(--surface)}
-.item::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--faint)}
-.item.critical::before,.item.high::before{background:var(--bad)}
-.item.medium::before{background:var(--warn)}
-.item-h{display:flex;gap:10px;align-items:flex-start}
-.item-h h3{margin:0;font-size:15px;line-height:1.5;flex:1;font-weight:650}
-.item .tag{display:block;margin-top:2px}
-.fix{display:flex;gap:12px;align-items:flex-start;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-2)}
-.fix p{margin:0;flex:1;font-size:14px}
-.fix b{color:var(--brand-strong);font-weight:700;margin-right:4px}
-.copy{padding:4px 10px;font-size:12px;border-radius:7px;background:var(--surface);color:var(--ink);border:1px solid var(--line);font-weight:600;flex:none}
-.copy:hover{background:var(--line-2)}
+/* list rows */
+.list{list-style:none;margin:0 -8px;padding:0}
+.row{display:flex;gap:14px;align-items:flex-start;padding:14px 8px;border-radius:16px}
+.row+.row{margin-top:2px}
+a.row:hover{background:var(--fill-2)}
+.ico{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--sub)}
+.ico svg{width:22px;height:22px}
+.ico.critical,.ico.high{background:var(--bad-soft);color:var(--bad)}
+.ico.medium{background:var(--warn-soft);color:var(--warn-ink)}
+.ico.low{background:var(--fill);color:var(--sub)}
+.ico.ok{background:var(--brand-soft);color:var(--brand-ink)}
+.ico.blue{background:var(--blue-soft);color:var(--blue)}
+.row .body{flex:1;min-width:0}
+.row .t{font-size:16.5px;font-weight:600;line-height:1.45;letter-spacing:-.02em}
+.row .s{font-size:14px;color:var(--muted);margin-top:2px}
+.row .s .sev{font-weight:600}
+.row .s .sev.critical,.row .s .sev.high{color:var(--bad-ink)}
+.row .s .sev.medium{color:var(--warn-ink)}
+.row .go{flex:none;color:#b0b8c1;align-self:center}
+.row .go svg{width:20px;height:20px}
+.fix{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--fill-2);font-size:14.5px;color:var(--sub);line-height:1.6}
+.fix p{margin:0;flex:1;min-width:0}
+.fix b{color:var(--ink);font-weight:600;margin-right:6px}
+.copy{flex:none;padding:6px 11px;font-size:13px;border-radius:10px;background:#fff;color:var(--sub);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
+.copy:hover{background:var(--fill)}
 details{margin-top:8px}
-summary{cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:5px}
+summary{cursor:pointer;font-size:13.5px;color:var(--muted);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:4px}
 summary::-webkit-details-marker{display:none}
-summary::before{content:"›";display:inline-block;transition:transform .15s;font-size:15px;line-height:1}
-details[open] summary::before{transform:rotate(90deg)}
-.ev{font:12.5px/1.55 ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--code);border:1px solid var(--line-2);border-radius:8px;padding:9px 11px;margin:8px 0 0;word-break:break-all;color:var(--muted);white-space:pre-wrap}
+summary::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s;margin-left:4px}
+details[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
+.ev{font:13px/1.6 ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--fill-2);border-radius:12px;padding:10px 12px;margin:8px 0 0;word-break:break-all;color:var(--sub);white-space:pre-wrap}
 
-/* side lists */
-.kv{display:grid;grid-template-columns:auto 1fr;gap:9px 14px;font-size:13.5px;margin:0}
-.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.news{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-.news li{padding:10px 0;border-top:1px solid var(--line-2)}
-.news li:first-child{border-top:0;padding-top:0}
-.news a{font-weight:600;font-size:14px;line-height:1.45;color:var(--ink);display:block}
-.news a:hover{color:var(--brand-strong)}
-.news small{color:var(--muted);display:block;font-size:12.5px;margin-top:3px}
+/* key-value */
+.kv{margin:0;display:flex;flex-direction:column}
+.kv div{display:flex;justify-content:space-between;gap:16px;padding:9px 0;font-size:15px}
+.kv dt{color:var(--sub)}
+.kv dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 
-/* callouts */
-.note{display:flex;gap:10px;align-items:center;border-radius:12px;padding:11px 14px;margin-bottom:16px;font-size:14px;background:var(--info-soft);color:var(--ink)}
-.note.ok{background:var(--brand-soft)}
-.note.bad{background:var(--bad-soft);color:var(--bad)}
-.note a{font-weight:650}
+/* notices */
+.note{display:flex;gap:12px;align-items:center;border-radius:20px;padding:16px 18px;margin-bottom:12px;font-size:15px;font-weight:600;background:var(--card)}
+.note .ico{width:36px;height:36px}
 .note .sp{flex:1}
+.note.bad{background:var(--bad-soft);color:var(--bad-ink)}
+.note.ok{background:var(--brand-soft);color:var(--brand-ink)}
+.note .btn{flex:none}
 
 /* checklist */
-.prop{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface-2)}
+.prop{padding:18px;border-radius:18px;background:var(--fill-2)}
 .prop+.prop{margin-top:10px}
-.prop h3{margin:0 0 6px;font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.prop p{margin:6px 0}
-.prop .btns{display:flex;gap:8px;margin-top:10px}
-.prop form{display:inline}
-.rows{list-style:none;margin:0;padding:0}
-.rows li{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:start;padding:11px 0;border-top:1px solid var(--line-2)}
-.rows li:first-child{border-top:0;padding-top:2px}
-.rows .t{font-weight:600;font-size:14px}
-.rows .chip{justify-self:start;margin-top:1px}
+.prop h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.02em;line-height:1.45}
+.prop p{margin:8px 0 0;color:var(--sub);font-size:15px}
+.prop .src{margin-top:8px;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.prop .src a{color:var(--blue)}
+.prop .btns{display:flex;gap:8px;margin-top:14px}
+.prop form{display:contents}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:8px;background:var(--fill);color:var(--sub);margin-bottom:8px}
+.pill.critical,.pill.high{background:var(--bad-soft);color:var(--bad-ink)}
+.pill.medium{background:var(--warn-soft);color:var(--warn-ink)}
+.pill.ok{background:var(--brand-soft);color:var(--brand-ink)}
 
 /* history */
 .chart{position:relative;padding-left:30px}
-.chart svg{display:block;width:100%;height:170px}
+.chart svg{width:100%;height:170px}
 .chart .grid line{stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
-.chart .grid line.goal{stroke:var(--brand);stroke-dasharray:4 4;opacity:.5}
-.chart path{fill:none;stroke:var(--brand);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
-.chart .y{position:absolute;left:0;font-size:11px;color:var(--faint);transform:translateY(-50%);font-variant-numeric:tabular-nums}
-.tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th,.tbl td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line-2);vertical-align:middle}
-.tbl th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:none;background:var(--surface-2)}
-.tbl th:first-child{border-top-left-radius:8px}.tbl th:last-child{border-top-right-radius:8px}
-.tbl tr:last-child td{border-bottom:0}
-.tbl td.num{font-variant-numeric:tabular-nums}
-.score-pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c)}
-.score-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
-.scroll{overflow-x:auto}
+.chart .grid line.goal{stroke:var(--brand);stroke-dasharray:4 4}
+.chart path{fill:none;stroke:var(--brand);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.chart .y{position:absolute;left:0;font-size:12px;color:var(--muted);transform:translateY(-50%);font-variant-numeric:tabular-nums}
+.score-dot{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--c-soft);color:var(--c-ink);font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.row .err{color:var(--bad-ink);font-size:13.5px;margin-top:4px}
+.row .link{flex:none;align-self:center;font-size:14px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:10px}
+.row .link:hover{background:var(--fill);color:var(--ink)}
 
 /* sent */
-pre.payload{white-space:pre-wrap;word-break:break-word;font:12px/1.55 ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--code);border:1px solid var(--line-2);padding:16px;border-radius:10px;max-height:68vh;overflow:auto;margin:0}
+pre.payload{white-space:pre-wrap;word-break:break-word;font:12.5px/1.6 ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--fill-2);padding:16px;border-radius:16px;max-height:68vh;overflow:auto;margin:0;color:var(--sub)}
 
-/* forms */
-label.f{display:block;font-size:13px;color:var(--muted);margin:0 0 6px;font-weight:600}
-input[type=text],input[type=time],select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
-input:focus,select:focus{outline:2px solid color-mix(in srgb,var(--brand) 45%,transparent);outline-offset:1px;border-color:var(--brand)}
-.agents td{padding:8px}
-.agents td:first-child{font-weight:650;white-space:nowrap}
-.agents input,.agents select{padding:7px 9px;font-size:13.5px}
-.agents .lock{font-size:12.5px;color:var(--muted)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:16px;cursor:pointer}
-.check input{margin-top:4px;accent-color:var(--brand)}
-.savebar{display:flex;justify-content:flex-end;gap:10px;margin:-4px 0 18px}
-.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+/* settings */
+label.f{display:block;font-size:14px;color:var(--sub);margin:0 0 8px;font-weight:600}
+input[type=text],input[type=time],select{width:100%;padding:13px 14px;border:0;border-radius:14px;background:var(--fill);color:var(--ink);font:inherit;font-size:16px;font-weight:500;appearance:none;-webkit-appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#8b95a1 50%),linear-gradient(135deg,#8b95a1 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:40px}
+input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;background-color:#fff}
+.agent{padding:16px 0}
+.agent+.agent{border-top:1px solid var(--fill)}
+.agent-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.agent-h b{font-size:16.5px;font-weight:700}
+.agent-h .lock{font-size:13.5px;color:var(--muted)}
+.agent .two{grid-template-columns:1fr 150px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:15px;margin-top:18px;cursor:pointer;color:var(--sub)}
+.check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--brand);flex:none}
+.savebar{position:sticky;bottom:16px;margin:4px 0 12px}
+.savebar button{width:100%;box-shadow:0 8px 24px rgba(15,122,85,.22)}
 
-footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px}
-footer .wrap{display:flex;gap:14px;flex-wrap:wrap;padding-top:16px;padding-bottom:26px}
-footer a{color:var(--muted)}
+footer .wrap{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:13px;padding-bottom:32px}
+footer a:hover{color:var(--ink)}
 
-@media (max-width:900px){
-  .cols{grid-template-columns:1fr}
-  .hero{grid-template-columns:1fr;justify-items:start;gap:18px;padding:22px}
-  .ring{width:140px;height:140px}
-  .ring .num{font-size:40px}
-}
-@media (max-width:640px){
+@media (max-width:560px){
   .wrap{padding:0 16px}
-  .bar{flex-wrap:wrap;height:auto;padding:10px 0;gap:10px}
-  nav{order:3;width:100%}
+  .card{padding:22px 18px;border-radius:22px}
+  .hero h1{font-size:24px}
+  .avatar{width:76px;height:76px;border-radius:26px}
+  .avatar .bug{width:60px;height:60px}
+  .stat{padding:12px}
+  .stat .v{font-size:19px}
+  .steps li{font-size:12.5px}
+  .steps li:not(:last-child)::after{left:calc(50% + 24px);right:calc(-50% + 24px)}
+  .agent .two{grid-template-columns:1fr}
   .two{grid-template-columns:1fr}
-  .rows li{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 {{$L := .Lang}}
+{{$mood := "none"}}{{if .Run}}{{$mood = .Run.Light}}{{end}}
 <header>
-  <div class="wrap bar">
-    <a class="brand" href="/?tab=today&lang={{$L}}">
-      <svg viewBox="0 0 512 512" aria-hidden="true"><g fill="none" stroke="#eafff5" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54"/><path d="M150 221l17-72 39-16 13-22h74l13 22 39 16 17 72c12 4 24 9 35 15v47c0 75-48 130-141 171-93-41-141-96-141-171v-47c11-6 23-11 35-15Z"/></g><path d="M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54" fill="none" stroke="#0f3a2c" stroke-width="26" stroke-linecap="round"/><circle cx="151" cy="84" r="14" fill="#0f3a2c"/><circle cx="361" cy="84" r="14" fill="#0f3a2c"/><path d="M150 230l17-81 39-16 13-22h74l13 22 39 16 17 81Z" fill="#2fbf8a" stroke="#0f3a2c" stroke-width="24" stroke-linejoin="round"/><circle cx="207" cy="168" r="24" fill="#ffffff"/><circle cx="305" cy="168" r="24" fill="#ffffff"/><circle cx="211" cy="165" r="10" fill="#0f3a2c"/><circle cx="301" cy="165" r="10" fill="#0f3a2c"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Z" fill="#169468"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171Z" fill="#1fae7a"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Zm0 2v220" fill="none" stroke="#0f3a2c" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Shieldbug
-    </a>
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="/?tab=today&lang={{$L}}">{{template "bug" "green"}}Shieldbug</a>
+      <span class="sp"></span>
+      <div class="lang" role="group" aria-label="Language"><a href="/?tab={{.Tab}}&lang=ko" class="{{if eq $L "ko"}}on{{end}}">한국어</a><a href="/?tab={{.Tab}}&lang=en" class="{{if eq $L "en"}}on{{end}}">EN</a></div>
+    </div>
     <nav>
       <a href="/?tab=today&lang={{$L}}" class="{{if eq .Tab "today"}}on{{end}}">{{t $L "tab_today"}}</a>
       <a href="/?tab=findings&lang={{$L}}" class="{{if eq .Tab "findings"}}on{{end}}">{{t $L "tab_findings"}}{{if and .Run .Run.Findings}}<span class="count">{{len .Run.Findings}}</span>{{end}}</a>
@@ -218,134 +271,157 @@ footer a{color:var(--muted)}
       <a href="/?tab=sent&lang={{$L}}" class="{{if eq .Tab "sent"}}on{{end}}">{{t $L "tab_sent"}}</a>
       <a href="/?tab=settings&lang={{$L}}" class="{{if eq .Tab "settings"}}on{{end}}">{{t $L "tab_settings"}}</a>
     </nav>
-    <div class="sp"></div>
-    <div class="seg" role="group" aria-label="Language"><a href="/?tab={{.Tab}}&lang=ko" class="{{if eq $L "ko"}}on{{end}}">한국어</a><a href="/?tab={{.Tab}}&lang=en" class="{{if eq $L "en"}}on{{end}}">English</a></div>
   </div>
 </header>
 
 <main class="wrap">
-{{if .Flash}}<div class="note {{if eq .Flash "saved"}}ok{{else}}bad{{end}}">{{if eq .Flash "saved"}}{{t $L "saved"}}{{else}}{{.Flash}}{{end}}</div>{{end}}
+{{if .Flash}}<div class="note {{if eq .Flash "saved"}}ok{{else}}bad{{end}}"><span class="ico {{if eq .Flash "saved"}}ok{{else}}high{{end}}">{{if eq .Flash "saved"}}{{template "i-check"}}{{else}}{{template "i-alert"}}{{end}}</span><span>{{if eq .Flash "saved"}}{{t $L "saved"}}{{else}}{{.Flash}}{{end}}</span></div>{{end}}
 
 {{if eq .Tab "today"}}
-<section class="card hero">
-  <div class="ring {{if .Run}}{{.Run.Light}}{{end}}">
-    <svg viewBox="0 0 120 120" role="img" aria-label="{{t $L "score"}} {{if .Run}}{{.Run.Score}}{{end}}">
-      <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="9"/>
-      {{if .Run}}<circle cx="60" cy="60" r="52" fill="none" stroke="var(--c)" stroke-width="9" stroke-linecap="round" stroke-dasharray="{{ring .Run.Score}} 400"/>{{end}}
-    </svg>
-    <div class="val">{{if .Run}}<div class="num">{{.Run.Score}}</div><div class="of">/ 100</div>{{else}}<div class="num muted">—</div>{{end}}</div>
-  </div>
-  <div>
-    {{if .Run}}
-    <span class="status {{.Run.Light}}">{{t $L (print "light_" .Run.Light)}}</span>
-    {{if or .Run.Summary .Run.SummaryKo}}<p class="summary">{{pick $L .Run.Summary .Run.SummaryKo}}</p>{{end}}
-    <div class="meta"><span>{{t $L "last_check"}} {{ago $L .Run.Started}}</span><span>{{fmtTime .Run.Started}}</span>{{if .Run.Agent}}<span>{{.Run.Agent}}</span>{{end}}</div>
-    {{if .Run.Findings}}<div class="sevs">
-      {{with count .Run.Findings "critical"}}<span class="chip critical">{{t $L "sev_critical"}} {{.}}</span>{{end}}
-      {{with count .Run.Findings "high"}}<span class="chip high">{{t $L "sev_high"}} {{.}}</span>{{end}}
-      {{with count .Run.Findings "medium"}}<span class="chip medium">{{t $L "sev_medium"}} {{.}}</span>{{end}}
-      {{with count .Run.Findings "low"}}<span class="chip">{{t $L "sev_low"}} {{.}}</span>{{end}}
-    </div>{{end}}
-    {{else}}
-    <p class="summary">{{t $L "no_runs"}}</p>
-    {{end}}
-    <div class="actions">
-      <form method="post" action="/run" id="runform">
-        <input type="hidden" name="csrf" value="{{.Token}}">
-        <button id="runbtn" {{if .Running}}disabled{{end}}>{{if .Running}}{{t $L "running"}}{{else}}{{t $L "run_now"}}{{end}}</button>
-      </form>
-      {{if .Run}}<a class="btn ghost" href="/?tab=sent&lang={{$L}}">{{t $L "view_sent"}}</a>{{end}}
-      <span class="progress" id="progress" {{if not .Running}}hidden{{end}}><span class="spin"></span><span id="ptext">{{if .Progress}}{{t $L (print "p_" .Progress)}}{{end}}</span></span>
+<section class="card hero {{$mood}}">
+  <div class="hero-top">
+    <div class="avatar">{{template "bug" $mood}}</div>
+    <div>
+      {{if .Run}}
+      <h1>{{t $L (print "light_" .Run.Light)}}</h1>
+      <p class="sub">{{t $L "last_check"}} {{ago $L .Run.Started}}{{if .Run.Agent}} · {{.Run.Agent}}{{end}}</p>
+      {{else}}
+      <h1>{{t $L "light_none"}}</h1>
+      <p class="sub">{{t $L "hello_none"}}</p>
+      {{end}}
     </div>
-    <p class="hint">{{t $L "scope"}}</p>
+  </div>
+  {{if .Run}}
+  <div class="meter">
+    <div class="meter-top"><span class="lbl">{{t $L "score"}}</span><span class="num">{{.Run.Score}}<small>/ 100</small></span></div>
+    <div class="track" role="img" aria-label="{{t $L "score"}} {{.Run.Score}}"><i style="width:{{.Run.Score}}%"></i></div>
+  </div>
+  {{if or .Run.Summary .Run.SummaryKo}}<p class="summary">{{pick $L .Run.Summary .Run.SummaryKo}}</p>{{end}}
+  <div class="stats">
+    <a class="stat {{if .Run.Findings}}hot{{end}}" href="/?tab=findings&lang={{$L}}"><div class="k">{{t $L "stat_fix"}}</div><div class="v">{{tf $L "unit_items" (len .Run.Findings)}}</div></a>
+    <a class="stat" href="/?tab=checklist&lang={{$L}}"><div class="k">{{t $L "stat_checks"}}</div><div class="v">{{tf $L "unit_items" (len .Checklist)}}</div></a>
+    <div class="stat"><div class="k">{{t $L "stat_intel"}}</div><div class="v">{{tf $L "unit_cases" (len .Run.Intel)}}</div></div>
+  </div>
+  {{end}}
+  <div class="cta">
+    <form method="post" action="/run" id="runform">
+      <input type="hidden" name="csrf" value="{{.Token}}">
+      <button id="runbtn" {{if .Running}}disabled{{end}}><span class="spin" id="spin" {{if not .Running}}hidden{{end}}></span><span id="runlabel">{{if .Running}}{{t $L "running"}}{{else}}{{t $L "run_now"}}{{end}}</span></button>
+    </form>
   </div>
 </section>
 
+<section class="card">
+  <div class="card-h"><h2>{{t $L "steps_title"}}</h2><span class="sp"></span><span class="more" id="steps-state">{{if and .Run (not .Running)}}{{t $L "steps_done"}}{{end}}</span></div>
+  <ol class="steps" id="steps" data-progress="{{.Progress}}" data-running="{{.Running}}" data-done="{{if .Run}}1{{end}}">
+    <li data-step="selftest"><span class="dot"><b>1</b><span class="ok">{{template "i-check"}}</span></span>{{t $L "st_selftest"}}</li>
+    <li data-step="collect"><span class="dot"><b>2</b><span class="ok">{{template "i-check"}}</span></span>{{t $L "st_collect"}}</li>
+    <li data-step="intel"><span class="dot"><b>3</b><span class="ok">{{template "i-check"}}</span></span>{{t $L "st_intel"}}</li>
+    <li data-step="analysis"><span class="dot"><b>4</b><span class="ok">{{template "i-check"}}</span></span>{{t $L "st_analysis"}}</li>
+  </ol>
+  <p class="hint">{{t $L "scope"}}</p>
+</section>
+
 {{if .Run}}
-{{range .Run.Errors}}<div class="note bad">{{.}}</div>{{end}}
-{{if .Run.Proposals}}<div class="note"><span>{{.Run.Proposals}} {{t $L "proposals_new"}}</span><span class="sp"></span><a href="/?tab=checklist&lang={{$L}}">{{t $L "open_list"}} →</a></div>{{end}}
-<div class="cols">
-  <section class="card">
-    <div class="card-h"><h2>{{t $L "todo"}}</h2><span class="sp"></span>{{if gt (len .Run.Findings) 3}}<a class="more" href="/?tab=findings&lang={{$L}}">{{t $L "all_findings"}} ({{len .Run.Findings}}) →</a>{{end}}</div>
-    {{if .Run.Findings}}
-    <div class="items">
-      {{range $i, $f := .Run.Findings}}{{if lt $i 3}}
-      <div class="item {{$f.Severity}}">
-        <div class="item-h"><h3>{{pick $L $f.Title $f.TitleKo}}</h3><span class="chip {{$f.Severity}}">{{sev $L $f.Severity}}</span></div>
+{{range .Run.Errors}}<div class="note bad"><span class="ico high">{{template "i-alert"}}</span><span>{{.}}</span></div>{{end}}
+{{if .Run.Proposals}}<div class="note"><span class="ico blue">{{template "i-spark"}}</span><span>{{tf $L "proposals_banner" .Run.Proposals}}</span><span class="sp"></span><a class="btn sm soft" href="/?tab=checklist&lang={{$L}}">{{t $L "open_list"}}</a></div>{{end}}
+
+<section class="card">
+  <div class="card-h"><h2>{{t $L "todo"}}</h2><span class="sp"></span>{{if gt (len .Run.Findings) 3}}<a class="more" href="/?tab=findings&lang={{$L}}">{{t $L "all_findings"}} {{len .Run.Findings}}{{template "i-chev"}}</a>{{end}}</div>
+  {{if .Run.Findings}}
+  <ul class="list">
+    {{range $i, $f := .Run.Findings}}{{if lt $i 3}}
+    <li class="row">
+      <span class="ico {{$f.Severity}}">{{template "i-alert"}}</span>
+      <div class="body">
+        <div class="t">{{pick $L $f.Title $f.TitleKo}}</div>
+        <div class="s"><span class="sev {{$f.Severity}}">{{sev $L $f.Severity}}</span> · {{t $L (print "source_" $f.Source)}}</div>
         {{if $f.Fix}}<div class="fix"><p>{{pick $L $f.Fix $f.FixKo}}</p><button type="button" class="copy" data-copy="{{pick $L $f.Fix $f.FixKo}}">{{t $L "copy"}}</button></div>{{end}}
       </div>
-      {{end}}{{end}}
-    </div>
-    {{else}}<p class="empty">{{t $L "no_findings"}}</p>{{end}}
-  </section>
-  <aside>
-    <section class="card">
-      <div class="card-h"><h2>{{t $L "intel"}}</h2></div>
-      {{if .Run.Intel}}<ul class="news">{{range .Run.Intel}}
-        <li><a href="{{.URL}}" target="_blank" rel="noopener noreferrer">{{pick $L .Title .TitleKo}}</a><small>{{.Date}}{{if .Products}} · {{range $j, $p := .Products}}{{if $j}}, {{end}}{{$p}}{{end}}{{end}}</small></li>
-      {{end}}</ul>{{else}}<p class="empty">{{t $L "no_intel"}}</p>{{end}}
-    </section>
-    <section class="card">
-      <div class="card-h"><h2>{{t $L "this_run"}}</h2></div>
-      <dl class="kv">
-        <dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{.Run.Agent}}{{else}}—{{end}}</dd>
-        {{range .Run.Calls}}<dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd>{{break}}{{end}}
-        <dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd>
-        <dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd>
-        <dt>{{t $L "cost"}}</dt><dd>{{money (sum .Run.Calls)}}</dd>
-        <dt>{{t $L "duration"}}</dt><dd>{{secs .Run.Seconds}}</dd>
-      </dl>
-      <p class="hint">{{t $L "cost_note"}}</p>
-    </section>
-  </aside>
-</div>
+    </li>
+    {{end}}{{end}}
+  </ul>
+  {{else}}
+  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_findings"}}</div></div></li></ul>
+  {{end}}
+</section>
+
+<section class="card">
+  <div class="card-h"><h2>{{t $L "intel"}}</h2></div>
+  {{if .Run.Intel}}<ul class="list">{{range .Run.Intel}}
+    <li><a class="row" href="{{.URL}}" target="_blank" rel="noopener noreferrer"><span class="ico blue">{{template "i-globe"}}</span><div class="body"><div class="t">{{pick $L .Title .TitleKo}}</div><div class="s">{{.Date}}{{if .Products}} · {{range $j, $p := .Products}}{{if $j}}, {{end}}{{$p}}{{end}}{{end}}</div></div><span class="go">{{template "i-chev"}}</span></a></li>
+  {{end}}</ul>{{else}}<p class="empty">{{t $L "no_intel"}}</p>{{end}}
+</section>
+
+<section class="card">
+  <div class="card-h"><h2>{{t $L "this_run"}}</h2><span class="sp"></span><a class="more" href="/?tab=sent&lang={{$L}}">{{t $L "view_sent"}}{{template "i-chev"}}</a></div>
+  <dl class="kv">
+    <div><dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{.Run.Agent}}{{else}}—{{end}}</dd></div>
+    {{range .Run.Calls}}<div><dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd></div>{{break}}{{end}}
+    <div><dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd></div>
+    <div><dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd></div>
+    <div><dt>{{t $L "cost"}}</dt><dd>{{money (sum .Run.Calls)}}</dd></div>
+    <div><dt>{{t $L "duration"}}</dt><dd>{{secs .Run.Seconds}}</dd></div>
+  </dl>
+  <p class="hint">{{t $L "cost_note"}}</p>
+</section>
 {{end}}
 {{end}}
 
 {{if eq .Tab "findings"}}
-<div class="page-h"><h1>{{t $L "tab_findings"}}</h1>{{if .Run}}<span class="meta">{{fmtTime .Run.Started}}</span>{{end}}</div>
+<div class="page-h"><h1>{{t $L "tab_findings"}}</h1>{{if .Run}}<p>{{tf $L "findings_sub" (len .Run.Findings) (fmtTime .Run.Started)}}</p>{{end}}</div>
+<section class="card">
 {{if and .Run .Run.Findings}}
-<div class="items">
-  {{range .Run.Findings}}
-  <div class="item {{.Severity}}">
-    <div class="item-h"><h3>{{pick $L .Title .TitleKo}}<span class="tag">{{t $L (print "source_" .Source)}}{{if .ChecklistID}} · {{.ChecklistID}}{{end}}</span></h3><span class="chip {{.Severity}}">{{sev $L .Severity}}</span></div>
-    {{if .Fix}}<div class="fix"><p><b>{{t $L "fix"}}</b>{{pick $L .Fix .FixKo}}</p><button type="button" class="copy" data-copy="{{pick $L .Fix .FixKo}}">{{t $L "copy"}}</button></div>{{end}}
-    {{if .Evidence}}<details><summary>{{t $L "show_evidence"}}</summary><div class="ev">{{.Evidence}}</div></details>{{end}}
-  </div>
-  {{end}}
-</div>
-{{else}}<div class="card"><p class="empty">{{t $L "no_findings"}}</p></div>{{end}}
+  <ul class="list">
+    {{range .Run.Findings}}
+    <li class="row">
+      <span class="ico {{.Severity}}">{{template "i-alert"}}</span>
+      <div class="body">
+        <div class="t">{{pick $L .Title .TitleKo}}</div>
+        <div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{t $L (print "source_" .Source)}}{{if .ChecklistID}} · {{.ChecklistID}}{{end}}</div>
+        {{if .Fix}}<div class="fix"><p><b>{{t $L "fix"}}</b>{{pick $L .Fix .FixKo}}</p><button type="button" class="copy" data-copy="{{pick $L .Fix .FixKo}}">{{t $L "copy"}}</button></div>{{end}}
+        {{if .Evidence}}<details><summary>{{t $L "show_evidence"}}</summary><div class="ev">{{.Evidence}}</div></details>{{end}}
+      </div>
+    </li>
+    {{end}}
+  </ul>
+{{else}}
+  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_findings"}}</div></div></li></ul>
+{{end}}
+</section>
 {{end}}
 
 {{if eq .Tab "checklist"}}
-<div class="page-h"><h1>{{t $L "tab_checklist"}}</h1></div>
+<div class="page-h"><h1>{{t $L "tab_checklist"}}</h1><p>{{tf $L "checklist_sub" (len .Checklist)}}</p></div>
 {{if .Pending}}
 <section class="card">
   <div class="card-h"><h2>{{t $L "pending"}}</h2></div>
+  <p class="empty" style="margin:-6px 0 16px;font-size:15px">{{t $L "pending_sub"}}</p>
   {{range .Pending}}
   <div class="prop">
-    <h3><span class="chip {{.Severity}}">{{sev $L .Severity}}</span>{{.T $L}}</h3>
+    <span class="pill {{.Severity}}">{{sev $L .Severity}}</span>
+    <h3>{{.T $L}}</h3>
     <p>{{.F $L}}</p>
-    <div class="meta">{{.Check}}</div>
-    {{range .Refs}}<div class="meta"><a href="{{.}}" target="_blank" rel="noopener noreferrer">{{.}}</a></div>{{end}}
+    {{if .Check}}<div class="src">{{.Check}}</div>{{end}}
+    {{range .Refs}}<div class="src"><a href="{{.}}" target="_blank" rel="noopener noreferrer">{{.}}</a></div>{{end}}
     <div class="btns">
       <form method="post" action="/proposal"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="decision" value="approve"><button class="sm">{{t $L "approve"}}</button></form>
-      <form method="post" action="/proposal"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="decision" value="reject"><button class="sm ghost">{{t $L "reject"}}</button></form>
+      <form method="post" action="/proposal"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="decision" value="reject"><button class="sm soft">{{t $L "reject"}}</button></form>
     </div>
   </div>
   {{end}}
 </section>
 {{end}}
 <section class="card">
-  <div class="card-h"><h2>{{t $L "active_items"}}</h2><span class="chip">{{len .Checklist}}</span></div>
-  <ul class="rows">
-    {{range .Checklist}}<li><span class="chip {{.Severity}}">{{sev $L .Severity}}</span><div><div class="t">{{.T $L}}</div><div class="tag">{{.Category}} · {{.ID}}{{if eq .Source "ai"}} · {{t $L "from_ai"}}{{end}}</div></div></li>{{end}}
+  <div class="card-h"><h2>{{t $L "active_items"}}</h2></div>
+  <ul class="list">
+    {{range .Checklist}}<li class="row"><span class="ico {{.Severity}}">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}{{if eq .Source "ai"}} · {{t $L "from_ai"}}{{end}}</div></div></li>{{end}}
   </ul>
 </section>
 {{end}}
 
 {{if eq .Tab "history"}}
-<div class="page-h"><h1>{{t $L "tab_history"}}</h1></div>
+<div class="page-h"><h1>{{t $L "tab_history"}}</h1>{{if .Runs}}<p>{{tf $L "history_sub" (len .Runs)}}</p>{{end}}</div>
 <section class="card">
   <div class="card-h"><h2>{{t $L "history_trend"}}</h2></div>
   {{if gt (len .Runs) 1}}
@@ -359,35 +435,34 @@ footer a{color:var(--muted)}
   {{else}}<p class="empty">{{t $L "no_history"}}</p>{{end}}
 </section>
 <section class="card">
-  <div class="scroll">
-  <table class="tbl">
-    <tr><th>{{t $L "when"}}</th><th>{{t $L "score"}}</th><th>{{t $L "findings_n"}}</th><th>{{t $L "agent"}}</th><th>{{t $L "tokens_short"}}</th><th>{{t $L "cost_short"}}</th><th>{{t $L "duration"}}</th><th></th></tr>
-    {{range .Runs}}<tr>
-      <td>{{fmtTime .Started}} <span class="tag">{{if .Scheduled}}{{t $L "scheduled"}}{{else}}{{t $L "manual"}}{{end}}</span></td>
-      <td><span class="score-pill {{.Light}}">{{.Score}}</span></td>
-      <td class="num">{{len .Findings}}</td><td>{{.Agent}}</td><td class="num">{{tokens .Calls}}</td><td class="num">{{money (sum .Calls)}}</td><td class="num">{{secs .Seconds}}</td>
-      <td><a href="/?tab=sent&id={{.ID}}&lang={{$L}}">{{t $L "tab_sent"}}</a></td>
-    </tr>{{if .Errors}}<tr><td colspan="8">{{range .Errors}}<div class="meta" style="color:var(--bad)">{{.}}</div>{{end}}</td></tr>{{end}}{{end}}
-  </table>
-  </div>
+  <ul class="list">
+    {{range .Runs}}<li class="row {{.Light}}">
+      <span class="score-dot">{{.Score}}</span>
+      <div class="body">
+        <div class="t">{{fmtTime .Started}}</div>
+        <div class="s">{{if .Scheduled}}{{t $L "scheduled"}}{{else}}{{t $L "manual"}}{{end}} · {{t $L "stat_fix"}} {{len .Findings}} · {{.Agent}} · {{money (sum .Calls)}} · {{secs .Seconds}}</div>
+        {{range .Errors}}<div class="err">{{.}}</div>{{end}}
+      </div>
+      <a class="link" href="/?tab=sent&id={{.ID}}&lang={{$L}}">{{t $L "tab_sent"}}</a>
+    </li>{{else}}<li class="row"><div class="body"><div class="t">{{t $L "no_runs"}}</div></div></li>{{end}}
+  </ul>
 </section>
 {{end}}
 
 {{if eq .Tab "sent"}}
-<div class="page-h"><h1>{{t $L "tab_sent"}}</h1>{{if .PayloadID}}<span class="meta">{{.PayloadID}}</span>{{end}}</div>
-<div class="note ok">{{t $L "sent_intro"}}</div>
+<div class="page-h"><h1>{{t $L "tab_sent"}}</h1><p>{{t $L "sent_intro"}}</p></div>
 <section class="card">
   {{if .Payload}}<pre class="payload">{{.Payload}}</pre>{{else}}<p class="empty">{{t $L "no_payload"}}</p>{{end}}
 </section>
 {{end}}
 
 {{if eq .Tab "settings"}}
-<div class="page-h"><h1>{{t $L "tab_settings"}}</h1></div>
+<div class="page-h"><h1>{{t $L "tab_settings"}}</h1><p>{{t $L "settings_sub"}}</p></div>
 <form method="post" action="/settings">
   <input type="hidden" name="csrf" value="{{.Token}}">
   <section class="card">
     <div class="card-h"><h2>{{t $L "agent_pick"}}</h2></div>
-    <select name="agent">
+    <select name="agent" aria-label="{{t $L "agent_pick"}}">
       <option value="auto" {{if eq .Cfg.Agent "auto"}}selected{{end}}>{{t $L "auto"}}{{if .Agents}} ({{index .Agents 0}}){{end}}</option>
       {{range .AllAgents}}<option value="{{.}}" {{if eq $.Cfg.Agent .}}selected{{end}}>{{.}}</option>{{end}}
     </select>
@@ -395,24 +470,19 @@ footer a{color:var(--muted)}
   </section>
   <section class="card">
     <div class="card-h"><h2>{{t $L "models_effort"}}</h2></div>
-    <div class="scroll">
-    <table class="tbl agents">
-      <tr><th>{{t $L "agent"}}</th><th>{{t $L "status"}}</th><th>{{t $L "lockdown"}}</th><th>{{t $L "model"}}</th><th>{{t $L "effort"}}</th></tr>
-      {{range .AllAgents}}<tr>
-        <td>{{.}}</td>
-        <td>{{if has $.Agents .}}<span class="chip ok">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="chip">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}</td>
-        <td class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</td>
-        <td><input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}" aria-label="{{.}} {{t $L "model"}}"></td>
-        <td>{{if effort .}}<select name="effort_{{.}}" aria-label="{{.}} {{t $L "effort"}}">{{$e := index $.Cfg.Effort .}}
-          <option value="" {{if eq $e ""}}selected{{end}}>—</option>
+    {{range .AllAgents}}<div class="agent">
+      <div class="agent-h"><b>{{.}}</b>{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
+      <div class="{{if effort .}}two{{end}}">
+        <input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}" aria-label="{{.}} {{t $L "model"}}" placeholder="{{t $L "model"}}">
+        {{if effort .}}<select name="effort_{{.}}" aria-label="{{.}} {{t $L "effort"}}">{{$e := index $.Cfg.Effort .}}
+          <option value="" {{if eq $e ""}}selected{{end}}>{{t $L "effort"}} —</option>
           <option value="low" {{if eq $e "low"}}selected{{end}}>low</option>
           <option value="medium" {{if eq $e "medium"}}selected{{end}}>medium</option>
           <option value="high" {{if eq $e "high"}}selected{{end}}>high</option>
           {{if maxeff .}}<option value="xhigh" {{if eq $e "xhigh"}}selected{{end}}>xhigh</option><option value="max" {{if eq $e "max"}}selected{{end}}>max</option>{{end}}
-        </select>{{else}}<span class="tag">—</span>{{end}}</td>
-      </tr>{{end}}
-    </table>
-    </div>
+        </select>{{end}}
+      </div>
+    </div>{{end}}
   </section>
   <section class="card">
     <div class="card-h"><h2>{{t $L "general"}}</h2></div>
@@ -428,37 +498,58 @@ footer a{color:var(--muted)}
   <div class="savebar"><button>{{t $L "save"}}</button></div>
 </form>
 <section class="card">
-  <div class="card-h"><h2>{{t $L "schedule"}}</h2><span class="sp"></span>{{if .Schedule}}<span class="chip ok">{{t $L "sched_on"}}</span>{{else}}<span class="chip">{{t $L "sched_off"}}</span>{{end}}</div>
-  {{if .Schedule}}<p class="meta" style="margin:0 0 12px">{{.Schedule}}</p>{{end}}
-  <form method="post" action="/schedule"><input type="hidden" name="csrf" value="{{.Token}}">
-    {{if .Schedule}}<input type="hidden" name="action" value="remove"><button class="ghost">{{t $L "sched_remove"}}</button>
-    {{else}}<input type="hidden" name="action" value="install"><button>{{t $L "sched_install"}} · {{.Cfg.Schedule.DailyAt}}</button>{{end}}
-  </form>
+  <ul class="list">
+    <li class="row">
+      <span class="ico {{if .Schedule}}ok{{end}}">{{template "i-check"}}</span>
+      <div class="body">
+        <div class="t">{{t $L "schedule"}} · {{if .Schedule}}{{t $L "sched_on"}}{{else}}{{t $L "sched_off"}}{{end}}</div>
+        <div class="s">{{if .Schedule}}{{t $L "sched_on_sub"}} {{.Schedule}}{{else}}{{t $L "sched_off_sub"}}{{end}}</div>
+      </div>
+      <form method="post" action="/schedule" style="align-self:center"><input type="hidden" name="csrf" value="{{.Token}}">
+        {{if .Schedule}}<input type="hidden" name="action" value="remove"><button class="sm soft">{{t $L "sched_remove"}}</button>
+        {{else}}<input type="hidden" name="action" value="install"><button class="sm">{{t $L "sched_install"}}</button>{{end}}
+      </form>
+    </li>
+  </ul>
 </section>
 {{end}}
 </main>
 <footer><div class="wrap"><span>Shieldbug {{.Version}}</span><span>Apache-2.0</span><a href="https://github.com/qruse/shieldbug" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://hslab.space/projects/shieldbug/" target="_blank" rel="noopener noreferrer">hslab.space</a></div></footer>
 <script>
 (function(){
-  var labels = {selftest: {{t $L "p_selftest"}}, collect: {{t $L "p_collect"}}, intel: {{t $L "p_intel"}}, analysis: {{t $L "p_analysis"}}};
+  var order = ['selftest','collect','intel','analysis'];
+  var copied = {{t $L "copied"}};
   // heartbeat: when the window closes, the server stops by itself
   setInterval(function(){ fetch('/ping', {cache:'no-store'}).catch(function(){}); }, 15000);
   fetch('/ping', {cache:'no-store'}).catch(function(){});
   document.addEventListener('click', function(e){
     var b = e.target.closest('[data-copy]');
     if (!b) return;
-    navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent='✓'; setTimeout(function(){b.textContent=t;},1200); });
+    navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent=copied; setTimeout(function(){b.textContent=t;},1200); });
   });
+  var steps = document.getElementById('steps');
+  function mark(cur, allDone){
+    if (!steps) return;
+    var idx = order.indexOf(cur);
+    steps.querySelectorAll('li').forEach(function(li, i){
+      li.classList.toggle('done', allDone || (idx >= 0 && i < idx));
+      li.classList.toggle('now', !allDone && i === idx);
+    });
+  }
   var running = {{.Running}};
+  if (steps) mark(steps.dataset.progress || (running ? 'selftest' : ''), !running && steps.dataset.done === '1');
   var form = document.getElementById('runform');
   if (form) form.addEventListener('submit', function(){
-    var b=document.getElementById('runbtn'); b.disabled=true; b.textContent={{t $L "running"}};
-    var p=document.getElementById('progress'); if (p) p.hidden=false;
+    document.getElementById('runbtn').disabled = true;
+    document.getElementById('runlabel').textContent = {{t $L "running"}};
+    document.getElementById('spin').hidden = false;
+    var st = document.getElementById('steps-state'); if (st) st.textContent = '';
+    mark('selftest', false);
   });
   if (running) {
     var poll = setInterval(function(){
       fetch('/status', {cache:'no-store'}).then(function(r){return r.json();}).then(function(s){
-        var p = document.getElementById('ptext'); if (p && labels[s.progress]) p.textContent = labels[s.progress];
+        if (s.progress) mark(s.progress, false);
         if (!s.running) { clearInterval(poll); location.href = '/?tab=today'; }
       }).catch(function(){});
     }, 2000);

@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"crypto/subtle"
-	_ "embed"
+	"embed"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -20,6 +20,25 @@ import (
 
 //go:embed web/index.html
 var indexHTML string
+
+// Pretendard (SIL Open Font License 1.1, web/fonts/LICENSE-Pretendard.txt),
+// KS X 1001 subset. Served from the binary so the dashboard never loads
+// anything from the internet.
+//
+//go:embed web/fonts/*.woff2
+var fontFS embed.FS
+
+func handleFont(w http.ResponseWriter, r *http.Request) {
+	name := strings.TrimPrefix(r.URL.Path, "/fonts/")
+	b, err := fontFS.ReadFile("web/fonts/" + name)
+	if err != nil || strings.ContainsAny(name, "/\\") {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "font/woff2")
+	w.Header().Set("Cache-Control", "max-age=31536000, immutable")
+	w.Write(b)
+}
 
 type server struct {
 	cfg      Config
@@ -44,6 +63,11 @@ func serve(c Config, openWindow bool, stay bool) error {
 	s := &server{cfg: c, token: newToken()}
 	s.lastSeen.Store(time.Now().Unix())
 	s.lastErr.Store("")
+	s.tmpl = parseIndex()
+	return serveListen(s, c, openWindow, stay)
+}
+
+func parseIndex() *template.Template {
 	funcs := template.FuncMap{
 		"t":   func(lang, key string) string { return tr(lang, key) },
 		"sev": func(lang, s string) string { return tr(lang, "sev_"+s) },
@@ -78,10 +102,14 @@ func serve(c Config, openWindow bool, stay bool) error {
 		},
 		"count":  countSev,
 		"isapi":  isAPI,
+		"tf":     trf,
 		"effort": hasEffort,
 		"maxeff": func(a string) bool { return a == "claude" || a == "claude-api" },
 	}
-	s.tmpl = template.Must(template.New("index").Funcs(funcs).Parse(indexHTML))
+	return template.Must(template.New("index").Funcs(funcs).Parse(indexHTML))
+}
+
+func serveListen(s *server, c Config, openWindow bool, stay bool) error {
 
 	ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", c.Dashboard.Port))
 	if err != nil {
@@ -93,6 +121,7 @@ func serve(c Config, openWindow bool, stay bool) error {
 	s.port = ln.Addr().(*net.TCPAddr).Port
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", s.guard(s.handleIndex))
+	mux.HandleFunc("/fonts/", s.guard(handleFont))
 	mux.HandleFunc("/ping", s.guard(s.handlePing))
 	mux.HandleFunc("/status", s.guard(s.handleStatus))
 	mux.HandleFunc("/run", s.guard(s.post(s.handleRun)))
@@ -154,7 +183,7 @@ func (s *server) guard(h http.HandlerFunc) http.HandlerFunc {
 		if r.URL.Query().Get("t") != "" {
 			http.SetCookie(w, &http.Cookie{Name: "sb", Value: s.token, Path: "/", HttpOnly: true, SameSite: http.SameSiteStrictMode})
 		}
-		w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		s.lastSeen.Store(time.Now().Unix())
