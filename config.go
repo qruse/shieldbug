@@ -15,12 +15,15 @@ import (
 // Config lives in ~/.shieldbug/config.json. Every field can be edited by hand,
 // by the user's AI, or from the dashboard's settings screen.
 type Config struct {
-	Language   string            `json:"language"`    // "auto", "ko", "en"
-	Agent      string            `json:"agent"`       // "auto", a CLI ("claude", "codex", "agy") or an API adapter ("claude-api", "openai-api", "gemini-api")
-	AgentOrder []string          `json:"agent_order"` // auto-detection order
-	Models     map[string]string `json:"models"`
-	Effort     map[string]string `json:"effort"` // "" = CLI default
-	Schedule   struct {
+	Language   string   `json:"language"`    // "auto", "ko", "en"
+	Agent      string   `json:"agent"`       // "auto", a CLI ("claude", "codex", "agy") or an API adapter ("claude-api", "openai-api", "gemini-api")
+	AgentOrder []string `json:"agent_order"` // auto-detection order
+	// Use: the AIs ticked in Settings, tried in order (the next one only when a
+	// call fails). null = not chosen yet; [] = none, local checks only.
+	Use      []string          `json:"use"`
+	Models   map[string]string `json:"models"`
+	Effort   map[string]string `json:"effort"` // "" = CLI default
+	Schedule struct {
 		Enabled bool   `json:"enabled"`
 		DailyAt string `json:"daily_at"` // HH:MM local time
 	} `json:"schedule"`
@@ -277,19 +280,58 @@ func detectAgents(c Config) []string {
 
 const noAgentMsg = "no AI found: install Claude Code, Codex or Antigravity (agy), or set ANTHROPIC_API_KEY, OPENAI_API_KEY or GEMINI_API_KEY"
 
-func pickAgent(c Config) (string, error) {
-	if c.Agent != "" && c.Agent != "auto" {
-		if !agentAvailable(c.Agent) {
-			if isAPI(c.Agent) {
-				return "", errors.New("configured agent '" + c.Agent + "' has no API key: set " + strings.Join(apiProviders[c.Agent].keyEnv, " or "))
+// chosenAgents: the AIs the user ticked, in display order. Being installed
+// does not mean being used. With no choice saved yet (older configs, first
+// run) it is the pinned agent, or else the first one found.
+func chosenAgents(c Config) []string {
+	if c.Use != nil {
+		var out []string
+		for _, a := range allAgents {
+			if slices.Contains(c.Use, a) {
+				out = append(out, a)
 			}
-			return "", errors.New("configured agent '" + c.Agent + "' was not found")
 		}
-		return c.Agent, nil
+		return out
 	}
-	found := detectAgents(c)
-	if len(found) == 0 {
-		return "", errors.New(noAgentMsg)
+	if c.Agent != "" && c.Agent != "auto" {
+		return []string{c.Agent}
 	}
-	return found[0], nil
+	if found := detectAgents(c); len(found) > 0 {
+		return found[:1]
+	}
+	return nil
+}
+
+// runAgents: the chosen AIs that can run now. A check uses the first and moves
+// to the next only when a call fails.
+func runAgents(c Config) ([]string, error) {
+	chosen := chosenAgents(c)
+	if len(chosen) == 0 {
+		if c.Use != nil {
+			return nil, errors.New("no AI is selected in Settings")
+		}
+		return nil, errors.New(noAgentMsg)
+	}
+	var ok []string
+	for _, a := range chosen {
+		if agentAvailable(a) {
+			ok = append(ok, a)
+		}
+	}
+	if len(ok) == 0 {
+		a := chosen[0]
+		if isAPI(a) {
+			return nil, errors.New("configured agent '" + a + "' has no API key: set " + strings.Join(apiProviders[a].keyEnv, " or "))
+		}
+		return nil, errors.New("configured agent '" + a + "' was not found")
+	}
+	return ok, nil
+}
+
+func pickAgent(c Config) (string, error) {
+	ok, err := runAgents(c)
+	if err != nil {
+		return "", err
+	}
+	return ok[0], nil
 }

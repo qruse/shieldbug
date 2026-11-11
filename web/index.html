@@ -255,6 +255,13 @@ input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;backgro
 .agent+.agent{border-top:1px solid var(--fill)}
 .agent-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .agent-h b{font-size:16.5px;font-weight:700}
+.pick{display:flex;align-items:center;gap:12px;cursor:pointer}
+.pick input{width:22px;height:22px;margin:0;accent-color:var(--brand);flex:none;cursor:pointer}
+.pick input:disabled{cursor:default}
+.agent.off .agent-h b{color:var(--muted)}
+.agent.off .fields{display:none}
+.agent.off .agent-h{margin-bottom:0}
+.first{font-size:12.5px;font-weight:700;color:var(--brand-ink)}
 .agent-h .lock{font-size:13.5px;color:var(--muted)}
 .agent .two{grid-template-columns:1fr 150px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -494,17 +501,10 @@ footer a:hover{color:var(--ink)}
   <input type="hidden" name="csrf" value="{{.Token}}">
   <section class="card">
     <div class="card-h"><h2>{{t $L "agent_pick"}}</h2></div>
-    <select name="agent" aria-label="{{t $L "agent_pick"}}">
-      <option value="auto" {{if eq .Cfg.Agent "auto"}}selected{{end}}>{{t $L "auto"}}{{if .Agents}} — {{aname $L (index .Agents 0)}}{{end}}</option>
-      {{range .AllAgents}}<option value="{{.}}" {{if eq $.Cfg.Agent .}}selected{{end}}>{{aname $L .}}</option>{{end}}
-    </select>
-    <p class="hint">{{t $L "agent_hint"}}</p>
-  </section>
-  <section class="card">
-    <div class="card-h"><h2>{{t $L "models_effort"}}</h2></div>
-    {{range .AllAgents}}<div class="agent">
-      <div class="agent-h"><b>{{aname $L .}}</b>{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
-      <div class="{{if effort .}}two{{end}}">
+    <p class="empty" style="margin:-6px 0 6px;font-size:15px">{{t $L "agent_hint"}}</p>
+    {{range .AllAgents}}{{$on := has $.Chosen .}}{{$ok := has $.Agents .}}<div class="agent {{if not $on}}off{{end}}">
+      <div class="agent-h"><label class="pick"><input type="checkbox" name="use" value="{{.}}" {{if $on}}checked{{end}} {{if and (not $ok) (not $on)}}disabled{{end}}><b>{{aname $L .}}</b></label>{{if and $on (eq . (index $.Chosen 0))}}<span class="first">{{t $L "used_first"}}</span>{{end}}{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
+      <div class="fields {{if effort .}}two{{end}}">
         <input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}" aria-label="{{.}} {{t $L "model"}}" placeholder="{{t $L "model"}}">
         {{if effort .}}<select name="effort_{{.}}" aria-label="{{.}} {{t $L "effort"}}">{{$e := index $.Cfg.Effort .}}
           <option value="" {{if eq $e ""}}selected{{end}}>{{t $L "effort"}} —</option>
@@ -558,6 +558,9 @@ footer a:hover{color:var(--ink)}
     var b = e.target.closest('[data-copy]');
     if (!b) return;
     navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent=copied; setTimeout(function(){b.textContent=t;},1200); });
+  });
+  document.querySelectorAll('input[name=use]').forEach(function(cb){
+    cb.addEventListener('change', function(){ cb.closest('.agent').classList.toggle('off', !cb.checked); });
   });
   var rb = document.getElementById('reload');
   if (rb) rb.addEventListener('click', function(){ location.reload(); });

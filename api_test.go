@@ -166,6 +166,34 @@ func TestAPIAgentDetection(t *testing.T) {
 	}
 }
 
+// Only ticked AIs run; an installed but unticked one is never used.
+func TestChosenAgents(t *testing.T) {
+	t.Setenv("PATH", "")
+	t.Setenv("LOCALAPPDATA", t.TempDir())
+	t.Setenv("USERPROFILE", t.TempDir())
+	t.Setenv("HOME", t.TempDir())
+	t.Setenv("ANTHROPIC_API_KEY", fakeKey)
+	t.Setenv("OPENAI_API_KEY", fakeKey)
+	t.Setenv("GEMINI_API_KEY", "")
+	t.Setenv("GOOGLE_API_KEY", "")
+	c := testCfg()
+	if got := chosenAgents(c); len(got) != 1 || got[0] != "claude-api" {
+		t.Fatalf("not chosen yet: first found only, got %v", got)
+	}
+	c.Use = []string{"openai-api", "gemini-api", "claude-api"}
+	got, err := runAgents(c)
+	if err != nil || len(got) != 2 || got[0] != "claude-api" || got[1] != "openai-api" {
+		t.Fatalf("ticked and available, in display order: %v %v", got, err)
+	}
+	c.Use = []string{}
+	if _, err := runAgents(c); err == nil || !strings.Contains(err.Error(), "no AI is selected") {
+		t.Fatalf("none ticked: %v", err)
+	}
+	if nextNote(0, []string{"a", "b"}) != " — trying b" || nextNote(1, []string{"a", "b"}) != "" {
+		t.Fatal("nextNote")
+	}
+}
+
 // An older config that still names Gemini CLI loads cleanly and falls back to auto.
 func TestDroppedGeminiCLI(t *testing.T) {
 	home := t.TempDir()

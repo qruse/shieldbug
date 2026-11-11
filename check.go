@@ -78,22 +78,25 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	r.Checklist = len(items)
 	r.Findings = append(r.Findings, local...)
 
-	agent, err := pickAgent(c)
+	agents, err := runAgents(c)
 	if err != nil {
 		r.Errors = append(r.Errors, err.Error()+" — showing local checks only")
 		return finish(r, start), nil
 	}
-	r.Agent = agent
-	r.Lockdown = lockdown[agent]
+	r.Agent = agents[0]
+	r.Lockdown = lockdown[agents[0]]
 
 	if c.Intel.ModelSearch {
 		setProgress("intel")
-		intel, u, err := runIntel(c, agent)
-		r.Calls = append(r.Calls, u)
-		if err != nil {
-			r.Errors = append(r.Errors, "intel: "+err.Error())
+		for i, agent := range agents {
+			intel, u, err := runIntel(c, agent)
+			r.Calls = append(r.Calls, u)
+			if err == nil {
+				r.Intel = intel
+				break
+			}
+			r.Errors = append(r.Errors, "intel ("+agent+"): "+err.Error()+nextNote(i, agents))
 		}
-		r.Intel = intel
 	}
 
 	setProgress("analysis")
@@ -110,10 +113,18 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 		return finish(r, start), nil
 	}
 	savePayload(r.ID, prompt)
-	res, u, err := runAnalysis(c, agent, prompt)
-	r.Calls = append(r.Calls, u)
-	if err != nil {
-		r.Errors = append(r.Errors, "analysis: "+err.Error())
+	var res *AIResult
+	for i, agent := range agents {
+		out, u, err := runAnalysis(c, agent, prompt)
+		r.Calls = append(r.Calls, u)
+		if err == nil {
+			res = &out
+			r.Agent, r.Lockdown = agent, lockdown[agent]
+			break
+		}
+		r.Errors = append(r.Errors, "analysis ("+agent+"): "+err.Error()+nextNote(i, agents))
+	}
+	if res == nil {
 		return finish(r, start), nil
 	}
 	r.Summary, r.SummaryKo = res.Summary, res.SummaryKo
@@ -124,6 +135,14 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	}
 	r.Proposals = addProposals(props)
 	return finish(r, start), nil
+}
+
+// nextNote tells the user a failed call moved on to the next ticked AI.
+func nextNote(i int, agents []string) string {
+	if i+1 < len(agents) {
+		return " — trying " + agents[i+1]
+	}
+	return ""
 }
 
 // maskForStorage is used only when the gate blocked a payload: what is kept on

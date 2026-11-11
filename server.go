@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -213,7 +214,10 @@ func (s *server) guard(h http.HandlerFunc) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
-		w.Header().Set("Referrer-Policy", "no-referrer")
+		// same-origin, not no-referrer: with no-referrer Chromium sends "Origin: null"
+		// on form posts and post() would reject every save. The token-bearing URL
+		// still never leaves this origin.
+		w.Header().Set("Referrer-Policy", "same-origin")
 		s.lastSeen.Store(time.Now().Unix())
 		h(w, r)
 	}
@@ -252,6 +256,7 @@ type pageData struct {
 	Cfg       Config
 	Agents    []string
 	AllAgents []string
+	Chosen    []string
 	Lockdown  map[string]string
 	Payload   string
 	PayloadID string
@@ -286,6 +291,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if tab == "settings" {
 		d.Schedule = scheduleStatus()
 		d.Agents = detectAgents(cfg)
+		d.Chosen = chosenAgents(cfg)
 	}
 	if b, err := os.ReadFile(progressPath()); err == nil {
 		d.Progress = strings.TrimSpace(string(b))
@@ -348,9 +354,13 @@ func (s *server) handleProposal(w http.ResponseWriter, r *http.Request) {
 func (s *server) handleSettings(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	c := s.cfg
-	if v := r.FormValue("agent"); v == "auto" || lockdown[v] != "" {
-		c.Agent = v
+	use := []string{} // ticked AIs; none ticked = local checks only
+	for _, v := range r.Form["use"] {
+		if slices.Contains(allAgents, v) && !slices.Contains(use, v) {
+			use = append(use, v)
+		}
 	}
+	c.Use = use
 	for _, a := range allAgents {
 		if v := strings.TrimSpace(r.FormValue("model_" + a)); v != "" && len(v) < 80 && !strings.ContainsAny(v, " \"'`;&|<>?#%") {
 			c.Models[a] = v
