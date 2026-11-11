@@ -80,6 +80,18 @@ var dict = map[string][2]string{ // en, ko
 	"proposals_new":   {"new checklist proposals", "새 체크리스트 제안"},
 	"open_list":       {"Review", "검토하기"},
 	"community":       {"Share a case", "사례 공유"},
+	"status":          {"Status", "상태"},
+	"agent_pick":      {"AI to use", "사용할 AI"},
+	"agent_hint":      {"Auto uses the first one found: subscription CLIs first, then API keys.", "자동은 찾은 것 중 첫 번째를 씁니다. 구독 CLI가 먼저, 그다음 API 키입니다."},
+	"models_effort":   {"Models and reasoning effort", "모델과 추론 강도"},
+	"general":         {"Schedule and language", "일정과 언어"},
+	"view_sent":       {"See what was sent", "보낸 내용 보기"},
+	"all_findings":    {"See all findings", "발견 사항 전체 보기"},
+	"show_evidence":   {"Show evidence", "근거 보기"},
+	"from_ai":         {"added by AI", "AI 추가"},
+	"no_history":      {"The trend appears after two or more checks.", "점검이 두 번 이상 쌓이면 추이가 보입니다."},
+	"cost_short":      {"Cost", "비용"},
+	"tokens_short":    {"Tokens", "토큰"},
 }
 
 func tr(lang, key string) string {
