@@ -125,7 +125,6 @@ var dict = map[string][2]string{ // en, ko
 var agentNames = map[string][2]string{
 	"claude":     {"Claude (Claude Code)", "Claude (Claude Code)"},
 	"codex":      {"GPT (Codex)", "GPT (Codex)"},
-	"gemini":     {"Gemini (Gemini CLI)", "Gemini (Gemini CLI)"},
 	"agy":        {"Gemini (Antigravity)", "Gemini (Antigravity)"},
 	"claude-api": {"Claude (API key)", "Claude (API 키)"},
 	"openai-api": {"GPT (API key)", "GPT (API 키)"},

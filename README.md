@@ -4,9 +4,9 @@
 
 <p align="center"><b>AI 해킹은 AI가 막아야지, 내 토큰으로 쓰는 AI 백신</b></p>
 
-A daily security check for people who use AI coding agents. It runs on **the AI you already pay for** (Claude Code, Codex, Gemini CLI, Antigravity, or an API key), so it costs almost nothing. It is open source, so you can read exactly what it does.
+A daily security check for people who use AI coding agents. It runs on **the AI you already pay for** (Claude Code, Codex, Antigravity, or an API key), so it costs almost nothing. It is open source, so you can read exactly what it does.
 
-> Status: **early alpha (v0.1.0)**. Tested on Windows 11 with Claude Code. macOS, Linux, Codex and Gemini adapters are written but not yet tested. It is a daily check of your setup, not a replacement for antivirus.
+> Status: **early alpha (v0.1.0)**. Tested on Windows 11 with Claude Code. macOS, Linux, and the Codex, Antigravity and API-key adapters are written but not yet tested. It is a daily check of your setup, not a replacement for antivirus.
 
 [한국어 설명은 아래에 있습니다.](#한국어)
 
@@ -25,7 +25,7 @@ The checklist grows: when a new attack pattern appears, your AI proposes a new c
 
 ## Try it
 
-You need [Go 1.27+](https://go.dev/dl/) and at least one of: `claude`, `codex`, `gemini`, `agy`, or an API key in `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY`.
+You need [Go 1.27+](https://go.dev/dl/) and at least one of: `claude` (Claude Code), `codex`, `agy` (Antigravity), or an API key in `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY`.
 
 ```bash
 go install github.com/qruse/shieldbug@latest
@@ -50,7 +50,7 @@ Code: [Apache 2.0](LICENSE). Checklist content: [CC BY 4.0](checklist/LICENSE). 
 
 ## 한국어
 
-AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입니다. 이미 돈을 내고 쓰는 AI(Claude Code, Codex, Gemini CLI, Antigravity, 또는 API 키)로 돌아가서 비용이 거의 들지 않고, 오픈소스라 무엇을 하는지 전부 볼 수 있습니다.
+AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입니다. 이미 돈을 내고 쓰는 AI(Claude Code, Codex, Antigravity, 또는 API 키)로 돌아가서 비용이 거의 들지 않고, 오픈소스라 무엇을 하는지 전부 볼 수 있습니다.
 
 > 상태: **초기 알파 (v0.1.0)**. Windows 11과 Claude Code에서만 시험했습니다. 백신을 대신하는 게 아니라, 내 PC 설정의 구멍을 매일 찾아 주는 점검입니다.
 

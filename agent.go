@@ -44,7 +44,6 @@ var lockdown = map[string]string{
 	"claude": "full",      // --tools "" removes every tool
 	"codex":  "read-only", // sandbox blocks writes and network, read tools remain
 	"agy":    "plan-mode", // tools that need approval are refused headless
-	"gemini": "unverified",
 	// API adapters send the analysis request with no tools at all.
 	"claude-api": "full",
 	"openai-api": "full",
@@ -97,11 +96,6 @@ func agentArgs(c Config, agent string, kind callKind, work, prompt string) (args
 			args = append(args, "--model", model)
 		}
 		stdin = ""
-	case "gemini":
-		args = []string{"-p", "Follow the instructions in the input exactly and reply with the JSON object only."}
-		if model != "" {
-			args = append(args, "-m", model)
-		}
 	default:
 		return nil, "", fmt.Errorf("unknown agent %q", agent)
 	}

@@ -272,7 +272,7 @@ Run(요청) → JSON 결과, 사용량(입력·출력 토큰, 비용, 출처: �
 | Claude Code | `claude -p --model claude-sonnet-5-5 --effort low --tools "" --safe-mode --strict-mcp-config --disable-slash-commands --permission-mode dontAsk --permission-prompts none --no-session-persistence --output-format json --json-schema <스키마> --max-budget-usd 0.5` (프롬프트는 표준 입력) | `--tools "WebSearch" --allowedTools WebSearch` | **완전 차단** (`--tools ""`) | JSON의 `total_cost_usd`, `usage` (클라이언트 추정값) | ✅ 플래그는 이 PC의 `claude --help`, 사용량 필드는 https://code.claude.com/docs/en/headless |
 | Codex CLI | `codex exec -m gpt-6.1-terra -c model_reasoning_effort="low" -c web_search="disabled" --sandbox read-only --skip-git-repo-check --ephemeral --json --output-schema <파일> -` | `-c web_search="live"` | 읽기 전용 샌드박스. 쓰기와 명령의 네트워크는 막히지만 읽기 도구는 남는다 | `turn.completed`의 토큰 수 × 가격표 | ✅ https://learn.chatgpt.com/docs/non-interactive-mode · https://learn.chatgpt.com/docs/sandboxing (이 PC에는 CLI 없음) |
 | Antigravity | `agy -p --model gemini-3.8-flash-low --mode plan --sandbox --disable-slash-commands --output-format json --json-schema <스키마> --print-timeout 600s` | 미정 | 승인이 필요한 도구는 헤드리스에서 거부되고 실행은 계속됨 ◐ (https://antigravity.google/docs/cli/headless/) | JSON 출력에 있으면 사용, 없으면 "미제공" | ✅ 플래그와 모델 ID는 이 PC의 `agy --help`, `agy models` |
-| Gemini CLI | `gemini -p` + 읽기 전용 승인 모드 + `--sandbox` | 미정 | 미확인 | 미확인 | ◐ https://geminicli.com/docs/cli/cli-reference (이 PC에 없음) |
+| ~~Gemini CLI~~ | 11/12 제외. Gemini 모델은 Antigravity와 Gemini API 키로 쓴다 | | | | |
 
 정직하게 적어 둘 한계.
 - **Claude만 "도구 완전 차단"을 플래그로 보장한다.** Codex와 Antigravity는 읽기 도구가 남을 수 있어, 모델이 스스로 파일을 열면 가려지지 않은 내용이 그 모델 제공사로 갈 수 있다. 빈 폴더 실행과 프롬프트 규칙으로 줄이되, 대시보드와 README에 어댑터별 차단 수준을 표시한다.
@@ -298,7 +298,7 @@ Run(요청) → JSON 결과, 사용량(입력·출력 토큰, 비용, 출처: �
 |---|---|---|
 | `language` | `"auto"` | OS 언어를 따름. `ko` 또는 `en` |
 | `agent` | `"auto"` | `codex`, `claude`, `gemini`, `agy`, 또는 사용자 정의 이름 |
-| `agent_order` | `["claude","codex","gemini","agy"]` | 자동 선택 순서. 초안은 가장 저렴한 `codex` 우선이었으나, 도구 완전 차단이 확인된 `claude`를 앞에 둔다 (14절 질문 4) |
+| `agent_order` | `["claude","codex","agy","claude-api","openai-api","gemini-api"]` | 자동 선택 순서. 초안은 가장 저렴한 `codex` 우선이었으나, 도구 완전 차단이 확인된 `claude`를 앞에 둔다 (14절 질문 4) |
 | `models.codex` | `"gpt-6.1-terra"` | |
 | `models.claude` | `"claude-sonnet-5-5"` | |
 | `models.gemini` | `"gemini-3.8-flash"` | |

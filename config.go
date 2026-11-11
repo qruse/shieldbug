@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -15,7 +16,7 @@ import (
 // by the user's AI, or from the dashboard's settings screen.
 type Config struct {
 	Language   string            `json:"language"`    // "auto", "ko", "en"
-	Agent      string            `json:"agent"`       // "auto", a CLI ("claude", "codex", "gemini", "agy") or an API adapter ("claude-api", "openai-api", "gemini-api")
+	Agent      string            `json:"agent"`       // "auto", a CLI ("claude", "codex", "agy") or an API adapter ("claude-api", "openai-api", "gemini-api")
 	AgentOrder []string          `json:"agent_order"` // auto-detection order
 	Models     map[string]string `json:"models"`
 	Effort     map[string]string `json:"effort"` // "" = CLI default
@@ -59,7 +60,6 @@ func defaultConfig() Config {
 	c.Models = map[string]string{
 		"claude":     "claude-sonnet-5-5",
 		"codex":      "gpt-6.1-terra",
-		"gemini":     "gemini-3.8-flash",
 		"agy":        "gemini-3.8-flash-medium",
 		"claude-api": "claude-sonnet-5-5",
 		"openai-api": "gpt-6.1-terra",
@@ -120,6 +120,16 @@ func loadConfig() (Config, error) {
 	}
 	if c.Effort == nil {
 		c.Effort = map[string]string{}
+	}
+	// Drop ids that are no longer supported (Gemini CLI, removed 2026-11-12).
+	c.AgentOrder = slices.DeleteFunc(c.AgentOrder, func(a string) bool { return !slices.Contains(allAgents, a) })
+	for k := range c.Models {
+		if !slices.Contains(allAgents, k) {
+			delete(c.Models, k)
+		}
+	}
+	if c.Agent != "auto" && !slices.Contains(allAgents, c.Agent) {
+		c.Agent = "auto"
 	}
 	if len(c.AgentOrder) == 0 {
 		c.AgentOrder = d.AgentOrder
@@ -236,11 +246,16 @@ func agentBinary(name string) string {
 }
 
 // allAgents: subscription CLIs, then API-key adapters.
-var allAgents = []string{"claude", "codex", "gemini", "agy", "claude-api", "openai-api", "gemini-api"}
+// Gemini CLI was dropped on 2026-11-12: Antigravity covers Gemini models.
+var allAgents = []string{"claude", "codex", "agy", "claude-api", "openai-api", "gemini-api"}
 
 // agentAvailable: a CLI is available when its binary is found, an API adapter
-// when its key is set in the environment.
+// when its key is set in the environment. Ids no longer supported (for example
+// "gemini" in an older config) are never available.
 func agentAvailable(name string) bool {
+	if !slices.Contains(allAgents, name) {
+		return false
+	}
 	if isAPI(name) {
 		return apiKey(name) != ""
 	}
@@ -260,7 +275,7 @@ func detectAgents(c Config) []string {
 	return found
 }
 
-const noAgentMsg = "no AI found: install claude, codex, gemini or agy, or set ANTHROPIC_API_KEY, OPENAI_API_KEY or GEMINI_API_KEY"
+const noAgentMsg = "no AI found: install Claude Code, Codex or Antigravity (agy), or set ANTHROPIC_API_KEY, OPENAI_API_KEY or GEMINI_API_KEY"
 
 func pickAgent(c Config) (string, error) {
 	if c.Agent != "" && c.Agent != "auto" {

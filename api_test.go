@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -161,5 +163,26 @@ func TestAPIAgentDetection(t *testing.T) {
 	c.Agent = "claude-api"
 	if _, err := pickAgent(c); err == nil || !strings.Contains(err.Error(), "ANTHROPIC_API_KEY") {
 		t.Fatalf("missing-key message: %v", err)
+	}
+}
+
+// An older config that still names Gemini CLI loads cleanly and falls back to auto.
+func TestDroppedGeminiCLI(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	if err := os.MkdirAll(dataDir(), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	old := `{"agent":"gemini","agent_order":["claude","codex","gemini","agy"],"models":{"gemini":"gemini-3.8-flash","claude":"claude-sonnet-5-5"}}`
+	if err := os.WriteFile(configPath(), []byte(old), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	c, err := loadConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c.Agent != "auto" || slices.Contains(c.AgentOrder, "gemini") || c.Models["gemini"] != "" || agentAvailable("gemini") {
+		t.Fatalf("gemini CLI still present: %q %v %v", c.Agent, c.AgentOrder, c.Models)
 	}
 }
