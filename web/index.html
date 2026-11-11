@@ -29,6 +29,7 @@
 {{define "i-check"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 12.5l3.6 3.6 7.4-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>{{end}}
 {{define "i-globe"}}<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.3 3.5 5 3.5 8s-1.1 5.7-3.5 8c-2.4-2.3-3.5-5-3.5-8s1.1-5.7 3.5-8Z"/></svg>{{end}}
 {{define "i-spark"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9Z" fill="currentColor"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="currentColor"/></svg>{{end}}
+{{define "i-lock"}}<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>{{end}}
 {{define "i-chev"}}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6.5l5.5 5.5-5.5 5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>{{end}}
 <!doctype html>
 <html lang="{{.Lang}}">
@@ -482,11 +483,27 @@ footer a:hover{color:var(--ink)}
 </section>
 {{end}}
 <section class="card">
-  <div class="card-h"><h2>{{t $L "active_items"}}</h2></div>
+  <div class="card-h"><h2>{{tf $L "core_title" (len .Core)}}</h2></div>
+  <p class="empty" style="margin:-6px 0 6px;font-size:15px">{{t $L "core_sub"}}</p>
   <ul class="list">
-    {{range .Checklist}}<li class="row"><span class="ico {{.Severity}}">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}{{if eq .Source "ai"}} · {{t $L "from_ai"}}{{end}}</div></div></li>{{end}}
+    {{range .Core}}<li class="row"><span class="ico ok">{{template "i-lock"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}</div></div></li>{{end}}
   </ul>
 </section>
+<section class="card">
+  <div class="card-h"><h2>{{t $L "added_title"}}</h2></div>
+  {{if .Added}}<ul class="list">
+    {{range .Added}}<li class="row"><span class="ico {{.Severity}}">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}{{if eq .Source "ai"}} · {{t $L "from_ai"}}{{end}}</div></div>
+      <form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="remove"><button class="sm soft">{{t $L "remove"}}</button></form></li>{{end}}
+  </ul>{{else}}<p class="empty">{{t $L "added_none"}}</p>{{end}}
+  <p class="hint">{{t $L "added_hint"}}</p>
+</section>
+{{if .Extras}}<section class="card">
+  <div class="card-h"><h2>{{t $L "extras_title"}}</h2></div>
+  <ul class="list">
+    {{range .Extras}}<li class="row"><span class="ico low">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}</div></div>
+      <form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="add"><button class="sm">{{t $L "approve"}}</button></form></li>{{end}}
+  </ul>
+</section>{{end}}
 {{end}}
 
 {{if eq .Tab "history"}}

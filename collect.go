@@ -279,7 +279,7 @@ func collectSecrets() (string, []Finding) {
 
 	if _, err := os.Stat(filepath.Join(h, ".git-credentials")); err == nil {
 		lines = append(lines, "~/.git-credentials: present (plain-text git credentials)")
-		out = append(out, Finding{ChecklistID: "plaintext-git-credentials", Severity: "high", Source: "local",
+		out = append(out, Finding{ChecklistID: "plaintext-tokens", Severity: "high", Source: "local",
 			Title: "Git credentials are stored in plain text", TitleKo: "Git 자격 증명이 평문으로 저장됨", Evidence: "~/.git-credentials exists",
 			Fix: "Switch to the OS credential manager and delete ~/.git-credentials.", FixKo: "OS 자격 증명 관리자로 바꾸고 ~/.git-credentials를 지우세요."})
 	}
@@ -287,7 +287,7 @@ func collectSecrets() (string, []Finding) {
 		helper = strings.TrimSpace(helper)
 		lines = append(lines, "git credential.helper: "+helper)
 		if helper == "store" {
-			out = append(out, Finding{ChecklistID: "plaintext-git-credentials", Severity: "high", Source: "local",
+			out = append(out, Finding{ChecklistID: "plaintext-tokens", Severity: "high", Source: "local",
 				Title: "git is set to store credentials in plain text", TitleKo: "git이 자격 증명을 평문으로 저장하도록 설정됨", Evidence: "credential.helper=store",
 				Fix: "git config --global credential.helper manager (Windows) / osxkeychain (macOS) / libsecret (Linux)", FixKo: "OS 자격 증명 관리자 헬퍼로 바꾸세요."})
 		}
@@ -301,7 +301,7 @@ func collectSecrets() (string, []Finding) {
 		has := strings.Contains(lower, "authtoken") || strings.Contains(lower, "password") || strings.Contains(lower, "\"auth\"")
 		lines = append(lines, fmt.Sprintf("~/%s: present, contains credentials: %v", name, has))
 		if has {
-			out = append(out, Finding{ChecklistID: "npmrc-token", Severity: "medium", Source: "local",
+			out = append(out, Finding{ChecklistID: "plaintext-tokens", Severity: "medium", Source: "local",
 				Title: "A credential is stored in ~/" + name, TitleKo: "~/" + name + "에 자격 증명이 저장됨", Evidence: "~/" + name,
 				Fix: "Use a short-lived, narrowly scoped token or a credential helper.", FixKo: "기간·권한이 제한된 토큰이나 자격 증명 헬퍼를 쓰세요."})
 		}

@@ -76,6 +76,18 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	sort.Strings(r.Sections)
 	items := activeChecklist(c)
 	r.Checklist = len(items)
+	// Built-in rules only report for checks that are on the user's list.
+	active := map[string]bool{}
+	for _, it := range items {
+		active[it.ID] = true
+	}
+	kept := local[:0]
+	for _, f := range local {
+		if active[f.ChecklistID] {
+			kept = append(kept, f)
+		}
+	}
+	local = kept
 	r.Findings = append(r.Findings, local...)
 
 	agents, err := runAgents(c)

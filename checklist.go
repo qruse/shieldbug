@@ -10,8 +10,15 @@ import (
 	"time"
 )
 
+// base.json: the core checks every AI-agent user should have; they cannot be
+// turned off. extras.json: optional checks the user can add from the
+// Checklist tab. The user's own and AI-proposed checks live in local.json.
+//
 //go:embed checklist/base.json
 var baseChecklist []byte
+
+//go:embed checklist/extras.json
+var extrasChecklist []byte
 
 // ChecklistItem is one living check. Titles and fixes are per language.
 type ChecklistItem struct {
@@ -36,14 +43,81 @@ type checklistFile struct {
 
 func checklistDir() string { return filepath.Join(dataDir(), "checklist") }
 
+// loadBase: the built-in core checks. Fixed per release, so a user file can
+// add checks but never remove these.
 func loadBase() []ChecklistItem {
 	var f checklistFile
-	// A user copy at ~/.shieldbug/checklist/base.json overrides the built-in one.
-	if b, err := os.ReadFile(filepath.Join(checklistDir(), "base.json")); err == nil && json.Unmarshal(b, &f) == nil && len(f.Items) > 0 {
-		return f.Items
-	}
 	_ = json.Unmarshal(baseChecklist, &f)
 	return f.Items
+}
+
+func loadExtras() []ChecklistItem {
+	var f checklistFile
+	_ = json.Unmarshal(extrasChecklist, &f)
+	return f.Items
+}
+
+// addedChecklist: checks the user added (extras, their own, approved AI
+// proposals), skipping any id that is already a core check.
+func addedChecklist() []ChecklistItem {
+	core := map[string]bool{}
+	for _, it := range loadBase() {
+		core[it.ID] = true
+	}
+	var out []ChecklistItem
+	for _, it := range loadItems("local.json") {
+		if !core[it.ID] && it.Status != "rejected" && it.Status != "pending" {
+			out = append(out, it)
+		}
+	}
+	return out
+}
+
+// availableExtras: optional checks not added yet.
+func availableExtras() []ChecklistItem {
+	have := map[string]bool{}
+	for _, it := range loadItems("local.json") {
+		have[it.ID] = true
+	}
+	var out []ChecklistItem
+	for _, it := range loadExtras() {
+		if !have[it.ID] {
+			out = append(out, it)
+		}
+	}
+	return out
+}
+
+// addExtra copies an optional check into local.json.
+func addExtra(id string) bool {
+	for _, it := range availableExtras() {
+		if it.ID == id {
+			it.Status, it.Source = "active", "extra"
+			it.Added = time.Now().Format("2006-01-02")
+			_ = saveItems("local.json", append(loadItems("local.json"), it))
+			logHistory("added", id, "user")
+			return true
+		}
+	}
+	return false
+}
+
+// removeAdded drops a check the user added. Core checks are not in local.json,
+// so they cannot be removed this way.
+func removeAdded(id string) bool {
+	items := loadItems("local.json")
+	var keep []ChecklistItem
+	for _, it := range items {
+		if it.ID != id {
+			keep = append(keep, it)
+		}
+	}
+	if len(keep) == len(items) {
+		return false
+	}
+	_ = saveItems("local.json", keep)
+	logHistory("removed", id, "user")
+	return true
 }
 
 func loadItems(name string) []ChecklistItem {
@@ -56,8 +130,8 @@ func saveItems(name string, items []ChecklistItem) error {
 	return writeJSON(filepath.Join(checklistDir(), name), checklistFile{Version: 2, Items: items})
 }
 
-// activeChecklist = base + user-approved local items, minus disabled ones and
-// categories the user turned off.
+// activeChecklist = the core checks (always) + the checks the user added,
+// minus added ones they disabled or whose category they turned off.
 func activeChecklist(c Config) []ChecklistItem {
 	disabled := map[string]bool{}
 	for _, id := range c.Checks.DisabledIDs {
@@ -67,12 +141,9 @@ func activeChecklist(c Config) []ChecklistItem {
 	for _, k := range c.Checks.Categories {
 		cats[k] = true
 	}
-	var out []ChecklistItem
-	for _, it := range append(loadBase(), loadItems("local.json")...) {
-		if disabled[it.ID] || it.Status == "rejected" || it.Status == "pending" {
-			continue
-		}
-		if len(cats) > 0 && !cats[it.Category] {
+	out := loadBase()
+	for _, it := range addedChecklist() {
+		if disabled[it.ID] || (len(cats) > 0 && !cats[it.Category]) {
 			continue
 		}
 		out = append(out, it)
@@ -84,7 +155,7 @@ func activeChecklist(c Config) []ChecklistItem {
 // exist or were rejected before. At most three per day.
 func addProposals(props []ChecklistItem) int {
 	known := map[string]bool{}
-	for _, it := range loadBase() {
+	for _, it := range append(loadBase(), loadExtras()...) {
 		known[it.ID] = true
 	}
 	for _, it := range loadItems("local.json") {

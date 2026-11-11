@@ -25,20 +25,41 @@
       "updated": "2026-11-12"
     },
     {
-      "id": "agent-wildcard-allow",
+      "id": "prompt-injection-surface",
+      "rev": 3,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "Agents can read untrusted content and act without review",
+        "ko": "에이전트가 외부 글을 읽고 확인 없이 행동할 수 있음"
+      },
+      "check": "Report only when an agent can BOTH read untrusted content (web pages, mail, issues, PR comments) AND run shell commands or write files without approval. If agent-skip-permissions already reports the same setting, add this risk to that finding instead of a separate one. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
+      "fix": {
+        "en": "Keep web reading and shell execution in separate, approval-gated steps.",
+        "ko": "웹 읽기와 명령 실행을 나누고, 실행 전에는 승인을 받게 하세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base",
+      "updated": "2026-11-12"
+    },
+    {
+      "id": "agent-hooks-network",
       "rev": 2,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Agent allow-list contains wildcards for shell or network",
-        "ko": "에이전트 허용 목록에 셸·네트워크 와일드카드가 있음"
+        "en": "Agent hooks run commands that reach the network",
+        "ko": "에이전트 훅이 네트워크로 나가는 명령을 실행함"
       },
-      "check": "Permission allow rules such as Bash(*), Bash(curl:*), WebFetch(*) or equivalent in Codex/Gemini settings. Only report when approvals are also off entirely; allow rules the user wrote are a deliberate choice. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
+      "check": "Agent hooks (Claude Code hooks, Codex notify and similar) that download and run code (curl ... | sh, iwr ... | iex), send files or environment variables to a host, or run scripts the user did not write. A hook that only posts a notification to a service the user already uses is fine.",
       "fix": {
-        "en": "Replace wildcards with exact commands you actually need.",
-        "ko": "와일드카드 대신 실제로 쓰는 명령만 적으세요."
+        "en": "Read every hook command. Delete hooks that download code or that you did not write yourself.",
+        "ko": "훅 명령을 하나씩 읽고, 코드를 내려받아 실행하거나 직접 만들지 않은 훅은 지우세요."
       },
       "refs": [],
       "added": "2026-11-11",
@@ -69,25 +90,26 @@
       "updated": "2026-11-12"
     },
     {
-      "id": "agent-hooks-network",
-      "rev": 2,
+      "id": "mcp-unpinned",
+      "rev": 1,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Agent hooks run commands that reach the network",
-        "ko": "에이전트 훅이 네트워크로 나가는 명령을 실행함"
+        "en": "MCP servers run without a pinned version",
+        "ko": "버전을 고정하지 않고 실행하는 MCP 서버"
       },
-      "check": "Agent hooks (Claude Code hooks, Codex notify and similar) that download and run code (curl ... | sh, iwr ... | iex), send files or environment variables to a host, or run scripts the user did not write. A hook that only posts a notification to a service the user already uses is fine.",
+      "check": "MCP server definitions that run npx -y pkg, uvx pkg, @latest or pip installs without an exact version, so a new release runs without review.",
       "fix": {
-        "en": "Read every hook command. Delete hooks that download code or that you did not write yourself.",
-        "ko": "훅 명령을 하나씩 읽고, 코드를 내려받아 실행하거나 직접 만들지 않은 훅은 지우세요."
+        "en": "Pin an exact version (pkg@1.2.3, pkg==1.2.3) and update on purpose.",
+        "ko": "정확한 버전(pkg@1.2.3, pkg==1.2.3)으로 고정하고, 업데이트는 확인하고 직접 하세요."
       },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
+      "refs": [
+        "https://gbhackers.com/corelight-reveals-ai-security/"
+      ],
+      "added": "2026-11-12",
+      "source": "base"
     },
     {
       "id": "secrets-in-mcp-config",
@@ -110,67 +132,46 @@
       "source": "base"
     },
     {
-      "id": "plaintext-git-credentials",
+      "id": "plaintext-tokens",
       "rev": 1,
       "status": "active",
       "category": "secrets",
       "severity": "high",
       "kind": "ai",
       "title": {
-        "en": "Git credentials stored in plain text",
-        "ko": "Git 비밀번호·토큰이 평문 파일에 저장됨"
+        "en": "Git or package registry tokens stored in plain files",
+        "ko": "Git·패키지 저장소 토큰이 평문 파일에 있음"
       },
-      "check": "~/.git-credentials exists or credential.helper=store.",
+      "check": "~/.git-credentials or credential.helper=store; auth tokens in ~/.npmrc, ~/.pypirc, ~/.netrc or ~/.docker/config.json. Any agent or install script can read these files, and stolen registry tokens are how package worms spread.",
       "fix": {
-        "en": "Use the OS credential manager (git credential-manager / osxkeychain / libsecret) and delete ~/.git-credentials.",
-        "ko": "OS 자격 증명 관리자를 쓰고 ~/.git-credentials 파일은 지우세요."
+        "en": "Use the OS credential manager for git, short-lived granular tokens for registries, and delete tokens you no longer use.",
+        "ko": "Git은 OS 자격 증명 관리자를 쓰고, 저장소 토큰은 기간·권한이 제한된 것으로 바꾸고, 안 쓰는 토큰은 지우세요."
       },
       "refs": [
         "https://www.boannews.com/news/articleView.html?idxno=147009"
       ],
-      "added": "2026-11-11",
+      "added": "2026-11-12",
       "source": "base"
     },
     {
-      "id": "npmrc-token",
+      "id": "shell-history-secrets",
       "rev": 1,
       "status": "active",
       "category": "secrets",
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Package registry token in ~/.npmrc or ~/.pypirc",
-        "ko": "~/.npmrc·~/.pypirc에 패키지 저장소 토큰이 있음"
+        "en": "Shell history contains keys or tokens",
+        "ko": "셸 기록에 키·토큰이 남아 있음"
       },
-      "check": "authToken / password lines present (values redacted).",
+      "check": "bash, zsh, fish or PowerShell history containing values that match key or token patterns (only the file name is reported).",
       "fix": {
-        "en": "Use short-lived or granular tokens and remove unused ones.",
-        "ko": "기간 제한·권한 제한 토큰을 쓰고 안 쓰는 토큰은 지우세요."
+        "en": "Delete those lines and rotate the key. Set keys in environment variables or a keychain instead of typing them into commands.",
+        "ko": "그 줄을 지우고 키를 새로 발급하세요. 키는 명령에 직접 치지 말고 환경변수나 키체인에 넣으세요."
       },
       "refs": [],
-      "added": "2026-11-11",
+      "added": "2026-11-12",
       "source": "base"
-    },
-    {
-      "id": "ssh-key-no-passphrase",
-      "rev": 2,
-      "status": "active",
-      "category": "secrets",
-      "severity": "low",
-      "kind": "ai",
-      "title": {
-        "en": "SSH private key without a passphrase",
-        "ko": "비밀번호 없는 SSH 개인 키"
-      },
-      "check": "Private keys under ~/.ssh that are not encrypted.",
-      "fix": {
-        "en": "ssh-keygen -p -f <key> to add a passphrase, or keep the key in an agent or hardware key.",
-        "ko": "ssh-keygen -p -f <키>로 비밀번호를 걸거나, ssh-agent·하드웨어 키에 보관하세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
     },
     {
       "id": "exposed-listeners",
@@ -180,55 +181,13 @@
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Local dev/AI services listening on all interfaces",
-        "ko": "로컬 개발·AI 서비스가 외부에서 접속 가능하게 열려 있음"
+        "en": "AI or dev services reachable from the network",
+        "ko": "AI·개발 서비스가 외부에서 접속 가능하게 열려 있음"
       },
-      "check": "Listening TCP sockets bound to 0.0.0.0 or [::] by dev servers, model servers (Ollama 11434, Jupyter 8888, etc.), MCP servers or databases.",
+      "check": "Listening TCP sockets bound to 0.0.0.0 or [::] by AI and developer services: model servers (Ollama 11434, LM Studio), MCP servers, notebooks (Jupyter 8888), dev servers and databases. System services are out of scope.",
       "fix": {
         "en": "Bind to 127.0.0.1, or block the port in the firewall.",
         "ko": "127.0.0.1에만 묶거나 방화벽에서 막으세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "os-protection-off",
-      "rev": 2,
-      "status": "active",
-      "category": "system",
-      "severity": "high",
-      "kind": "ai",
-      "title": {
-        "en": "Built-in OS protection is off",
-        "ko": "운영체제 기본 보호 기능이 꺼져 있음"
-      },
-      "check": "Windows Defender real-time protection or a firewall profile off; macOS firewall off (off by default on macOS, so reported as medium); Linux with no firewall service running (ufw, firewalld, nftables). Disk encryption is checked by disk-encryption-off.",
-      "fix": {
-        "en": "Turn them back on. Shieldbug complements them, it does not replace them.",
-        "ko": "다시 켜세요. Shieldbug는 이걸 대신하지 않고 보완합니다."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "stale-os-updates",
-      "rev": 2,
-      "status": "active",
-      "category": "system",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "OS security updates are old",
-        "ko": "운영체제 보안 업데이트가 오래됨"
-      },
-      "check": "Last installed security update older than 45 days.",
-      "fix": {
-        "en": "Install pending updates.",
-        "ko": "밀린 업데이트를 설치하세요."
       },
       "refs": [],
       "added": "2026-11-11",
@@ -256,89 +215,7 @@
       ],
       "added": "2026-11-11",
       "source": "base"
-    },
-    {
-      "id": "prompt-injection-surface",
-      "rev": 3,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Agents can read untrusted content and act without review",
-        "ko": "에이전트가 외부 글을 읽고 확인 없이 행동할 수 있음"
-      },
-      "check": "Report only when an agent can BOTH read untrusted content (web pages, mail, issues, PR comments) AND run shell commands or write files without approval. If agent-skip-permissions already reports the same setting, add this risk to that finding instead of a separate one. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
-      "fix": {
-        "en": "Keep web reading and shell execution in separate, approval-gated steps.",
-        "ko": "웹 읽기와 명령 실행을 나누고, 실행 전에는 승인을 받게 하세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "mcp-unpinned",
-      "rev": 1,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "MCP servers run without a pinned version",
-        "ko": "버전을 고정하지 않고 실행하는 MCP 서버"
-      },
-      "check": "MCP server definitions that run npx -y pkg, uvx pkg, @latest or pip installs without an exact version, so a new release runs without review.",
-      "fix": {
-        "en": "Pin an exact version (pkg@1.2.3, pkg==1.2.3) and update on purpose.",
-        "ko": "정확한 버전(pkg@1.2.3, pkg==1.2.3)으로 고정하고, 업데이트는 확인하고 직접 하세요."
-      },
-      "refs": [
-        "https://gbhackers.com/corelight-reveals-ai-security/"
-      ],
-      "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "shell-history-secrets",
-      "rev": 1,
-      "status": "active",
-      "category": "secrets",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Shell history contains keys or tokens",
-        "ko": "셸 기록에 키·토큰이 남아 있음"
-      },
-      "check": "bash, zsh, fish or PowerShell history containing values that match key or token patterns (only the file name is reported).",
-      "fix": {
-        "en": "Delete those lines and rotate the key. Set keys in environment variables or a keychain instead of typing them into commands.",
-        "ko": "그 줄을 지우고 키를 새로 발급하세요. 키는 명령에 직접 치지 말고 환경변수나 키체인에 넣으세요."
-      },
-      "refs": [],
-      "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "disk-encryption-off",
-      "rev": 1,
-      "status": "active",
-      "category": "system",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Disk encryption is off",
-        "ko": "디스크 암호화가 꺼져 있음"
-      },
-      "check": "Windows BitLocker or Device encryption off on the system drive, macOS FileVault off, Linux with no dm-crypt (LUKS) device. Skipped inside WSL.",
-      "fix": {
-        "en": "Turn on BitLocker / Device encryption, FileVault, or LUKS. A lost laptop then does not hand over every key on it.",
-        "ko": "BitLocker·장치 암호화, FileVault, LUKS를 켜세요. 노트북을 잃어버려도 안의 키가 통째로 새지 않아요."
-      },
-      "refs": [],
-      "added": "2026-11-12",
-      "source": "base"
     }
-  ]
+  ],
+  "note": "Core checks every AI-agent user should have. They cannot be turned off; add more from extras.json or your own in ~/.shieldbug/checklist/local.json."
 }
