@@ -37,6 +37,8 @@ type Usage struct {
 	CostUSD   float64 `json:"cost_usd,omitempty"` // as reported by the CLI; an estimate, not a bill
 	TokensIn  int     `json:"tokens_in,omitempty"`
 	TokensOut int     `json:"tokens_out,omitempty"`
+	// TokensCached is the part of TokensIn served from cache (Codex reports it).
+	TokensCached int `json:"tokens_cached,omitempty"`
 }
 
 // Lockdown describes how strongly each adapter blocks tools in the analysis call.
@@ -77,7 +79,8 @@ func agentArgs(c Config, agent string, kind callKind, work, prompt string) (args
 		if kind == callIntel {
 			search = "live"
 		}
-		args = []string{"exec", "--sandbox", "read-only", "--skip-git-repo-check", "--ephemeral",
+		// --json: stdout becomes an event stream; turn.completed carries the token counts.
+		args = []string{"exec", "--json", "--sandbox", "read-only", "--skip-git-repo-check", "--ephemeral",
 			"--output-last-message", filepath.Join(work, "last.txt"), "-c", `web_search="` + search + `"`}
 		if model != "" {
 			args = append(args, "-m", model)
@@ -136,6 +139,9 @@ func callAgent(c Config, agent string, kind callKind, prompt string) (string, Us
 	err = cmd.Run()
 	u.Seconds = time.Since(start).Seconds()
 	raw := stdout.String()
+	if agent == "codex" {
+		raw = codexEvents(raw, &u)
+	}
 	if b, e := os.ReadFile(filepath.Join(work, "last.txt")); e == nil && len(b) > 0 {
 		raw = string(b)
 	}
@@ -172,6 +178,39 @@ func callAgent(c Config, agent string, kind callKind, prompt string) (string, Us
 		return "", u, fmt.Errorf("%s returned nothing: %s", agent, hidePaths(clip(msg, 500)))
 	}
 	return raw, u, nil
+}
+
+// codexEvents reads `codex exec --json` output: it adds up token counts from
+// turn.completed and returns the last agent message (used only when
+// --output-last-message wrote nothing).
+func codexEvents(stream string, u *Usage) string {
+	var last string
+	for _, line := range strings.Split(stream, "\n") {
+		var ev struct {
+			Type  string `json:"type"`
+			Usage struct {
+				In     int `json:"input_tokens"`
+				Cached int `json:"cached_input_tokens"`
+				Out    int `json:"output_tokens"`
+			} `json:"usage"`
+			Item struct {
+				Type string `json:"type"`
+				Text string `json:"text"`
+			} `json:"item"`
+		}
+		if json.Unmarshal([]byte(strings.TrimSpace(line)), &ev) != nil {
+			continue
+		}
+		switch {
+		case ev.Type == "turn.completed":
+			u.TokensIn += ev.Usage.In
+			u.TokensCached += ev.Usage.Cached
+			u.TokensOut += ev.Usage.Out
+		case ev.Type == "item.completed" && ev.Item.Type == "agent_message":
+			last = ev.Item.Text
+		}
+	}
+	return last
 }
 
 // ---------- intel: today's threats, no machine data ----------

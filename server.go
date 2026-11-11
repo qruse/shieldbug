@@ -100,12 +100,16 @@ func parseIndex() *template.Template {
 			}
 			return false
 		},
-		"count":  countSev,
-		"isapi":  isAPI,
-		"tf":     trf,
-		"aname":  agentName,
-		"effort": hasEffort,
-		"maxeff": func(a string) bool { return a == "claude" || a == "claude-api" },
+		"count":   countSev,
+		"isapi":   isAPI,
+		"tf":      trf,
+		"aname":   agentName,
+		"pct":     pct,
+		"plan5h":  func(r *Run) float64 { v, _, _ := planShare(*r); return v },
+		"planwk":  func(r *Run) float64 { _, v, _ := planShare(*r); return v },
+		"hasplan": func(r *Run) bool { _, _, ok := planShare(*r); return ok },
+		"effort":  hasEffort,
+		"maxeff":  func(a string) bool { return a == "claude" || a == "claude-api" },
 	}
 	return template.Must(template.New("index").Funcs(funcs).Parse(indexHTML))
 }

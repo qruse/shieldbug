@@ -36,6 +36,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shieldbug</title>
+<script>try{var th=localStorage.getItem('sb-theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th);}catch(e){}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M149 229l18-80 39-16 13-22h74l13 22 39 16 18 80Z' fill='%232fbf8a' stroke='%230f3a2c' stroke-width='22' stroke-linejoin='round'/%3E%3Ccircle cx='207' cy='165' r='22' fill='%23fff'/%3E%3Ccircle cx='305' cy='165' r='22' fill='%23fff'/%3E%3Ccircle cx='211' cy='162' r='11' fill='%230f3a2c'/%3E%3Ccircle cx='301' cy='162' r='11' fill='%230f3a2c'/%3E%3Cpath d='M256 216c-51 0-99 8-141 29v38c0 75 48 130 141 171 93-41 141-96 141-171v-38c-42-21-90-29-141-29Z' fill='%23169468' stroke='%230f3a2c' stroke-width='22' stroke-linejoin='round'/%3E%3Cpath d='M256 218v225' stroke='%230f3a2c' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:Pretendard;font-weight:400;font-display:swap;src:url(/fonts/Pretendard-Regular.woff2) format("woff2")}
@@ -48,7 +49,28 @@
   --warn:#f59f00;--warn-ink:#c27c00;--warn-soft:#fff5e1;
   --bad:#f04452;--bad-ink:#d22030;--bad-soft:#ffeef0;
   --blue:#3182f6;--blue-soft:#e8f3ff;
+  --head:rgba(255,255,255,.92);--brand-dis:#a6dcc6;
   color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#101013;--card:#1c1c21;--fill:#2a2a31;--fill-2:#232329;
+  --ink:#f2f3f5;--sub:#b0b5bd;--muted:#7e858f;--line:#33333b;
+  --brand:#1fae7a;--brand-press:#2fbf8a;--brand-ink:#4fd5a2;--brand-soft:#15302a;
+  --warn:#f5a623;--warn-ink:#ffbb38;--warn-soft:#352a12;
+  --bad:#f04452;--bad-ink:#ff6b76;--bad-soft:#3a1d22;
+  --blue:#5aa2ff;--blue-soft:#1b2a40;
+  --head:rgba(28,28,33,.92);--brand-dis:#2d5b4a;
+  color-scheme:dark;
+}}
+:root[data-theme=dark]{
+  --bg:#101013;--card:#1c1c21;--fill:#2a2a31;--fill-2:#232329;
+  --ink:#f2f3f5;--sub:#b0b5bd;--muted:#7e858f;--line:#33333b;
+  --brand:#1fae7a;--brand-press:#2fbf8a;--brand-ink:#4fd5a2;--brand-soft:#15302a;
+  --warn:#f5a623;--warn-ink:#ffbb38;--warn-soft:#352a12;
+  --bad:#f04452;--bad-ink:#ff6b76;--bad-soft:#3a1d22;
+  --blue:#5aa2ff;--blue-soft:#1b2a40;
+  --head:rgba(28,28,33,.92);--brand-dis:#2d5b4a;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -59,7 +81,7 @@ svg{display:block}
 .wrap{max-width:760px;margin:0 auto;padding:0 20px}
 
 /* header */
-header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.6) blur(12px)}
+header{position:sticky;top:0;z-index:5;background:var(--head);backdrop-filter:saturate(1.6) blur(12px)}
 .bar{display:flex;align-items:center;gap:12px;height:58px}
 .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;letter-spacing:-.03em}
 .brand .bug{width:30px;height:30px}
@@ -71,9 +93,15 @@ nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px
 nav::-webkit-scrollbar{display:none}
 nav a{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;color:var(--sub);white-space:nowrap;font-size:15px;font-weight:600;background:transparent;transition:background .15s}
 nav a:hover{background:var(--fill)}
-nav a.on{background:var(--ink);color:#fff}
+nav a.on{background:var(--ink);color:var(--card)}
 .count{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--bad);color:#fff;font-size:12px;font-weight:700;display:inline-grid;place-items:center;line-height:1}
-nav a.on .count{background:#fff;color:var(--ink)}
+nav a.on .count{background:var(--card);color:var(--ink)}
+.theme{appearance:none;border:0;background:transparent;color:var(--sub);width:36px;height:36px;padding:0;border-radius:10px;display:grid;place-items:center;cursor:pointer}
+.theme:hover{background:var(--fill)}
+.theme svg{width:20px;height:20px}
+.theme .moon{display:block}.theme .sun{display:none}
+:root[data-theme=dark] .theme .moon{display:none}:root[data-theme=dark] .theme .sun{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .theme .moon{display:none}:root:not([data-theme=light]) .theme .sun{display:block}}
 
 main.wrap{padding-top:14px;padding-bottom:40px}
 .page-h{margin:14px 4px 18px}
@@ -119,7 +147,7 @@ main.wrap{padding-top:14px;padding-bottom:40px}
 button,.btn{appearance:none;border:0;border-radius:16px;padding:15px 20px;font:inherit;font-size:17px;font-weight:700;letter-spacing:-.02em;cursor:pointer;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.2;transition:background .15s,transform .08s}
 button:hover{background:var(--brand-press)}
 button:active{transform:scale(.98)}
-button:disabled{background:#a6dcc6;cursor:default;transform:none}
+button:disabled{background:var(--brand-dis);cursor:default;transform:none}
 .cta button,.cta .btn{width:100%}
 .btn.soft,button.soft{background:var(--fill);color:var(--sub)}
 .btn.soft:hover,button.soft:hover{background:var(--line)}
@@ -136,7 +164,7 @@ button.sm,.btn.sm{padding:9px 14px;font-size:14.5px;border-radius:12px}
 .steps .dot b{font-weight:700}
 .steps li.done{color:var(--sub)}
 .steps li.done .dot{background:var(--brand-soft);color:var(--brand-ink)}
-.steps li.done:not(:last-child)::after{background:#a6dcc6}
+.steps li.done:not(:last-child)::after{background:var(--brand-dis)}
 .steps li.now{color:var(--ink)}
 .steps li.now .dot{background:var(--brand);color:#fff;box-shadow:0 0 0 6px var(--brand-soft)}
 .steps .dot .ok{display:none}
@@ -166,7 +194,7 @@ a.row:hover{background:var(--fill-2)}
 .fix{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--fill-2);font-size:14.5px;color:var(--sub);line-height:1.6}
 .fix p{margin:0;flex:1;min-width:0}
 .fix b{color:var(--ink);font-weight:600;margin-right:6px}
-.copy{flex:none;padding:6px 11px;font-size:13px;border-radius:10px;background:#fff;color:var(--sub);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
+.copy{flex:none;padding:6px 11px;font-size:13px;border-radius:10px;background:var(--card);color:var(--sub);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
 .copy:hover{background:var(--fill)}
 details{margin-top:8px}
 summary{cursor:pointer;font-size:13.5px;color:var(--muted);font-weight:600;list-style:none;display:inline-flex;align-items:center;gap:4px}
@@ -222,7 +250,7 @@ pre.payload{white-space:pre-wrap;word-break:break-word;font:12.5px/1.6 ui-monosp
 label.f{display:block;font-size:14px;color:var(--sub);margin:0 0 8px;font-weight:600}
 input[type=text],input[type=time],select{width:100%;padding:13px 14px;border:0;border-radius:14px;background:var(--fill);color:var(--ink);font:inherit;font-size:16px;font-weight:500;appearance:none;-webkit-appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,#8b95a1 50%),linear-gradient(135deg,#8b95a1 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:40px}
-input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;background-color:#fff}
+input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;background-color:var(--card)}
 .agent{padding:16px 0}
 .agent+.agent{border-top:1px solid var(--fill)}
 .agent-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -262,6 +290,7 @@ footer a:hover{color:var(--ink)}
       <a class="brand" href="/?tab=today&lang={{$L}}">{{template "bug" "green"}}Shieldbug</a>
       <span class="sp"></span>
       <div class="lang" role="group" aria-label="Language"><a href="/?tab={{.Tab}}&lang=ko" class="{{if eq $L "ko"}}on{{end}}">한국어</a><a href="/?tab={{.Tab}}&lang=en" class="{{if eq $L "en"}}on{{end}}">EN</a></div>
+      <button type="button" class="theme" id="theme" aria-label="{{t $L "theme_toggle"}}" title="{{t $L "theme_toggle"}}"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg></button>
     </div>
     <nav>
       <a href="/?tab=today&lang={{$L}}" class="{{if eq .Tab "today"}}on{{end}}">{{t $L "tab_today"}}</a>
@@ -360,10 +389,12 @@ footer a:hover{color:var(--ink)}
     {{range .Run.Calls}}<div><dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd></div>{{break}}{{end}}
     <div><dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd></div>
     <div><dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd></div>
+    {{if hasplan .Run}}<div><dt>{{t $L "plan_5h"}}</dt><dd>{{pct $L (plan5h .Run)}}</dd></div>
+    <div><dt>{{t $L "plan_week"}}</dt><dd>{{pct $L (planwk .Run)}}</dd></div>{{end}}
     <div><dt>{{t $L "cost"}}</dt><dd>{{money (sum .Run.Calls)}}</dd></div>
     <div><dt>{{t $L "duration"}}</dt><dd>{{secs .Run.Seconds}}</dd></div>
   </dl>
-  <p class="hint">{{t $L "cost_note"}}</p>
+  <p class="hint">{{if hasplan .Run}}{{t $L "plan_note"}} {{end}}{{t $L "cost_note"}}</p>
 </section>
 {{end}}
 {{end}}
@@ -526,6 +557,14 @@ footer a:hover{color:var(--ink)}
     var b = e.target.closest('[data-copy]');
     if (!b) return;
     navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent=copied; setTimeout(function(){b.textContent=t;},1200); });
+  });
+  var tb = document.getElementById('theme');
+  if (tb) tb.addEventListener('click', function(){
+    var root = document.documentElement, cur = root.getAttribute('data-theme');
+    if (!cur) cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('sb-theme', next); } catch(e) {}
   });
   var steps = document.getElementById('steps');
   function mark(cur, allDone){
