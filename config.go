@@ -220,6 +220,12 @@ func agentBinary(name string) string {
 			filepath.Join(homeDir(), ".claude", "local", "claude"))
 	case "codex":
 		cands = append(cands, filepath.Join(homeDir(), ".codex", "bin", "codex"))
+		if local != "" {
+			// The Codex desktop app ships its CLI here, under a versioned folder, without adding it to PATH.
+			if m, _ := filepath.Glob(filepath.Join(local, "OpenAI", "Codex", "bin", "*", "codex.exe")); len(m) > 0 {
+				cands = append(cands, m...)
+			}
+		}
 	}
 	for _, c := range cands {
 		if st, err := os.Stat(c); err == nil && !st.IsDir() {

@@ -12,30 +12,30 @@ import (
 
 // Run is one daily check, stored as ~/.shieldbug/runs/<time>.json.
 type Run struct {
-	ID         string      `json:"id"`
-	Started    time.Time   `json:"started"`
-	Seconds    float64     `json:"seconds"`
-	Scheduled  bool        `json:"scheduled"`
-	Agent      string      `json:"agent"`
-	Lockdown   string      `json:"lockdown"`
-	Score      int         `json:"score"`
-	Light      string      `json:"light"` // green, yellow, red
-	Summary    string      `json:"summary,omitempty"`
-	SummaryKo  string      `json:"summary_ko,omitempty"`
-	Findings   []Finding   `json:"findings"`
-	Intel      []IntelItem `json:"intel,omitempty"`
-	Proposals  int         `json:"proposals"`
-	Calls      []Usage     `json:"calls"`
-	PayloadKB  float64     `json:"payload_kb"`
-	Checklist  int         `json:"checklist_items"`
-	Errors     []string    `json:"errors,omitempty"`
-	Sections   []string    `json:"sections"`
-	OS         string      `json:"os"`
+	ID        string      `json:"id"`
+	Started   time.Time   `json:"started"`
+	Seconds   float64     `json:"seconds"`
+	Scheduled bool        `json:"scheduled"`
+	Agent     string      `json:"agent"`
+	Lockdown  string      `json:"lockdown"`
+	Score     int         `json:"score"`
+	Light     string      `json:"light"` // green, yellow, red
+	Summary   string      `json:"summary,omitempty"`
+	SummaryKo string      `json:"summary_ko,omitempty"`
+	Findings  []Finding   `json:"findings"`
+	Intel     []IntelItem `json:"intel,omitempty"`
+	Proposals int         `json:"proposals"`
+	Calls     []Usage     `json:"calls"`
+	PayloadKB float64     `json:"payload_kb"`
+	Checklist int         `json:"checklist_items"`
+	Errors    []string    `json:"errors,omitempty"`
+	Sections  []string    `json:"sections"`
+	OS        string      `json:"os"`
 }
 
-func runsDir() string     { return filepath.Join(dataDir(), "runs") }
-func payloadDir() string  { return filepath.Join(dataDir(), "payloads") }
-func lockPath() string    { return filepath.Join(dataDir(), "check.lock") }
+func runsDir() string      { return filepath.Join(dataDir(), "runs") }
+func payloadDir() string   { return filepath.Join(dataDir(), "payloads") }
+func lockPath() string     { return filepath.Join(dataDir(), "check.lock") }
 func progressPath() string { return filepath.Join(dataDir(), "progress.txt") }
 
 var checkMu sync.Mutex

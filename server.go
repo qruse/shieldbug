@@ -45,24 +45,41 @@ func serve(c Config, openWindow bool, stay bool) error {
 	s.lastSeen.Store(time.Now().Unix())
 	s.lastErr.Store("")
 	funcs := template.FuncMap{
-		"t":       func(lang, key string) string { return tr(lang, key) },
-		"sev":     func(lang, s string) string { return tr(lang, "sev_"+s) },
-		"pick":    func(lang, en, ko string) string { if lang == "ko" && ko != "" { return ko }; return en },
+		"t":   func(lang, key string) string { return tr(lang, key) },
+		"sev": func(lang, s string) string { return tr(lang, "sev_"+s) },
+		"pick": func(lang, en, ko string) string {
+			if lang == "ko" && ko != "" {
+				return ko
+			}
+			return en
+		},
 		"ago":     func(lang string, t time.Time) string { return ago(lang, t) },
 		"fmtTime": func(t time.Time) string { return t.Format("2006-01-02 15:04") },
-		"money":   func(f float64) string { if f <= 0 { return "—" }; return fmt.Sprintf("$%.3f", f) },
-		"secs":    func(f float64) string { return fmt.Sprintf("%.0fs", f) },
-		"sum":     sumCost,
-		"tokens":  sumTokens,
-		"ring":    func(score int) float64 { return 2 * 3.14159 * 52 * float64(score) / 100 },
-		"spark":   sparkPath,
-		"json":    func(v any) string { b, _ := json.Marshal(v); return string(b) },
-		"lower":   strings.ToLower,
-		"has":     func(list []string, v string) bool { for _, x := range list { if x == v { return true } }; return false },
-		"count":   countSev,
-		"isapi":   isAPI,
-		"effort":  hasEffort,
-		"maxeff":  func(a string) bool { return a == "claude" || a == "claude-api" },
+		"money": func(f float64) string {
+			if f <= 0 {
+				return "—"
+			}
+			return fmt.Sprintf("$%.3f", f)
+		},
+		"secs":   func(f float64) string { return fmt.Sprintf("%.0fs", f) },
+		"sum":    sumCost,
+		"tokens": sumTokens,
+		"ring":   func(score int) float64 { return 2 * 3.14159 * 52 * float64(score) / 100 },
+		"spark":  sparkPath,
+		"json":   func(v any) string { b, _ := json.Marshal(v); return string(b) },
+		"lower":  strings.ToLower,
+		"has": func(list []string, v string) bool {
+			for _, x := range list {
+				if x == v {
+					return true
+				}
+			}
+			return false
+		},
+		"count":  countSev,
+		"isapi":  isAPI,
+		"effort": hasEffort,
+		"maxeff": func(a string) bool { return a == "claude" || a == "claude-api" },
 	}
 	s.tmpl = template.Must(template.New("index").Funcs(funcs).Parse(indexHTML))
 

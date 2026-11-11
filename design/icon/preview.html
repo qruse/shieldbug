@@ -1,0 +1,69 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shieldbug icon preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9eeea; color: #153c2a; font: 15px/1.5 system-ui, sans-serif; }
+    header, main { max-width: 1200px; margin: auto; padding: 24px; }
+    header { padding-bottom: 0; }
+    h1 { margin: 0; font-size: 24px; }
+    h2 { margin: 32px 0 12px; font-size: 18px; }
+    p { margin: 4px 0; }
+    .backgrounds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 540px), 1fr)); gap: 16px; }
+    .panel { min-width: 0; padding: 16px; border-radius: 12px; overflow-x: auto; }
+    .light { background: #fff; color: #153c2a; }
+    .dark { background: #151b18; color: #f3fff5; }
+    .sizes { display: flex; flex-wrap: wrap; align-items: end; gap: 20px; }
+    figure { margin: 0; flex: none; }
+    figcaption { margin-top: 6px; font-size: 12px; opacity: .7; }
+    img, .mono { display: block; }
+    .mono { background: currentColor; mask: url('icon-mono-v2.svg') center / contain no-repeat; -webkit-mask: url('icon-mono-v2.svg') center / contain no-repeat; }
+  </style>
+</head>
+<body>
+  <header><h1>Shieldbug icon preview — round 2</h1><p>Full colour, small-size and one-colour variants on light and dark backgrounds.</p></header>
+  <main id="previews"></main>
+  <script>
+    const sizes = [512, 128, 64, 32, 16];
+    const variants = [ ['Main', 'icon-v2.svg'], ['Small', 'icon-small-v2.svg'], ['Mono', 'icon-mono-v2.svg'] ];
+    const main = document.querySelector('#previews');
+    for (const [name, file] of variants) {
+      const section = document.createElement('section');
+      const title = document.createElement('h2');
+      title.textContent = name;
+      section.append(title);
+      const backgrounds = document.createElement('div');
+      backgrounds.className = 'backgrounds';
+      for (const background of ['light', 'dark']) {
+        const panel = document.createElement('div');
+        panel.className = `panel ${background}`;
+        const label = document.createElement('p');
+        label.textContent = background === 'light' ? 'White' : 'Near-black';
+        panel.append(label);
+        const row = document.createElement('div');
+        row.className = 'sizes';
+        for (const size of sizes) {
+          const figure = document.createElement('figure');
+          const icon = document.createElement(name === 'Mono' ? 'span' : 'img');
+          if (name === 'Mono') { icon.className = 'mono'; icon.setAttribute('role', 'img'); icon.setAttribute('aria-label', 'Shieldbug mono icon'); }
+          else { icon.src = file; icon.alt = `Shieldbug ${name.toLowerCase()} icon`; }
+          icon.style.width = `${size}px`;
+          icon.style.height = `${size}px`;
+          const caption = document.createElement('figcaption');
+          caption.textContent = `${size} px`;
+          figure.append(icon, caption);
+          row.append(figure);
+        }
+        panel.append(row);
+        backgrounds.append(panel);
+      }
+      section.append(backgrounds);
+      main.append(section);
+    }
+  </script>
+</body>
+</html>
+

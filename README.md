@@ -1,6 +1,8 @@
-# Shieldbug
+<p align="center"><img src="assets/icon.svg" width="140" alt="Shieldbug"></p>
 
-**AI 해킹은 AI가 막아야지, 내 토큰으로 쓰는 AI 백신**
+<h1 align="center">Shieldbug</h1>
+
+<p align="center"><b>AI 해킹은 AI가 막아야지, 내 토큰으로 쓰는 AI 백신</b></p>
 
 A daily security check for people who use AI coding agents. It runs on **the AI you already pay for** (Claude Code, Codex, Gemini CLI, Antigravity, or an API key), so it costs almost nothing. It is open source, so you can read exactly what it does.
 

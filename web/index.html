@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shieldbug</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3 6 7v8c0 7 4.5 11.5 10 14 5.5-2.5 10-7 10-14V7z' fill='%2316a34a'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cg fill='none' stroke='%23eafff5' stroke-width='30' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54'/%3E%3Cpath d='M150 221l17-72 39-16 13-22h74l13 22 39 16 17 72c12 4 24 9 35 15v47c0 75-48 130-141 171-93-41-141-96-141-171v-47c11-6 23-11 35-15Z'/%3E%3C/g%3E%3Cpath d='M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54' fill='none' stroke='%230f3a2c' stroke-width='26' stroke-linecap='round'/%3E%3Ccircle cx='151' cy='84' r='14' fill='%230f3a2c'/%3E%3Ccircle cx='361' cy='84' r='14' fill='%230f3a2c'/%3E%3Cpath d='M150 230l17-81 39-16 13-22h74l13 22 39 16 17 81Z' fill='%232fbf8a' stroke='%230f3a2c' stroke-width='24' stroke-linejoin='round'/%3E%3Ccircle cx='207' cy='168' r='24' fill='%23ffffff'/%3E%3Ccircle cx='305' cy='168' r='24' fill='%23ffffff'/%3E%3Ccircle cx='211' cy='165' r='10' fill='%230f3a2c'/%3E%3Ccircle cx='301' cy='165' r='10' fill='%230f3a2c'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Z' fill='%23169468'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171Z' fill='%231fae7a'/%3E%3Cpath d='M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Zm0 2v220' fill='none' stroke='%230f3a2c' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#f6f7f5;--card:#fff;--ink:#17201a;--muted:#5d6b62;--line:#e3e7e2;--accent:#15803d;--accent-ink:#fff;--green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--chip:#eef2ee;--code:#f1f3f0}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1411;--card:#171e19;--ink:#e6ece7;--muted:#9aa89f;--line:#26302a;--accent:#22c55e;--accent-ink:#06210f;--chip:#1f2923;--code:#121815}}
@@ -13,7 +13,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-ap
 a{color:var(--accent)}
 header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:2}
 .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.01em}
-.brand svg{width:26px;height:26px}
+.brand svg{width:30px;height:30px}
 nav{display:flex;gap:2px;margin-left:12px;overflow-x:auto}
 nav a{padding:7px 12px;border-radius:8px;color:var(--muted);text-decoration:none;white-space:nowrap;font-size:14px}
 nav a.on{background:var(--chip);color:var(--ink);font-weight:600}
@@ -82,7 +82,7 @@ footer{max-width:1060px;margin:0 auto;padding:0 22px 30px;color:var(--muted);fon
 {{$L := .Lang}}
 <header>
   <div class="brand">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 6 7v8c0 7 4.5 11.5 10 14 5.5-2.5 10-7 10-14V7z" fill="#16a34a"/><path d="M16 9v15M11 13l5 3 5-3M11 19l5-2 5 2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16" cy="8.5" r="2.2" fill="#fff"/></svg>
+    <svg viewBox="0 0 512 512" aria-hidden="true"><g fill="none" stroke="#eafff5" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"><path d="M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54"/><path d="M150 221l17-72 39-16 13-22h74l13 22 39 16 17 72c12 4 24 9 35 15v47c0 75-48 130-141 171-93-41-141-96-141-171v-47c11-6 23-11 35-15Z"/></g><path d="M182 138c-4-28-24-33-31-54M330 138c4-28 24-33 31-54" fill="none" stroke="#0f3a2c" stroke-width="26" stroke-linecap="round"/><circle cx="151" cy="84" r="14" fill="#0f3a2c"/><circle cx="361" cy="84" r="14" fill="#0f3a2c"/><path d="M150 230l17-81 39-16 13-22h74l13 22 39 16 17 81Z" fill="#2fbf8a" stroke="#0f3a2c" stroke-width="24" stroke-linejoin="round"/><circle cx="207" cy="168" r="24" fill="#ffffff"/><circle cx="305" cy="168" r="24" fill="#ffffff"/><circle cx="211" cy="165" r="10" fill="#0f3a2c"/><circle cx="301" cy="165" r="10" fill="#0f3a2c"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Z" fill="#169468"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171Z" fill="#1fae7a"/><path d="M256 219c-51 0-99 8-141 29v35c0 75 48 130 141 171 93-41 141-96 141-171v-35c-42-21-90-29-141-29Zm0 2v220" fill="none" stroke="#0f3a2c" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Shieldbug
   </div>
   <nav>

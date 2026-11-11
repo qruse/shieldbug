@@ -2,3 +2,4 @@ dist/
 *.exe
 *.exe~
 planning/*.log
+design/**/*.log

@@ -336,7 +336,7 @@ func geminiCall(ctx context.Context, c Config, key string, kind callKind, prompt
 		} `json:"usageMetadata"`
 	}
 	endpoint := apiBase("gemini-api") + "/v1beta/models/" + neturl.PathEscape(model) + ":generateContent"
-	if err := postJSON(ctx, endpoint,map[string]string{"x-goog-api-key": key}, body, &resp); err != nil {
+	if err := postJSON(ctx, endpoint, map[string]string{"x-goog-api-key": key}, body, &resp); err != nil {
 		return "", err
 	}
 	u.TokensIn, u.TokensOut = resp.Usage.In, resp.Usage.Out+resp.Usage.Thoughts

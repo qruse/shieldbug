@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- A light keyline keeps the dark outline legible on dark backgrounds. -->
+  <g fill="none" stroke="#f3fff5" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M192 105 165 69M320 105l27-36M136 238l-30-13M376 238l30-13M153 337l-27 22M359 337l27 22"/>
+    <path d="M256 83c-39 0-78 13-116 34-12 7-19 19-19 33v82c0 92 54 157 135 196 81-39 135-104 135-196v-82c0-14-7-26-19-33-38-21-77-34-116-34Z"/>
+  </g>
+  <g fill="none" stroke="#153c2a" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M192 105 165 69M320 105l27-36M136 238l-30-13M376 238l30-13M153 337l-27 22M359 337l27 22"/>
+  </g>
+  <path d="M256 83c-39 0-78 13-116 34-12 7-19 19-19 33v82c0 92 54 157 135 196 81-39 135-104 135-196v-82c0-14-7-26-19-33-38-21-77-34-116-34Z" fill="#16a34a" stroke="#153c2a" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M256 104c-37 0-75 13-110 33v73c0 84 42 145 110 181 68-36 110-97 110-181v-73c-35-20-73-33-110-33Z" fill="#30b760"/>
+  <path d="M256 275v116" fill="none" stroke="#087a38" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="211" cy="207" r="13" fill="#153c2a"/>
+  <circle cx="301" cy="207" r="13" fill="#153c2a"/>
+  <path d="M235 243c12 12 30 12 42 0" fill="none" stroke="#153c2a" stroke-width="10" stroke-linecap="round"/>
+</svg>
