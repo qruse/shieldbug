@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="{{.Lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shieldbug</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3 6 7v8c0 7 4.5 11.5 10 14 5.5-2.5 10-7 10-14V7z' fill='%2316a34a'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f6f7f5;--card:#fff;--ink:#17201a;--muted:#5d6b62;--line:#e3e7e2;--accent:#15803d;--accent-ink:#fff;--green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--chip:#eef2ee;--code:#f1f3f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1411;--card:#171e19;--ink:#e6ece7;--muted:#9aa89f;--line:#26302a;--accent:#22c55e;--accent-ink:#06210f;--chip:#1f2923;--code:#121815}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+a{color:var(--accent)}
+header{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:2}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand svg{width:26px;height:26px}
+nav{display:flex;gap:2px;margin-left:12px;overflow-x:auto}
+nav a{padding:7px 12px;border-radius:8px;color:var(--muted);text-decoration:none;white-space:nowrap;font-size:14px}
+nav a.on{background:var(--chip);color:var(--ink);font-weight:600}
+.sp{flex:1}
+.lang a{color:var(--muted);text-decoration:none;font-size:13px;margin-left:8px}
+.lang a.on{color:var(--ink);font-weight:600}
+main{max-width:1060px;margin:0 auto;padding:22px}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}header{flex-wrap:wrap}nav{order:3;width:100%;margin-left:0}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:18px}
+.card h2{font-size:15px;margin:0 0 12px;color:var(--muted);font-weight:600}
+.ring{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring svg{width:150px;height:150px}
+.ring .num{font-size:40px;font-weight:750;fill:var(--ink)}
+.light{display:inline-flex;align-items:center;gap:7px;font-weight:650;margin-top:6px}
+.dot{width:11px;height:11px;border-radius:50%}
+.green{--c:var(--green)} .yellow{--c:var(--yellow)} .red{--c:var(--red)}
+.dot{background:var(--c)}
+.meta{color:var(--muted);font-size:13px;margin-top:4px}
+button,.btn{appearance:none;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:650;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:var(--chip);color:var(--ink)}
+button:disabled{opacity:.6;cursor:default}
+.run{width:100%;margin-top:14px}
+.progress{margin-top:10px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;justify-content:center}
+.spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.summary{font-size:16px;margin:0}
+.f{border-top:1px solid var(--line);padding:14px 0}
+.f:first-of-type{border-top:0;padding-top:4px}
+.f h3{margin:0;font-size:15px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip);white-space:nowrap}
+.badge.critical,.badge.high{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
+.badge.medium{background:color-mix(in srgb,var(--yellow) 18%,transparent);color:var(--yellow)}
+.badge.low{color:var(--muted)}
+.src{font-size:12px;color:var(--muted);font-weight:400}
+.ev{font:12.5px/1.5 ui-monospace,Consolas,monospace;background:var(--code);border-radius:8px;padding:8px 10px;margin:8px 0;word-break:break-all;color:var(--muted)}
+.fix{display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.fix p{margin:0;flex:1}
+.copy{padding:3px 9px;font-size:12px;border-radius:7px;background:var(--chip);color:var(--ink)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:550}
+.news{list-style:none;margin:0;padding:0}
+.news li{padding:9px 0;border-top:1px solid var(--line)}
+.news li:first-child{border-top:0}
+.news small{color:var(--muted);display:block}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:13px}
+.trend path{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.trend line{stroke:var(--line)}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input[type=text],input[type=time],select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--ink);margin-top:14px}
+pre.payload{white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Consolas,monospace;background:var(--code);padding:14px;border-radius:10px;max-height:70vh;overflow:auto}
+.flash{background:var(--chip);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:14px}
+.err{color:var(--red);font-size:13px;margin:4px 0}
+.prop{border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.prop form{display:inline}
+.muted{color:var(--muted)}
+.scope{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+footer{max-width:1060px;margin:0 auto;padding:0 22px 30px;color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body>
+{{$L := .Lang}}
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 6 7v8c0 7 4.5 11.5 10 14 5.5-2.5 10-7 10-14V7z" fill="#16a34a"/><path d="M16 9v15M11 13l5 3 5-3M11 19l5-2 5 2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16" cy="8.5" r="2.2" fill="#fff"/></svg>
+    Shieldbug
+  </div>
+  <nav>
+    <a href="/?tab=today&lang={{$L}}" class="{{if eq .Tab "today"}}on{{end}}">{{t $L "tab_today"}}</a>
+    <a href="/?tab=findings&lang={{$L}}" class="{{if eq .Tab "findings"}}on{{end}}">{{t $L "tab_findings"}}</a>
+    <a href="/?tab=checklist&lang={{$L}}" class="{{if eq .Tab "checklist"}}on{{end}}">{{t $L "tab_checklist"}}{{if .Pending}} · {{len .Pending}}{{end}}</a>
+    <a href="/?tab=history&lang={{$L}}" class="{{if eq .Tab "history"}}on{{end}}">{{t $L "tab_history"}}</a>
+    <a href="/?tab=sent&lang={{$L}}" class="{{if eq .Tab "sent"}}on{{end}}">{{t $L "tab_sent"}}</a>
+    <a href="/?tab=settings&lang={{$L}}" class="{{if eq .Tab "settings"}}on{{end}}">{{t $L "tab_settings"}}</a>
+  </nav>
+  <div class="sp"></div>
+  <div class="lang"><a href="/?tab={{.Tab}}&lang=ko" class="{{if eq $L "ko"}}on{{end}}">한국어</a><a href="/?tab={{.Tab}}&lang=en" class="{{if eq $L "en"}}on{{end}}">English</a></div>
+</header>
+<main>
+{{if .Flash}}<div class="flash">{{if eq .Flash "saved"}}{{t $L "saved"}}{{else}}{{.Flash}}{{end}}</div>{{end}}
+
+{{if eq .Tab "today"}}
+<div class="grid">
+  <div>
+    <div class="card ring">
+      {{if .Run}}
+      <svg viewBox="0 0 120 120" role="img" aria-label="{{t $L "score"}} {{.Run.Score}}">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="10"/>
+        <circle class="{{.Run.Light}}" cx="60" cy="60" r="52" fill="none" stroke="var(--c)" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="{{ring .Run.Score}} 400" transform="rotate(-90 60 60)"/>
+        <text x="60" y="72" text-anchor="middle" class="num">{{.Run.Score}}</text>
+      </svg>
+      <div class="light {{.Run.Light}}"><span class="dot"></span>{{t $L (print "light_" .Run.Light)}}</div>
+      <div class="meta">{{t $L "last_check"}}: {{ago $L .Run.Started}} · {{fmtTime .Run.Started}}</div>
+      {{else}}
+      <p class="muted">{{t $L "no_runs"}}</p>
+      {{end}}
+      <form method="post" action="/run" id="runform">
+        <input type="hidden" name="csrf" value="{{.Token}}">
+        <button class="run" id="runbtn" {{if .Running}}disabled{{end}}>{{if .Running}}{{t $L "running"}}{{else}}{{t $L "run_now"}}{{end}}</button>
+      </form>
+      <div class="progress" id="progress" {{if not .Running}}hidden{{end}}><span class="spin"></span><span id="ptext">{{if .Progress}}{{t $L (print "p_" .Progress)}}{{end}}</span></div>
+      <div class="scope">{{t $L "scope"}}</div>
+    </div>
+    {{if .Run}}
+    <div class="card">
+      <h2>{{t $L "this_run"}}</h2>
+      <dl class="kv">
+        <dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{.Run.Agent}}{{else}}—{{end}}</dd>
+        {{range .Run.Calls}}<dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd>{{break}}{{end}}
+        <dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd>
+        <dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd>
+        <dt>{{t $L "cost"}}</dt><dd>{{money (sum .Run.Calls)}}</dd>
+        <dt>{{t $L "duration"}}</dt><dd>{{secs .Run.Seconds}}</dd>
+      </dl>
+      <p class="meta">{{t $L "cost_note"}}</p>
+    </div>
+    {{end}}
+  </div>
+  <div>
+    {{if .Run}}
+    {{if or .Run.Summary .Run.SummaryKo}}<div class="card"><p class="summary">{{pick $L .Run.Summary .Run.SummaryKo}}</p></div>{{end}}
+    {{range .Run.Errors}}<p class="err">{{.}}</p>{{end}}
+    {{if .Run.Proposals}}<div class="flash">{{.Run.Proposals}} {{t $L "proposals_new"}} — <a href="/?tab=checklist&lang={{$L}}">{{t $L "open_list"}}</a></div>{{end}}
+    <div class="card">
+      <h2>{{t $L "todo"}}</h2>
+      {{if .Run.Findings}}
+        {{range $i, $f := .Run.Findings}}{{if lt $i 3}}
+        <div class="f">
+          <h3><span class="badge {{$f.Severity}}">{{sev $L $f.Severity}}</span>{{pick $L $f.Title $f.TitleKo}}</h3>
+          {{if $f.Fix}}<div class="fix"><p>{{pick $L $f.Fix $f.FixKo}}</p><button class="copy" data-copy="{{pick $L $f.Fix $f.FixKo}}">{{t $L "copy"}}</button></div>{{end}}
+        </div>
+        {{end}}{{end}}
+        {{if gt (len .Run.Findings) 3}}<p class="meta"><a href="/?tab=findings&lang={{$L}}">{{t $L "tab_findings"}} ({{len .Run.Findings}}) →</a></p>{{end}}
+      {{else}}<p class="muted">{{t $L "no_findings"}}</p>{{end}}
+    </div>
+    <div class="card">
+      <h2>{{t $L "intel"}}</h2>
+      {{if .Run.Intel}}<ul class="news">{{range .Run.Intel}}
+        <li><a href="{{.URL}}" target="_blank" rel="noopener noreferrer">{{pick $L .Title .TitleKo}}</a><small>{{.Date}}{{if .Products}} · {{range $j, $p := .Products}}{{if $j}}, {{end}}{{$p}}{{end}}{{end}}</small>{{if .Summary}}<small>{{.Summary}}</small>{{end}}</li>
+      {{end}}</ul>{{else}}<p class="muted">{{t $L "no_intel"}}</p>{{end}}
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}
+
+{{if eq .Tab "findings"}}
+<div class="card">
+  <h2>{{t $L "tab_findings"}}{{if .Run}} · {{fmtTime .Run.Started}}{{end}}</h2>
+  {{if and .Run .Run.Findings}}
+  {{range .Run.Findings}}
+  <div class="f">
+    <h3><span class="badge {{.Severity}}">{{sev $L .Severity}}</span>{{pick $L .Title .TitleKo}} <span class="src">{{t $L (print "source_" .Source)}}{{if .ChecklistID}} · {{.ChecklistID}}{{end}}</span></h3>
+    {{if .Evidence}}<div class="ev">{{.Evidence}}</div>{{end}}
+    {{if .Fix}}<div class="fix"><p><strong>{{t $L "fix"}}:</strong> {{pick $L .Fix .FixKo}}</p><button class="copy" data-copy="{{pick $L .Fix .FixKo}}">{{t $L "copy"}}</button></div>{{end}}
+  </div>
+  {{end}}
+  {{else}}<p class="muted">{{t $L "no_findings"}}</p>{{end}}
+</div>
+{{end}}
+
+{{if eq .Tab "checklist"}}
+{{if .Pending}}
+<div class="card">
+  <h2>{{t $L "pending"}}</h2>
+  {{range .Pending}}
+  <div class="prop">
+    <h3 style="margin:0 0 4px;font-size:15px"><span class="badge {{.Severity}}">{{sev $L .Severity}}</span> {{.T $L}}</h3>
+    <div class="meta">{{.Check}}</div>
+    <p style="margin:6px 0">{{.F $L}}</p>
+    {{range .Refs}}<div class="meta"><a href="{{.}}" target="_blank" rel="noopener noreferrer">{{.}}</a></div>{{end}}
+    <form method="post" action="/proposal"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="decision" value="approve"><button>{{t $L "approve"}}</button></form>
+    <form method="post" action="/proposal"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="decision" value="reject"><button class="ghost">{{t $L "reject"}}</button></form>
+  </div>
+  {{end}}
+</div>
+{{end}}
+<div class="card">
+  <h2>{{t $L "active_items"}} ({{len .Checklist}})</h2>
+  <table>
+    {{range .Checklist}}<tr><td><span class="badge {{.Severity}}">{{sev $L .Severity}}</span></td><td>{{.T $L}}<div class="meta">{{.Category}} · {{.ID}}{{if eq .Source "ai"}} · AI{{end}}</div></td></tr>{{end}}
+  </table>
+</div>
+{{end}}
+
+{{if eq .Tab "history"}}
+<div class="card">
+  <h2>{{t $L "history_trend"}}</h2>
+  {{if gt (len .Runs) 1}}
+  <svg class="trend" viewBox="0 0 300 60" width="100%" height="120" preserveAspectRatio="none" role="img" aria-label="{{t $L "history_trend"}}">
+    <line x1="0" y1="4" x2="300" y2="4"/><line x1="0" y1="30" x2="300" y2="30"/><line x1="0" y1="56" x2="300" y2="56"/>
+    <path d="{{spark .Runs}}"/>
+  </svg>
+  {{else}}<p class="muted">—</p>{{end}}
+</div>
+<div class="card">
+  <table>
+    <tr><th>{{t $L "when"}}</th><th>{{t $L "score"}}</th><th>{{t $L "findings_n"}}</th><th>{{t $L "agent"}}</th><th>{{t $L "tokens"}}</th><th>{{t $L "cost"}}</th><th>{{t $L "duration"}}</th><th></th></tr>
+    {{range .Runs}}<tr>
+      <td>{{fmtTime .Started}} <span class="meta">{{if .Scheduled}}{{t $L "scheduled"}}{{else}}{{t $L "manual"}}{{end}}</span></td>
+      <td><span class="light {{.Light}}"><span class="dot"></span>{{.Score}}</span></td>
+      <td>{{len .Findings}}</td><td>{{.Agent}}</td><td>{{tokens .Calls}}</td><td>{{money (sum .Calls)}}</td><td>{{secs .Seconds}}</td>
+      <td><a href="/?tab=sent&id={{.ID}}&lang={{$L}}">{{t $L "tab_sent"}}</a></td>
+    </tr>{{if .Errors}}<tr><td colspan="8">{{range .Errors}}<div class="err">{{.}}</div>{{end}}</td></tr>{{end}}{{end}}
+  </table>
+</div>
+{{end}}
+
+{{if eq .Tab "sent"}}
+<div class="card">
+  <h2>{{t $L "tab_sent"}}{{if .PayloadID}} · {{.PayloadID}}{{end}}</h2>
+  <p class="meta">{{t $L "sent_intro"}}</p>
+  {{if .Payload}}<pre class="payload">{{.Payload}}</pre>{{else}}<p class="muted">{{t $L "no_payload"}}</p>{{end}}
+</div>
+{{end}}
+
+{{if eq .Tab "settings"}}
+<form method="post" action="/settings" class="card">
+  <input type="hidden" name="csrf" value="{{.Token}}">
+  <h2>{{t $L "tab_settings"}}</h2>
+  <label>{{t $L "agent"}}</label>
+  <select name="agent">
+    <option value="auto" {{if eq .Cfg.Agent "auto"}}selected{{end}}>{{t $L "auto"}}{{if .Agents}} ({{index .Agents 0}}){{end}}</option>
+    {{range .AllAgents}}<option value="{{.}}" {{if eq $.Cfg.Agent .}}selected{{end}}>{{.}} — {{if isapi .}}{{if has $.Agents .}}{{t $L "key_set"}}{{else}}{{t $L "no_key"}}{{end}}{{else}}{{if has $.Agents .}}{{t $L "detected"}}{{else}}{{t $L "not_found"}}{{end}}{{end}} ·{{t $L (print "lock_" (index $.Lockdown .))}}</option>{{end}}
+  </select>
+  {{range .AllAgents}}
+  <div class="row">
+    <div><label>{{.}} · {{t $L "model"}}</label><input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}"></div>
+    <div>{{if effort .}}<label>{{t $L "effort"}}</label>
+      <select name="effort_{{.}}">{{$e := index $.Cfg.Effort .}}
+        <option value="" {{if eq $e ""}}selected{{end}}>—</option>
+        <option value="low" {{if eq $e "low"}}selected{{end}}>low</option>
+        <option value="medium" {{if eq $e "medium"}}selected{{end}}>medium</option>
+        <option value="high" {{if eq $e "high"}}selected{{end}}>high</option>
+        {{if maxeff .}}<option value="xhigh" {{if eq $e "xhigh"}}selected{{end}}>xhigh</option><option value="max" {{if eq $e "max"}}selected{{end}}>max</option>{{end}}
+      </select>{{end}}</div>
+    <div></div>
+  </div>
+  {{end}}
+  <div class="row">
+    <div><label>{{t $L "daily_at"}}</label><input type="time" name="daily_at" value="{{.Cfg.Schedule.DailyAt}}"></div>
+    <div><label>{{t $L "language"}}</label><select name="language">
+      <option value="auto" {{if eq .Cfg.Language "auto"}}selected{{end}}>{{t $L "auto"}}</option>
+      <option value="ko" {{if eq .Cfg.Language "ko"}}selected{{end}}>한국어</option>
+      <option value="en" {{if eq .Cfg.Language "en"}}selected{{end}}>English</option></select></div>
+    <div></div>
+  </div>
+  <label class="check"><input type="checkbox" name="model_search" {{if .Cfg.Intel.ModelSearch}}checked{{end}}> {{t $L "model_search"}}</label>
+  <p><button>{{t $L "save"}}</button></p>
+</form>
+<div class="card">
+  <h2>{{t $L "schedule"}}</h2>
+  <p>{{if .Schedule}}{{t $L "sched_on"}} <span class="meta">({{.Schedule}})</span>{{else}}{{t $L "sched_off"}}{{end}}</p>
+  <form method="post" action="/schedule"><input type="hidden" name="csrf" value="{{.Token}}">
+    {{if .Schedule}}<input type="hidden" name="action" value="remove"><button class="ghost">{{t $L "sched_remove"}}</button>
+    {{else}}<input type="hidden" name="action" value="install"><button>{{t $L "sched_install"}} · {{.Cfg.Schedule.DailyAt}}</button>{{end}}
+  </form>
+</div>
+{{end}}
+</main>
+<footer>Shieldbug {{.Version}} · MIT · <a href="https://hslab.space/projects/shieldbug/" target="_blank" rel="noopener noreferrer">hslab.space</a></footer>
+<script>
+(function(){
+  var token = {{.Token}};
+  var labels = {selftest: {{t $L "p_selftest"}}, collect: {{t $L "p_collect"}}, intel: {{t $L "p_intel"}}, analysis: {{t $L "p_analysis"}}};
+  // heartbeat: when the window closes, the server stops by itself
+  setInterval(function(){ fetch('/ping', {cache:'no-store'}).catch(function(){}); }, 15000);
+  fetch('/ping', {cache:'no-store'}).catch(function(){});
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-copy]');
+    if (!b) return;
+    navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent='✓'; setTimeout(function(){b.textContent=t;},1200); });
+  });
+  var running = {{.Running}};
+  var form = document.getElementById('runform');
+  if (form) form.addEventListener('submit', function(){ var b=document.getElementById('runbtn'); b.disabled=true; b.textContent={{t $L "running"}}; });
+  if (running) {
+    var poll = setInterval(function(){
+      fetch('/status', {cache:'no-store'}).then(function(r){return r.json();}).then(function(s){
+        var p = document.getElementById('ptext'); if (p && labels[s.progress]) p.textContent = labels[s.progress];
+        if (!s.running) { clearInterval(poll); location.href = '/?tab=today'; }
+      }).catch(function(){});
+    }, 2000);
+  }
+})();
+</script>
+</body>
+</html>

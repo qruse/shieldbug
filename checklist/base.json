@@ -1,0 +1,273 @@
+{
+  "version": 2,
+  "items": [
+    {
+      "id": "agent-skip-permissions",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "AI agents run without permission prompts",
+        "ko": "AI 에이전트가 허락 없이 실행되도록 설정됨"
+      },
+      "check": "Look at agent settings and shell aliases/scripts for --dangerously-skip-permissions, bypassPermissions, --yolo, approval_policy=never with full access, or sandbox disabled.",
+      "fix": {
+        "en": "Remove the bypass flag/mode. Allow specific safe tools instead of everything.",
+        "ko": "우회 플래그나 모드를 빼고, 필요한 도구만 골라서 허용하세요."
+      },
+      "refs": [
+        "https://snyk.io/blog/weaponizing-ai-coding-agents-for-malware-in-the-nx-malicious-package"
+      ],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "agent-wildcard-allow",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "Agent allow-list contains wildcards for shell or network",
+        "ko": "에이전트 허용 목록에 셸·네트워크 와일드카드가 있음"
+      },
+      "check": "Permission allow rules such as Bash(*), Bash(curl:*), WebFetch(*) or equivalent in Codex/Gemini settings.",
+      "fix": {
+        "en": "Replace wildcards with exact commands you actually need.",
+        "ko": "와일드카드 대신 실제로 쓰는 명령만 적으세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "mcp-unknown-servers",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "MCP servers from unknown sources or run via npx/uvx latest",
+        "ko": "출처가 불분명하거나 최신 버전을 그대로 받아 실행하는 MCP 서버"
+      },
+      "check": "MCP server definitions that run unpinned packages (npx -y pkg, uvx pkg without version), remote URLs not from the vendor, or servers not used recently.",
+      "fix": {
+        "en": "Pin versions, remove servers you do not use, prefer official vendors.",
+        "ko": "버전을 고정하고, 안 쓰는 서버는 지우고, 공식 제공처 것을 쓰세요."
+      },
+      "refs": [
+        "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
+      ],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "agent-hooks-network",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Agent hooks run commands that reach the network",
+        "ko": "에이전트 훅이 네트워크로 나가는 명령을 실행함"
+      },
+      "check": "Hooks (Claude Code hooks, Codex notify, Gemini hooks) that call curl/wget/Invoke-WebRequest, pipe to a shell, or run unknown scripts.",
+      "fix": {
+        "en": "Read every hook command. Delete hooks you did not write yourself.",
+        "ko": "훅 명령을 하나씩 읽고, 직접 만든 게 아니면 지우세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "secrets-in-mcp-config",
+      "rev": 1,
+      "status": "active",
+      "category": "secrets",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "API keys written in plain text inside agent/MCP config",
+        "ko": "에이전트·MCP 설정 파일에 API 키가 평문으로 적혀 있음"
+      },
+      "check": "Redacted markers ([REDACTED:...]) inside env/headers of MCP or agent configs.",
+      "fix": {
+        "en": "Move keys to the OS keychain or environment, and rotate any key that was ever committed or shared.",
+        "ko": "키는 OS 키체인이나 환경변수로 옮기고, 공유된 적 있는 키는 새로 발급하세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "plaintext-git-credentials",
+      "rev": 1,
+      "status": "active",
+      "category": "secrets",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Git credentials stored in plain text",
+        "ko": "Git 비밀번호·토큰이 평문 파일에 저장됨"
+      },
+      "check": "~/.git-credentials exists or credential.helper=store.",
+      "fix": {
+        "en": "Use the OS credential manager (git credential-manager / osxkeychain / libsecret) and delete ~/.git-credentials.",
+        "ko": "OS 자격 증명 관리자를 쓰고 ~/.git-credentials 파일은 지우세요."
+      },
+      "refs": [
+        "https://www.boannews.com/news/articleView.html?idxno=147009"
+      ],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "npmrc-token",
+      "rev": 1,
+      "status": "active",
+      "category": "secrets",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "Package registry token in ~/.npmrc or ~/.pypirc",
+        "ko": "~/.npmrc·~/.pypirc에 패키지 저장소 토큰이 있음"
+      },
+      "check": "authToken / password lines present (values redacted).",
+      "fix": {
+        "en": "Use short-lived or granular tokens and remove unused ones.",
+        "ko": "기간 제한·권한 제한 토큰을 쓰고 안 쓰는 토큰은 지우세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "ssh-key-no-passphrase",
+      "rev": 1,
+      "status": "active",
+      "category": "secrets",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "SSH private key without a passphrase",
+        "ko": "비밀번호 없는 SSH 개인 키"
+      },
+      "check": "Private keys under ~/.ssh that are not encrypted.",
+      "fix": {
+        "en": "ssh-keygen -p -f <key> to add a passphrase, or move keys into a hardware key / agent.",
+        "ko": "ssh-keygen -p -f <키>로 비밀번호를 거세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "exposed-listeners",
+      "rev": 1,
+      "status": "active",
+      "category": "network",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Local dev/AI services listening on all interfaces",
+        "ko": "로컬 개발·AI 서비스가 외부에서 접속 가능하게 열려 있음"
+      },
+      "check": "Listening TCP sockets bound to 0.0.0.0 or [::] by dev servers, model servers (Ollama 11434, Jupyter 8888, etc.), MCP servers or databases.",
+      "fix": {
+        "en": "Bind to 127.0.0.1, or block the port in the firewall.",
+        "ko": "127.0.0.1에만 묶거나 방화벽에서 막으세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "os-protection-off",
+      "rev": 1,
+      "status": "active",
+      "category": "system",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Built-in OS protection is off",
+        "ko": "운영체제 기본 보호 기능이 꺼져 있음"
+      },
+      "check": "Windows Defender real-time protection or firewall off; macOS firewall/FileVault/SIP off; Linux firewall inactive.",
+      "fix": {
+        "en": "Turn them back on. Shieldbug complements them, it does not replace them.",
+        "ko": "다시 켜세요. Shieldbug는 이걸 대신하지 않고 보완합니다."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "stale-os-updates",
+      "rev": 1,
+      "status": "active",
+      "category": "system",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "OS security updates are old",
+        "ko": "운영체제 보안 업데이트가 오래됨"
+      },
+      "check": "Last installed update older than 30 days.",
+      "fix": {
+        "en": "Install pending updates.",
+        "ko": "밀린 업데이트를 설치하세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "advisory-affected-packages",
+      "rev": 1,
+      "status": "active",
+      "category": "supply-chain",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Installed tools match today's advisories",
+        "ko": "설치된 도구가 오늘 나온 보안 경고에 해당함"
+      },
+      "check": "Compare installed AI CLIs, global npm/pip packages and their versions with advisories and incident reports from the last few days.",
+      "fix": {
+        "en": "Update or remove the affected package, then rotate tokens it could read.",
+        "ko": "해당 패키지를 업데이트·삭제하고, 그 패키지가 읽을 수 있던 토큰은 새로 발급하세요."
+      },
+      "refs": [
+        "https://www.microsoft.com/en-us/security/blog/2026/08/04/chaindrop-supply-chain-compromise-anatomy-self-propagating-worm/"
+      ],
+      "added": "2026-11-11",
+      "source": "base"
+    },
+    {
+      "id": "prompt-injection-surface",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "medium",
+      "kind": "ai",
+      "title": {
+        "en": "Agents can read untrusted content and act without review",
+        "ko": "에이전트가 외부 글을 읽고 확인 없이 행동할 수 있음"
+      },
+      "check": "Agents allowed to fetch web pages or read mail/issues AND to run shell or write files without approval.",
+      "fix": {
+        "en": "Keep web reading and shell execution in separate, approval-gated steps.",
+        "ko": "웹 읽기와 명령 실행을 나누고, 실행 전에는 승인을 받게 하세요."
+      },
+      "refs": [],
+      "added": "2026-11-11",
+      "source": "base"
+    }
+  ]
+}
