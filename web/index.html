@@ -209,6 +209,8 @@ details[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
 details.card.minor{margin-top:0}
 details.card.minor>summary{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
 
+.updating{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:20;padding:12px 18px;border-radius:14px;background:var(--ink);color:var(--card);font-size:14.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+
 /* key-value */
 .kv{margin:0;display:flex;flex-direction:column}
 .kv div{display:flex;justify-content:space-between;gap:16px;padding:9px 0;font-size:15px}
@@ -590,8 +592,28 @@ footer a:hover{color:var(--ink)}
   document.querySelectorAll('input[name=use]').forEach(function(cb){
     cb.addEventListener('change', function(){ cb.closest('.agent').classList.toggle('off', !cb.checked); });
   });
+  // A new program file on disk: hand over to it on the same address, then reload.
+  function applyUpdate(){
+    var n = document.createElement('div');
+    n.className = 'updating'; n.textContent = {{t $L "updating"}};
+    document.body.appendChild(n);
+    var body = new URLSearchParams({csrf: {{.Token}}});
+    fetch('/restart', {method: 'POST', body: body}).then(function(r){
+      if (r.status !== 202) { location.reload(); return; }
+      var tries = 0;
+      var wait = setInterval(function(){
+        if (++tries > 40) { clearInterval(wait); location.reload(); return; }
+        fetch('/ping', {cache: 'no-store'}).then(function(p){ if (p.ok) { clearInterval(wait); location.reload(); } }).catch(function(){});
+      }, 400);
+    }).catch(function(){ location.reload(); });
+  }
   var rb = document.getElementById('reload');
-  if (rb) rb.addEventListener('click', function(){ location.reload(); });
+  if (rb) rb.addEventListener('click', function(){
+    fetch('/status', {cache: 'no-store'}).then(function(r){ return r.json(); })
+      .then(function(s){ if (s.update && !s.running) applyUpdate(); else location.reload(); })
+      .catch(function(){ location.reload(); });
+  });
+  if ({{.Update}} && !{{.Running}}) applyUpdate();
   var tb = document.getElementById('theme');
   if (tb) tb.addEventListener('click', function(){
     var root = document.documentElement, cur = root.getAttribute('data-theme');

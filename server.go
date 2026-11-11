@@ -11,6 +11,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -52,6 +54,55 @@ type server struct {
 	mu       sync.Mutex
 	cfgMod   time.Time // config.json modification time when cfg was loaded
 	tmpl     *template.Template
+	srv      *http.Server
+	exePath  string    // this program file
+	exeMod   time.Time // its modification time when this process started
+}
+
+// updated: the program file was replaced (a new version) while this dashboard
+// was running.
+func (s *server) updated() bool {
+	if s.exePath == "" {
+		return false
+	}
+	st, err := os.Stat(s.exePath)
+	return err == nil && !st.ModTime().Equal(s.exeMod)
+}
+
+// Handoff to a new version: the old process frees the port and starts the new
+// program file on the same port with the same token, so the open window only
+// has to reload. Passed through the environment, never the command line.
+const (
+	envHandoffToken = "SHIELDBUG_HANDOFF_TOKEN"
+	envHandoffPort  = "SHIELDBUG_HANDOFF_PORT"
+)
+
+func (s *server) handleRestart(w http.ResponseWriter, r *http.Request) {
+	if p, _ := os.ReadFile(progressPath()); s.running.Load() || len(p) > 0 {
+		http.Error(w, "a check is running", http.StatusConflict)
+		return
+	}
+	if !s.updated() {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	w.WriteHeader(http.StatusAccepted)
+	go func() {
+		time.Sleep(150 * time.Millisecond) // let this response reach the page
+		// Start the new version first (it waits for the port), then close this
+		// server: closing makes serve() return and this process exit.
+		cmd := exec.Command(s.exePath, "serve")
+		cmd.Env = append(os.Environ(), envHandoffToken+"="+s.token, envHandoffPort+"="+strconv.Itoa(s.port))
+		if f, err := os.OpenFile(filepath.Join(dataDir(), "restart.log"), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o600); err == nil {
+			cmd.Stdout, cmd.Stderr = f, f // why a handoff failed, if it does (no token is printed)
+		}
+		hideWindow(cmd)
+		if err := cmd.Start(); err != nil {
+			fmt.Fprintln(os.Stderr, "shieldbug: restart:", err)
+			return // keep serving the old version
+		}
+		_ = s.srv.Close()
+	}()
 }
 
 // reloadIfChanged picks up edits made to config.json outside the dashboard
@@ -141,8 +192,28 @@ func parseIndex() *template.Template {
 }
 
 func serveListen(s *server, c Config, openWindow bool, stay bool) error {
-
-	ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", c.Dashboard.Port))
+	s.exePath = selfPath()
+	if st, err := os.Stat(s.exePath); err == nil {
+		s.exeMod = st.ModTime()
+	}
+	port := c.Dashboard.Port
+	handoff := false
+	if tok := os.Getenv(envHandoffToken); tok != "" {
+		handoff = true
+		// Started by an older version handing over: keep its token and port.
+		s.token = tok
+		if p, err := strconv.Atoi(os.Getenv(envHandoffPort)); err == nil {
+			port = p
+		}
+		os.Unsetenv(envHandoffToken)
+		os.Unsetenv(envHandoffPort)
+		openWindow = false
+	}
+	ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+	for i := 0; err != nil && handoff && i < 20; i++ {
+		time.Sleep(150 * time.Millisecond) // the old process is still letting go of the port
+		ln, err = net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+	}
 	if err != nil {
 		ln, err = net.Listen("tcp", "127.0.0.1:0") // port in use: take any free one
 		if err != nil {
@@ -159,7 +230,9 @@ func serveListen(s *server, c Config, openWindow bool, stay bool) error {
 	mux.HandleFunc("/proposal", s.guard(s.post(s.handleProposal)))
 	mux.HandleFunc("/settings", s.guard(s.post(s.handleSettings)))
 	mux.HandleFunc("/schedule", s.guard(s.post(s.handleSchedule)))
+	mux.HandleFunc("/restart", s.guard(s.post(s.handleRestart)))
 	srv := &http.Server{Handler: mux, ReadHeaderTimeout: 10 * time.Second}
+	s.srv = srv
 
 	url := fmt.Sprintf("http://127.0.0.1:%d/?t=%s", s.port, s.token)
 	fmt.Println("Shieldbug dashboard:", url)
@@ -259,6 +332,7 @@ type pageData struct {
 	Agents    []string
 	AllAgents []string
 	Chosen    []string
+	Update    bool // a newer program file is on disk
 	Lockdown  map[string]string
 	Payload   string
 	PayloadID string
@@ -286,7 +360,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		tab = "today"
 	}
 	runs := listRuns(60)
-	d := pageData{Lang: lang, Tab: tab, Token: s.token, Runs: runs, Running: s.running.Load(), Cfg: cfg,
+	d := pageData{Lang: lang, Tab: tab, Token: s.token, Runs: runs, Running: s.running.Load(), Cfg: cfg, Update: s.updated(),
 		AllAgents: allAgents, Lockdown: lockdown,
 		Checklist: activeChecklist(cfg), Pending: pendingProposals(), Version: version,
 		Flash: r.URL.Query().Get("msg")}
@@ -328,7 +402,7 @@ func (s *server) handlePing(w http.ResponseWriter, r *http.Request) {
 func (s *server) handleStatus(w http.ResponseWriter, r *http.Request) {
 	p, _ := os.ReadFile(progressPath())
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{"running": s.running.Load() || len(p) > 0, "progress": strings.TrimSpace(string(p))})
+	json.NewEncoder(w).Encode(map[string]any{"running": s.running.Load() || len(p) > 0, "progress": strings.TrimSpace(string(p)), "update": s.updated()})
 }
 
 func (s *server) handleRun(w http.ResponseWriter, r *http.Request) {
