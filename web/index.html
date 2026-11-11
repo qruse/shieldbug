@@ -284,7 +284,7 @@ footer a:hover{color:var(--ink)}
     <div>
       {{if .Run}}
       <h1>{{t $L (print "light_" .Run.Light)}}</h1>
-      <p class="sub">{{t $L "last_check"}} {{ago $L .Run.Started}}{{if .Run.Agent}} · {{.Run.Agent}}{{end}}</p>
+      <p class="sub">{{t $L "last_check"}} {{ago $L .Run.Started}}{{if .Run.Agent}} · {{aname $L .Run.Agent}}{{end}}</p>
       {{else}}
       <h1>{{t $L "light_none"}}</h1>
       <p class="sub">{{t $L "hello_none"}}</p>
@@ -356,7 +356,7 @@ footer a:hover{color:var(--ink)}
 <section class="card">
   <div class="card-h"><h2>{{t $L "this_run"}}</h2><span class="sp"></span><a class="more" href="/?tab=sent&lang={{$L}}">{{t $L "view_sent"}}{{template "i-chev"}}</a></div>
   <dl class="kv">
-    <div><dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{.Run.Agent}}{{else}}—{{end}}</dd></div>
+    <div><dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{aname $L .Run.Agent}}{{else}}—{{end}}</dd></div>
     {{range .Run.Calls}}<div><dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd></div>{{break}}{{end}}
     <div><dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd></div>
     <div><dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd></div>
@@ -440,7 +440,7 @@ footer a:hover{color:var(--ink)}
       <span class="score-dot">{{.Score}}</span>
       <div class="body">
         <div class="t">{{fmtTime .Started}}</div>
-        <div class="s">{{if .Scheduled}}{{t $L "scheduled"}}{{else}}{{t $L "manual"}}{{end}} · {{t $L "stat_fix"}} {{len .Findings}} · {{.Agent}} · {{money (sum .Calls)}} · {{secs .Seconds}}</div>
+        <div class="s">{{if .Scheduled}}{{t $L "scheduled"}}{{else}}{{t $L "manual"}}{{end}} · {{t $L "stat_fix"}} {{len .Findings}} · {{aname $L .Agent}} · {{money (sum .Calls)}} · {{secs .Seconds}}</div>
         {{range .Errors}}<div class="err">{{.}}</div>{{end}}
       </div>
       <a class="link" href="/?tab=sent&id={{.ID}}&lang={{$L}}">{{t $L "tab_sent"}}</a>
@@ -463,15 +463,15 @@ footer a:hover{color:var(--ink)}
   <section class="card">
     <div class="card-h"><h2>{{t $L "agent_pick"}}</h2></div>
     <select name="agent" aria-label="{{t $L "agent_pick"}}">
-      <option value="auto" {{if eq .Cfg.Agent "auto"}}selected{{end}}>{{t $L "auto"}}{{if .Agents}} ({{index .Agents 0}}){{end}}</option>
-      {{range .AllAgents}}<option value="{{.}}" {{if eq $.Cfg.Agent .}}selected{{end}}>{{.}}</option>{{end}}
+      <option value="auto" {{if eq .Cfg.Agent "auto"}}selected{{end}}>{{t $L "auto"}}{{if .Agents}} — {{aname $L (index .Agents 0)}}{{end}}</option>
+      {{range .AllAgents}}<option value="{{.}}" {{if eq $.Cfg.Agent .}}selected{{end}}>{{aname $L .}}</option>{{end}}
     </select>
     <p class="hint">{{t $L "agent_hint"}}</p>
   </section>
   <section class="card">
     <div class="card-h"><h2>{{t $L "models_effort"}}</h2></div>
     {{range .AllAgents}}<div class="agent">
-      <div class="agent-h"><b>{{.}}</b>{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
+      <div class="agent-h"><b>{{aname $L .}}</b>{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
       <div class="{{if effort .}}two{{end}}">
         <input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}" aria-label="{{.}} {{t $L "model"}}" placeholder="{{t $L "model"}}">
         {{if effort .}}<select name="effort_{{.}}" aria-label="{{.}} {{t $L "effort"}}">{{$e := index $.Cfg.Effort .}}

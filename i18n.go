@@ -121,6 +121,28 @@ var dict = map[string][2]string{ // en, ko
 	"settings_sub":     {"Everything here can also be changed by your own AI in ~/.shieldbug/config.json.", "여기 있는 건 모두 내 AI에게 시켜서 ~/.shieldbug/config.json으로 바꿀 수도 있어요."},
 }
 
+// agentNames: what people see for each agent id. The id stays in config.json.
+var agentNames = map[string][2]string{
+	"claude":     {"Claude (Claude Code)", "Claude (Claude Code)"},
+	"codex":      {"GPT (Codex)", "GPT (Codex)"},
+	"gemini":     {"Gemini (Gemini CLI)", "Gemini (Gemini CLI)"},
+	"agy":        {"Gemini (Antigravity)", "Gemini (Antigravity)"},
+	"claude-api": {"Claude (API key)", "Claude (API 키)"},
+	"openai-api": {"GPT (API key)", "GPT (API 키)"},
+	"gemini-api": {"Gemini (API key)", "Gemini (API 키)"},
+}
+
+func agentName(lang, id string) string {
+	v, ok := agentNames[id]
+	if !ok {
+		return id
+	}
+	if lang == "ko" {
+		return v[1]
+	}
+	return v[0]
+}
+
 func tr(lang, key string) string {
 	v, ok := dict[key]
 	if !ok {

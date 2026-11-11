@@ -103,6 +103,7 @@ func parseIndex() *template.Template {
 		"count":  countSev,
 		"isapi":  isAPI,
 		"tf":     trf,
+		"aname":  agentName,
 		"effort": hasEffort,
 		"maxeff": func(a string) bool { return a == "claude" || a == "claude-api" },
 	}
