@@ -172,10 +172,35 @@ func mergeFindings(local, ai []Finding) []Finding {
 	return out
 }
 
-var sevWeight = map[string]int{"critical": 40, "high": 20, "medium": 8, "low": 2}
+// Only critical and high findings move the score much; medium ones are shown
+// as "worth a look" and cost little, low ones nothing.
+var sevWeight = map[string]int{"critical": 40, "high": 20, "medium": 3, "low": 0}
+
+// isMajor: what the dashboard puts in front of the user.
+func isMajor(f Finding) bool { return f.Severity == "critical" || f.Severity == "high" }
+
+func splitFindings(fs []Finding, major bool) []Finding {
+	var out []Finding
+	for _, f := range fs {
+		if isMajor(f) == major {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
 var sevOrder = map[string]int{"critical": 0, "high": 1, "medium": 2, "low": 3}
 
 func finish(r *Run, start time.Time) *Run {
+	score(r)
+	r.Seconds = time.Since(start).Seconds()
+	_ = writeJSON(filepath.Join(runsDir(), r.ID+".json"), r)
+	return r
+}
+
+// score sets Score and Light from the findings. Stored runs are scored again
+// when loaded, so a change of weights shows up without a new check.
+func score(r *Run) {
 	sort.SliceStable(r.Findings, func(i, j int) bool { return sevOrder[r.Findings[i].Severity] < sevOrder[r.Findings[j].Severity] })
 	score := 100
 	worst := 3
@@ -197,9 +222,6 @@ func finish(r *Run, start time.Time) *Run {
 	default:
 		r.Light = "green"
 	}
-	r.Seconds = time.Since(start).Seconds()
-	_ = writeJSON(filepath.Join(runsDir(), r.ID+".json"), r)
-	return r
 }
 
 func savePayload(id, text string) {
@@ -231,6 +253,7 @@ func listRuns(n int) []Run {
 		}
 		var r Run
 		if readJSON(filepath.Join(runsDir(), name), &r) == nil {
+			score(&r)
 			out = append(out, r)
 		}
 	}

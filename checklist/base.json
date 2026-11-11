@@ -3,7 +3,7 @@
   "items": [
     {
       "id": "agent-skip-permissions",
-      "rev": 1,
+      "rev": 2,
       "status": "active",
       "category": "ai-agents",
       "severity": "high",
@@ -12,7 +12,7 @@
         "en": "AI agents run without permission prompts",
         "ko": "AI 에이전트가 허락 없이 실행되도록 설정됨"
       },
-      "check": "Look at agent settings and shell aliases/scripts for --dangerously-skip-permissions, bypassPermissions, --yolo, approval_policy=never with full access, or sandbox disabled.",
+      "check": "Look at agent settings and shell aliases/scripts for --dangerously-skip-permissions, bypassPermissions, --yolo, approval_policy=never with full access, or sandbox disabled. Only explicit bypasses count. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
       "fix": {
         "en": "Remove the bypass flag/mode. Allow specific safe tools instead of everything.",
         "ko": "우회 플래그나 모드를 빼고, 필요한 도구만 골라서 허용하세요."
@@ -21,11 +21,12 @@
         "https://snyk.io/blog/weaponizing-ai-coding-agents-for-malware-in-the-nx-malicious-package"
       ],
       "added": "2026-11-11",
-      "source": "base"
+      "source": "base",
+      "updated": "2026-11-12"
     },
     {
       "id": "agent-wildcard-allow",
-      "rev": 1,
+      "rev": 2,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
@@ -34,14 +35,15 @@
         "en": "Agent allow-list contains wildcards for shell or network",
         "ko": "에이전트 허용 목록에 셸·네트워크 와일드카드가 있음"
       },
-      "check": "Permission allow rules such as Bash(*), Bash(curl:*), WebFetch(*) or equivalent in Codex/Gemini settings.",
+      "check": "Permission allow rules such as Bash(*), Bash(curl:*), WebFetch(*) or equivalent in Codex/Gemini settings. Only report when approvals are also off entirely; allow rules the user wrote are a deliberate choice. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
       "fix": {
         "en": "Replace wildcards with exact commands you actually need.",
         "ko": "와일드카드 대신 실제로 쓰는 명령만 적으세요."
       },
       "refs": [],
       "added": "2026-11-11",
-      "source": "base"
+      "source": "base",
+      "updated": "2026-11-12"
     },
     {
       "id": "mcp-unknown-servers",
@@ -257,7 +259,7 @@
     },
     {
       "id": "prompt-injection-surface",
-      "rev": 2,
+      "rev": 3,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
@@ -266,7 +268,7 @@
         "en": "Agents can read untrusted content and act without review",
         "ko": "에이전트가 외부 글을 읽고 확인 없이 행동할 수 있음"
       },
-      "check": "Report only when an agent can BOTH read untrusted content (web pages, mail, issues, PR comments) AND run shell commands or write files without approval. If agent-skip-permissions already reports the same setting, add this risk to that finding instead of a separate one.",
+      "check": "Report only when an agent can BOTH read untrusted content (web pages, mail, issues, PR comments) AND run shell commands or write files without approval. If agent-skip-permissions already reports the same setting, add this risk to that finding instead of a separate one. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
       "fix": {
         "en": "Keep web reading and shell execution in separate, approval-gated steps.",
         "ko": "웹 읽기와 명령 실행을 나누고, 실행 전에는 승인을 받게 하세요."

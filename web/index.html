@@ -203,6 +203,12 @@ summary::after{content:"";width:7px;height:7px;border-right:2px solid currentCol
 details[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
 .ev{font:13px/1.6 ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--fill-2);border-radius:12px;padding:10px 12px;margin:8px 0 0;word-break:break-all;color:var(--sub);white-space:pre-wrap}
 
+.minor-link{display:flex;align-items:center;gap:2px;margin:10px 0 0;padding:12px 14px;border-radius:14px;background:var(--fill-2);color:var(--sub);font-size:14.5px;font-weight:600}
+.minor-link svg{width:16px;height:16px;margin-left:auto}
+.minor-link:hover{background:var(--fill)}
+details.card.minor{margin-top:0}
+details.card.minor>summary{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+
 /* key-value */
 .kv{margin:0;display:flex;flex-direction:column}
 .kv div{display:flex;justify-content:space-between;gap:16px;padding:9px 0;font-size:15px}
@@ -302,7 +308,7 @@ footer a:hover{color:var(--ink)}
     </div>
     <nav>
       <a href="/?tab=today&lang={{$L}}" class="{{if eq .Tab "today"}}on{{end}}">{{t $L "tab_today"}}</a>
-      <a href="/?tab=findings&lang={{$L}}" class="{{if eq .Tab "findings"}}on{{end}}">{{t $L "tab_findings"}}{{if and .Run .Run.Findings}}<span class="count">{{len .Run.Findings}}</span>{{end}}</a>
+      <a href="/?tab=findings&lang={{$L}}" class="{{if eq .Tab "findings"}}on{{end}}">{{t $L "tab_findings"}}{{if .Run}}{{with major .Run.Findings}}<span class="count">{{len .}}</span>{{end}}{{end}}</a>
       <a href="/?tab=checklist&lang={{$L}}" class="{{if eq .Tab "checklist"}}on{{end}}">{{t $L "tab_checklist"}}{{if .Pending}}<span class="count">{{len .Pending}}</span>{{end}}</a>
       <a href="/?tab=history&lang={{$L}}" class="{{if eq .Tab "history"}}on{{end}}">{{t $L "tab_history"}}</a>
       <a href="/?tab=sent&lang={{$L}}" class="{{if eq .Tab "sent"}}on{{end}}">{{t $L "tab_sent"}}</a>
@@ -335,7 +341,7 @@ footer a:hover{color:var(--ink)}
   </div>
   {{if or .Run.Summary .Run.SummaryKo}}<p class="summary">{{pick $L .Run.Summary .Run.SummaryKo}}</p>{{end}}
   <div class="stats">
-    <a class="stat {{if .Run.Findings}}hot{{end}}" href="/?tab=findings&lang={{$L}}"><div class="k">{{t $L "stat_fix"}}</div><div class="v">{{tf $L "unit_items" (len .Run.Findings)}}</div></a>
+    {{$nm := len (major .Run.Findings)}}<a class="stat {{if $nm}}hot{{end}}" href="/?tab=findings&lang={{$L}}"><div class="k">{{t $L "stat_fix"}}</div><div class="v">{{tf $L "unit_items" $nm}}</div></a>
     <a class="stat" href="/?tab=checklist&lang={{$L}}"><div class="k">{{t $L "stat_checks"}}</div><div class="v">{{tf $L "unit_items" (len .Checklist)}}</div></a>
     <div class="stat"><div class="k">{{t $L "stat_intel"}}</div><div class="v">{{tf $L "unit_cases" (len .Run.Intel)}}</div></div>
   </div>
@@ -363,11 +369,12 @@ footer a:hover{color:var(--ink)}
 {{range .Run.Errors}}<div class="note bad"><span class="ico high">{{template "i-alert"}}</span><span>{{.}}</span></div>{{end}}
 {{if .Run.Proposals}}<div class="note"><span class="ico blue">{{template "i-spark"}}</span><span>{{tf $L "proposals_banner" .Run.Proposals}}</span><span class="sp"></span><a class="btn sm soft" href="/?tab=checklist&lang={{$L}}">{{t $L "open_list"}}</a></div>{{end}}
 
+{{$major := major .Run.Findings}}{{$minor := minor .Run.Findings}}
 <section class="card">
-  <div class="card-h"><h2>{{t $L "todo"}}</h2><span class="sp"></span>{{if gt (len .Run.Findings) 3}}<a class="more" href="/?tab=findings&lang={{$L}}">{{t $L "all_findings"}} {{len .Run.Findings}}{{template "i-chev"}}</a>{{end}}</div>
-  {{if .Run.Findings}}
+  <div class="card-h"><h2>{{t $L "todo"}}</h2><span class="sp"></span>{{if gt (len $major) 3}}<a class="more" href="/?tab=findings&lang={{$L}}">{{t $L "all_findings"}} {{len $major}}{{template "i-chev"}}</a>{{end}}</div>
+  {{if $major}}
   <ul class="list">
-    {{range $i, $f := .Run.Findings}}{{if lt $i 3}}
+    {{range $i, $f := $major}}{{if lt $i 3}}
     <li class="row">
       <span class="ico {{$f.Severity}}">{{template "i-alert"}}</span>
       <div class="body">
@@ -379,8 +386,9 @@ footer a:hover{color:var(--ink)}
     {{end}}{{end}}
   </ul>
   {{else}}
-  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_findings"}}</div></div></li></ul>
+  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_major"}}</div></div></li></ul>
   {{end}}
+  {{if $minor}}<a class="minor-link" href="/?tab=findings&lang={{$L}}#minor">{{tf $L "minor_more" (len $minor)}}{{template "i-chev"}}</a>{{end}}
 </section>
 
 <section class="card">
@@ -408,11 +416,12 @@ footer a:hover{color:var(--ink)}
 {{end}}
 
 {{if eq .Tab "findings"}}
-<div class="page-h"><h1>{{t $L "tab_findings"}}</h1>{{if .Run}}<p>{{tf $L "findings_sub" (len .Run.Findings) (fmtTime .Run.Started)}}</p>{{end}}</div>
+{{$major := major nil}}{{$minor := minor nil}}{{if .Run}}{{$major = major .Run.Findings}}{{$minor = minor .Run.Findings}}{{end}}
+<div class="page-h"><h1>{{t $L "tab_findings"}}</h1>{{if .Run}}<p>{{tf $L "findings_sub" (len $major) (fmtTime .Run.Started)}}</p>{{end}}</div>
 <section class="card">
-{{if and .Run .Run.Findings}}
+{{if $major}}
   <ul class="list">
-    {{range .Run.Findings}}
+    {{range $major}}
     <li class="row">
       <span class="ico {{.Severity}}">{{template "i-alert"}}</span>
       <div class="body">
@@ -425,9 +434,28 @@ footer a:hover{color:var(--ink)}
     {{end}}
   </ul>
 {{else}}
-  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_findings"}}</div></div></li></ul>
+  <ul class="list"><li class="row"><span class="ico ok">{{template "i-check"}}</span><div class="body"><div class="t">{{t $L "no_major"}}</div></div></li></ul>
 {{end}}
 </section>
+{{if $minor}}
+<details class="card minor" id="minor">
+  <summary>{{tf $L "minor_title" (len $minor)}}</summary>
+  <p class="hint" style="margin:8px 0 4px">{{t $L "minor_hint"}}</p>
+  <ul class="list">
+    {{range $minor}}
+    <li class="row">
+      <span class="ico {{.Severity}}">{{template "i-alert"}}</span>
+      <div class="body">
+        <div class="t">{{pick $L .Title .TitleKo}}</div>
+        <div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{t $L (print "source_" .Source)}}{{if .ChecklistID}} · {{.ChecklistID}}{{end}}</div>
+        {{if .Fix}}<div class="fix"><p><b>{{t $L "fix"}}</b>{{pick $L .Fix .FixKo}}</p><button type="button" class="copy" data-copy="{{pick $L .Fix .FixKo}}">{{t $L "copy"}}</button></div>{{end}}
+        {{if .Evidence}}<details><summary>{{t $L "show_evidence"}}</summary><div class="ev">{{.Evidence}}</div></details>{{end}}
+      </div>
+    </li>
+    {{end}}
+  </ul>
+</details>
+{{end}}
 {{end}}
 
 {{if eq .Tab "checklist"}}

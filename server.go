@@ -129,6 +129,8 @@ func parseIndex() *template.Template {
 		"tf":      trf,
 		"aname":   agentName,
 		"pct":     pct,
+		"major":   func(fs []Finding) []Finding { return splitFindings(fs, true) },
+		"minor":   func(fs []Finding) []Finding { return splitFindings(fs, false) },
 		"plan5h":  func(r *Run) float64 { v, _, _ := planShare(*r); return v },
 		"planwk":  func(r *Run) float64 { _, v, _ := planShare(*r); return v },
 		"hasplan": func(r *Run) bool { _, _, ok := planShare(*r); return ok },

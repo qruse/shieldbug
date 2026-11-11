@@ -282,6 +282,12 @@ RULES
 - Every finding must quote, in "evidence", the exact fact text it is based on. If you cannot point to a fact, leave the finding out.
 - Be calm and concrete. Do not invent problems. Things that look fine are not mentioned.
 
+BAR FOR A FINDING (the user wants only what really matters)
+- Report something only if an attacker could realistically use it against this machine: a secret readable in plain text, an agent whose approvals are switched off entirely, an installed package named in a real advisory, a service open to the network without authentication, OS protection turned off.
+- Vendor-supported convenience modes are the user's choice, not findings: Claude Code "auto" permission mode (a built-in classifier reviews each action), Codex approvals with its sandbox on, allow rules the user wrote, WebFetch or WebSearch being allowed. Only explicit bypasses count: bypassPermissions, --dangerously-skip-permissions, --yolo, or danger-full-access with approval "never".
+- "Could be tighter" hardening advice is not a finding. When in doubt, leave it out. Report at most 5 findings.
+- severity "high" = act today; "medium" = a real weakness that needs one more condition to be exploited. Do not report anything you would rate "low".
+
 TASK
 1. Check each checklist item against the facts. Report only items that actually apply.
 2. Do not repeat local findings unless you add something new (a clearer fix, a matching intel item).
