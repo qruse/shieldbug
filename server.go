@@ -186,7 +186,8 @@ func parseIndex() *template.Template {
 		"planwk":  func(r *Run) float64 { _, v, _ := planShare(*r); return v },
 		"hasplan": func(r *Run) bool { _, _, ok := planShare(*r); return ok },
 		"effort":  hasEffort,
-		"maxeff":  func(a string) bool { return a == "claude" || a == "claude-api" },
+		"models":  modelChoices,
+		"efforts": effortChoices,
 	}
 	return template.Must(template.New("index").Funcs(funcs).Parse(indexHTML))
 }
@@ -460,7 +461,7 @@ func (s *server) handleSettings(w http.ResponseWriter, r *http.Request) {
 		if v := strings.TrimSpace(r.FormValue("model_" + a)); v != "" && len(v) < 80 && !strings.ContainsAny(v, " \"'`;&|<>?#%") {
 			c.Models[a] = v
 		}
-		if v := r.FormValue("effort_" + a); v == "" || v == "low" || v == "medium" || v == "high" || v == "xhigh" || v == "max" {
+		if v := r.FormValue("effort_" + a); v == "" || slices.Contains(effortChoices(a), v) {
 			if hasEffort(a) {
 				c.Effort[a] = v
 			}

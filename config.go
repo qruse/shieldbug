@@ -249,6 +249,45 @@ func agentBinary(name string) string {
 }
 
 // allAgents: subscription CLIs, then API-key adapters.
+// agentModels: the choices offered in the Settings dropdown, checked on
+// 2026-11-12 (Codex: app-server model/list; Antigravity: `agy models`, where
+// the reasoning level is part of the model name). Any other id still works when
+// written into config.json; the dropdown then shows it too.
+var agentModels = map[string][]string{
+	"claude":     {"claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-5-5", "claude-fable-5-2"},
+	"claude-api": {"claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-5-5", "claude-fable-5-2"},
+	"codex":      {"gpt-6.1-terra", "gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.6-luna"},
+	"openai-api": {"gpt-6.1-terra", "gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.6-luna"},
+	"agy": {"gemini-3.8-flash-low", "gemini-3.8-flash-medium", "gemini-3.8-flash-high",
+		"gemini-4-argon-low", "gemini-4-argon-medium", "gemini-4-argon-high",
+		"claude-sonnet-5-5-low", "claude-sonnet-5-5-medium", "claude-sonnet-5-5-high",
+		"claude-opus-5-5-low", "claude-opus-5-5-medium", "claude-opus-5-5-high", "gpt-oss-120b-medium"},
+	"gemini-api": {"gemini-3.8-flash", "gemini-4-argon"},
+}
+
+// modelChoices: the dropdown list for one AI, with the current value kept even
+// when it is not in the list.
+func modelChoices(agent, current string) []string {
+	list := agentModels[agent]
+	if current != "" && !slices.Contains(list, current) {
+		list = append([]string{current}, list...)
+	}
+	return list
+}
+
+// effortChoices: reasoning levels each adapter accepts.
+func effortChoices(agent string) []string {
+	switch agent {
+	case "claude", "claude-api":
+		return []string{"low", "medium", "high", "xhigh", "max"}
+	case "codex":
+		return []string{"low", "medium", "high", "xhigh", "max", "ultra"}
+	case "openai-api", "gemini-api":
+		return []string{"low", "medium", "high"}
+	}
+	return nil
+}
+
 // Gemini CLI was dropped on 2026-11-12: Antigravity covers Gemini models.
 var allAgents = []string{"claude", "codex", "agy", "claude-api", "openai-api", "gemini-api"}
 

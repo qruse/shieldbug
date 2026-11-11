@@ -264,6 +264,8 @@ input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;backgro
 .agent+.agent{border-top:1px solid var(--fill)}
 .agent-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .agent-h b{font-size:16.5px;font-weight:700}
+.agent-h{flex-wrap:wrap;row-gap:4px}
+.agent-h .pill,.agent-h .lock,.first,.pick b{white-space:nowrap}
 .pick{display:flex;align-items:center;gap:12px;cursor:pointer}
 .pick input{width:22px;height:22px;margin:0;accent-color:var(--brand);flex:none;cursor:pointer}
 .pick input:disabled{cursor:default}
@@ -293,6 +295,8 @@ footer a:hover{color:var(--ink)}
   .steps li{font-size:12.5px}
   .steps li:not(:last-child)::after{left:calc(50% + 24px);right:calc(-50% + 24px)}
   .agent .two{grid-template-columns:1fr}
+  .agent-h .sp{display:none}
+  .agent-h .lock{flex-basis:100%;padding-left:34px;font-size:13px}
   .two{grid-template-columns:1fr}
 }
 </style>
@@ -552,13 +556,12 @@ footer a:hover{color:var(--ink)}
     {{range .AllAgents}}{{$on := has $.Chosen .}}{{$ok := has $.Agents .}}<div class="agent {{if not $on}}off{{end}}">
       <div class="agent-h"><label class="pick"><input type="checkbox" name="use" value="{{.}}" {{if $on}}checked{{end}} {{if and (not $ok) (not $on)}}disabled{{end}}><b>{{aname $L .}}</b></label>{{if and $on (eq . (index $.Chosen 0))}}<span class="first">{{t $L "used_first"}}</span>{{end}}{{if has $.Agents .}}<span class="pill ok" style="margin:0">{{if isapi .}}{{t $L "key_set"}}{{else}}{{t $L "detected"}}{{end}}</span>{{else}}<span class="pill" style="margin:0">{{if isapi .}}{{t $L "no_key"}}{{else}}{{t $L "not_found"}}{{end}}</span>{{end}}<span class="sp"></span><span class="lock">{{t $L (print "lock_" (index $.Lockdown .))}}</span></div>
       <div class="fields {{if effort .}}two{{end}}">
-        <input type="text" name="model_{{.}}" value="{{index $.Cfg.Models .}}" aria-label="{{.}} {{t $L "model"}}" placeholder="{{t $L "model"}}">
+        {{$m := index $.Cfg.Models .}}<select name="model_{{.}}" aria-label="{{.}} {{t $L "model"}}">
+          {{range models . $m}}<option value="{{.}}" {{if eq . $m}}selected{{end}}>{{.}}</option>{{end}}
+        </select>
         {{if effort .}}<select name="effort_{{.}}" aria-label="{{.}} {{t $L "effort"}}">{{$e := index $.Cfg.Effort .}}
           <option value="" {{if eq $e ""}}selected{{end}}>{{t $L "effort"}} —</option>
-          <option value="low" {{if eq $e "low"}}selected{{end}}>low</option>
-          <option value="medium" {{if eq $e "medium"}}selected{{end}}>medium</option>
-          <option value="high" {{if eq $e "high"}}selected{{end}}>high</option>
-          {{if maxeff .}}<option value="xhigh" {{if eq $e "xhigh"}}selected{{end}}>xhigh</option><option value="max" {{if eq $e "max"}}selected{{end}}>max</option>{{end}}
+          {{range efforts .}}<option value="{{.}}" {{if eq . $e}}selected{{end}}>{{.}}</option>{{end}}
         </select>{{end}}
       </div>
     </div>{{end}}
