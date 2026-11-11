@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -56,6 +57,31 @@ func readSmall(path string, limit int) (string, bool) {
 	buf := make([]byte, limit)
 	n, _ := f.Read(buf)
 	return string(buf[:n]), true
+}
+
+// readTail reads up to the last limit bytes of a file.
+func readTail(path string, limit int64) (string, bool) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", false
+	}
+	defer f.Close()
+	if st, err := f.Stat(); err == nil && st.Size() > limit {
+		_, _ = f.Seek(-limit, io.SeekEnd)
+	}
+	b, err := io.ReadAll(io.LimitReader(f, limit))
+	return string(b), err == nil
+}
+
+func historyFiles() []string {
+	h := homeDir()
+	p := []string{filepath.Join(h, ".bash_history"), filepath.Join(h, ".zsh_history"),
+		filepath.Join(h, ".local", "share", "fish", "fish_history"),
+		filepath.Join(h, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")}
+	if a := os.Getenv("APPDATA"); a != "" {
+		p = append(p, filepath.Join(a, "Microsoft", "Windows", "PowerShell", "PSReadLine", "ConsoleHost_history.txt"))
+	}
+	return p
 }
 
 func clip(s string, n int) string {
@@ -223,7 +249,7 @@ func scanAgentText(path, text string, out *[]Finding) {
 	if strings.Contains(strings.ToLower(text), "hooks") {
 		for _, line := range strings.Split(text, "\n") {
 			if strings.Contains(line, "command") && reNetHook.MatchString(line) {
-				*out = append(*out, Finding{ChecklistID: "agent-hooks-network", Severity: "high", Source: "local",
+				*out = append(*out, Finding{ChecklistID: "agent-hooks-network", Severity: "medium", Source: "local",
 					Title: "An agent hook calls the network or pipes into a shell", TitleKo: "에이전트 훅이 네트워크를 호출하거나 셸로 넘김",
 					Evidence: p + ": " + redact(strings.TrimSpace(line)), Fix: "Check that you wrote this hook; delete it if not.", FixKo: "직접 만든 훅인지 확인하고 아니면 지우세요."})
 				break
@@ -298,9 +324,26 @@ func collectSecrets() (string, []Finding) {
 	}
 	if len(plain) > 0 {
 		lines = append(lines, "SSH private keys without passphrase: "+strings.Join(plain, ", "))
-		out = append(out, Finding{ChecklistID: "ssh-key-no-passphrase", Severity: "medium", Source: "local",
+		out = append(out, Finding{ChecklistID: "ssh-key-no-passphrase", Severity: "low", Source: "local",
 			Title: "SSH private key without a passphrase", TitleKo: "비밀번호 없는 SSH 개인 키", Evidence: "~/.ssh/" + strings.Join(plain, ", ~/.ssh/"),
 			Fix: "ssh-keygen -p -f ~/.ssh/<key>", FixKo: "ssh-keygen -p -f ~/.ssh/<키> 로 비밀번호를 거세요."})
+	}
+	// Shell history: keys pasted into a command line stay on disk. Only the file
+	// name and whether something secret-like is there are reported.
+	var hist []string
+	for _, p := range historyFiles() {
+		text, ok := readTail(p, 1<<20)
+		if ok && (patternHits(text) > 0) {
+			hist = append(hist, hidePaths(p))
+		}
+	}
+	if len(hist) > 0 {
+		lines = append(lines, "shell history with secret-like values: "+strings.Join(hist, ", "))
+		out = append(out, Finding{ChecklistID: "shell-history-secrets", Severity: "medium", Source: "local",
+			Title: "Shell history contains what looks like a key or token", TitleKo: "셸 기록에 키·토큰으로 보이는 값이 남아 있음",
+			Evidence: strings.Join(hist, ", "),
+			Fix:      "Delete those lines from the history file and rotate the key. Next time set keys in an environment variable or keychain, not on the command line.",
+			FixKo:    "기록 파일에서 그 줄을 지우고 키를 새로 발급하세요. 앞으로 키는 명령줄 대신 환경변수나 키체인에 넣으세요."})
 	}
 	// Environment variable NAMES that look like secrets (values never read out).
 	var names []string
@@ -472,7 +515,9 @@ func collectSystem() (string, []Finding) {
 			`$d=Get-MpComputerStatus;` +
 			`$f=Get-NetFirewallProfile|ForEach-Object{"$($_.Name)=$($_.Enabled)"};` +
 			`$h=Get-HotFix|Where-Object InstalledOn|Sort-Object InstalledOn -Descending|Select-Object -First 1;` +
-			`[pscustomobject]@{defender_realtime=$d.RealTimeProtectionEnabled;defender_signature_age_days=$d.AntivirusSignatureAge;` +
+			// BitLocker state of the system drive, readable without admin rights: 1 on, 2 off, 3 encrypting, 4 decrypting, 5 suspended, 6 locked.
+			`$b=(New-Object -ComObject Shell.Application).NameSpace($env:SystemDrive+'\').Self.ExtendedProperty('System.Volume.BitLockerProtection');` +
+			`[pscustomobject]@{defender_realtime=$d.RealTimeProtectionEnabled;defender_signature_age_days=$d.AntivirusSignatureAge;bitlocker=$b;` +
 			`firewall=($f -join ',');last_update=$(if($h){$h.InstalledOn.ToString('yyyy-MM-dd')}else{''});` +
 			`os=(Get-CimInstance Win32_OperatingSystem).Caption}|ConvertTo-Json -Compress`
 		raw, err := runCmd(60*time.Second, "powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
@@ -482,6 +527,7 @@ func collectSystem() (string, []Finding) {
 		var s struct {
 			Realtime   *bool  `json:"defender_realtime"`
 			SigAge     *int   `json:"defender_signature_age_days"`
+			BitLocker  *int   `json:"bitlocker"`
 			Firewall   string `json:"firewall"`
 			LastUpdate string `json:"last_update"`
 			OS         string `json:"os"`
@@ -499,6 +545,13 @@ func collectSystem() (string, []Finding) {
 			out = append(out, Finding{ChecklistID: "os-protection-off", Severity: "high", Source: "local",
 				Title: "A Windows firewall profile is off", TitleKo: "Windows 방화벽 프로필 중 꺼진 것이 있음",
 				Evidence: s.Firewall, Fix: "Turn on all firewall profiles.", FixKo: "모든 방화벽 프로필을 켜세요."})
+		}
+		if s.BitLocker != nil && (*s.BitLocker == 2 || *s.BitLocker == 4) {
+			out = append(out, Finding{ChecklistID: "disk-encryption-off", Severity: "medium", Source: "local",
+				Title: "The system drive is not encrypted (BitLocker off)", TitleKo: "시스템 드라이브가 암호화돼 있지 않음 (BitLocker 꺼짐)",
+				Evidence: fmt.Sprintf("BitLockerProtection=%d", *s.BitLocker),
+				Fix:      "Turn on BitLocker or Device encryption in Settings > Privacy & security. On Windows Home, Device encryption is the option if your PC supports it.",
+				FixKo:    "설정 > 개인 정보 및 보안에서 BitLocker나 장치 암호화를 켜세요. Windows Home은 지원되는 PC에서 장치 암호화를 쓸 수 있어요."})
 		}
 		if s.LastUpdate != "" {
 			if t, err := time.Parse("2006-01-02", s.LastUpdate); err == nil && time.Since(t) > 45*24*time.Hour {
@@ -521,16 +574,53 @@ func collectSystem() (string, []Finding) {
 				Fix: "System Settings > Network > Firewall.", FixKo: "시스템 설정 > 네트워크 > 방화벽에서 켜세요."})
 		}
 		if strings.Contains(fv, "Off") {
-			out = append(out, Finding{ChecklistID: "os-protection-off", Severity: "high", Source: "local",
+			out = append(out, Finding{ChecklistID: "disk-encryption-off", Severity: "medium", Source: "local",
 				Title: "FileVault disk encryption is off", TitleKo: "FileVault 디스크 암호화가 꺼져 있음", Evidence: strings.TrimSpace(fv),
 				Fix: "System Settings > Privacy & Security > FileVault.", FixKo: "시스템 설정 > 개인정보 보호 및 보안 > FileVault에서 켜세요."})
 		}
 		return b.String(), out
 	default:
 		var b strings.Builder
-		ufw, _ := runCmd(15*time.Second, "ufw", "status")
 		osr, _ := readSmall("/etc/os-release", 4000)
-		fmt.Fprintf(&b, "ufw: %s\n%s", strings.TrimSpace(ufw), osr)
+		pv, _ := readSmall("/proc/version", 1000)
+		if strings.Contains(strings.ToLower(pv), "microsoft") {
+			// WSL: the Windows side owns the firewall and disk encryption.
+			fmt.Fprintf(&b, "WSL (firewall and disk encryption are handled by Windows)\n%s", osr)
+			return b.String(), out
+		}
+		// Firewall: any of the usual services running (no root needed to ask).
+		fw, _ := runCmd(15*time.Second, "systemctl", "is-active", "ufw", "firewalld", "nftables")
+		states := strings.Fields(fw)
+		known, active := len(states) == 3, false
+		for _, st := range states {
+			switch st {
+			case "active":
+				active = true
+			case "inactive", "failed", "unknown", "activating", "deactivating":
+			default:
+				known = false // not a systemd answer (no systemd, container, …)
+			}
+		}
+		fmt.Fprintf(&b, "firewall services (ufw firewalld nftables): %s\n", strings.Join(states, " "))
+		if known && !active {
+			out = append(out, Finding{ChecklistID: "os-protection-off", Severity: "medium", Source: "local",
+				Title: "No firewall service is running", TitleKo: "실행 중인 방화벽 서비스가 없음",
+				Evidence: "ufw, firewalld, nftables: not active",
+				Fix:      "Enable one, for example `sudo ufw enable` on Ubuntu or `sudo systemctl enable --now firewalld` on Fedora.",
+				FixKo:    "하나를 켜세요. 우분투는 `sudo ufw enable`, 페도라는 `sudo systemctl enable --now firewalld`."})
+		}
+		// Disk encryption: any dm-crypt device in the block device tree.
+		if blk, err := runCmd(15*time.Second, "lsblk", "-rno", "TYPE"); err == nil {
+			enc := strings.Contains(blk, "crypt")
+			fmt.Fprintf(&b, "disk encryption (dm-crypt): %v\n", enc)
+			if !enc {
+				out = append(out, Finding{ChecklistID: "disk-encryption-off", Severity: "medium", Source: "local",
+					Title: "No encrypted disk found", TitleKo: "암호화된 디스크가 없음", Evidence: "lsblk: no crypt device",
+					Fix:   "Encryption is easiest to set up when installing (LUKS). At least keep keys and tokens out of plain files.",
+					FixKo: "암호화(LUKS)는 설치할 때 켜는 게 가장 쉬워요. 그 전까지는 키·토큰을 평문 파일에 두지 마세요."})
+			}
+		}
+		b.WriteString(osr)
 		return b.String(), out
 	}
 }

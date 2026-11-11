@@ -110,6 +110,7 @@ var dict = map[string][2]string{ // en, ko
 	"plan_note":        {"Share of a $20 plan (Claude Pro, ChatGPT Plus) one check uses, estimated from measured usage.", "한 번 점검이 20달러 구독(Claude Pro, ChatGPT Plus) 한도에서 차지하는 몫이에요. 실측한 사용량으로 추정했어요."},
 	"pct_about":        {"about %s", "약 %s"},
 	"pct_tiny":         {"under 0.1%", "0.1% 미만"},
+	"reload":           {"Reload (shows changes made to config.json or the checklist)", "새로고침 (config.json이나 점검 목록을 바꾼 내용이 반영돼요)"},
 	"theme_toggle":     {"Switch light or dark mode", "라이트·다크 모드 바꾸기"},
 	"steps_title":      {"How your AI checks", "AI가 이렇게 점검해요"},
 	"steps_done":       {"All 4 steps done", "4단계 모두 마쳤어요"},

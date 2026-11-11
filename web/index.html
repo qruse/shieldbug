@@ -290,6 +290,7 @@ footer a:hover{color:var(--ink)}
       <a class="brand" href="/?tab=today&lang={{$L}}">{{template "bug" "green"}}Shieldbug</a>
       <span class="sp"></span>
       <div class="lang" role="group" aria-label="Language"><a href="/?tab={{.Tab}}&lang=ko" class="{{if eq $L "ko"}}on{{end}}">한국어</a><a href="/?tab={{.Tab}}&lang=en" class="{{if eq $L "en"}}on{{end}}">EN</a></div>
+      <button type="button" class="theme" id="reload" aria-label="{{t $L "reload"}}" title="{{t $L "reload"}}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.8 4.5v4.2h-4.2"/></svg></button>
       <button type="button" class="theme" id="theme" aria-label="{{t $L "theme_toggle"}}" title="{{t $L "theme_toggle"}}"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg></button>
     </div>
     <nav>
@@ -558,6 +559,8 @@ footer a:hover{color:var(--ink)}
     if (!b) return;
     navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function(){ var t=b.textContent; b.textContent=copied; setTimeout(function(){b.textContent=t;},1200); });
   });
+  var rb = document.getElementById('reload');
+  if (rb) rb.addEventListener('click', function(){ location.reload(); });
   var tb = document.getElementById('theme');
   if (tb) tb.addEventListener('click', function(){
     var root = document.documentElement, cur = root.getAttribute('data-theme');

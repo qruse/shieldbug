@@ -49,7 +49,27 @@ type server struct {
 	running  atomic.Bool
 	lastErr  atomic.Value
 	mu       sync.Mutex
+	cfgMod   time.Time // config.json modification time when cfg was loaded
 	tmpl     *template.Template
+}
+
+// reloadIfChanged picks up edits made to config.json outside the dashboard
+// (by hand or by the user's own AI), so a page refresh shows them.
+func (s *server) reloadIfChanged() {
+	st, err := os.Stat(configPath())
+	if err != nil {
+		return
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if st.ModTime().Equal(s.cfgMod) {
+		return
+	}
+	if c, err := loadConfig(); err == nil {
+		s.cfg = c
+		loadExtraPatterns(c)
+	}
+	s.cfgMod = st.ModTime()
 }
 
 func newToken() string {
@@ -64,6 +84,9 @@ func serve(c Config, openWindow bool, stay bool) error {
 	s.lastSeen.Store(time.Now().Unix())
 	s.lastErr.Store("")
 	s.tmpl = parseIndex()
+	if st, err := os.Stat(configPath()); err == nil {
+		s.cfgMod = st.ModTime()
+	}
 	return serveListen(s, c, openWindow, stay)
 }
 
@@ -243,6 +266,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	s.reloadIfChanged()
 	s.mu.Lock()
 	cfg := s.cfg
 	s.mu.Unlock()
@@ -300,6 +324,7 @@ func (s *server) handleStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) handleRun(w http.ResponseWriter, r *http.Request) {
+	s.reloadIfChanged()
 	if s.running.CompareAndSwap(false, true) {
 		s.lastErr.Store("")
 		go func() {

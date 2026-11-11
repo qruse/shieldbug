@@ -24,7 +24,8 @@ Usage:
   shieldbug collect         print the redacted local facts (no AI)
   shieldbug payload [id]    print exactly what was sent to the model
   shieldbug schedule install|remove|status
-  shieldbug shortcut        add desktop / start-menu shortcuts
+  shieldbug shortcut        add the desktop icon and the search entry again
+                            (done on the first run; run again after moving this file)
   shieldbug uninstall       remove schedule, shortcuts and ~/.shieldbug
   shieldbug version
 `
@@ -36,11 +37,21 @@ func main() {
 	if len(args) > 0 {
 		cmd = args[0]
 	}
+	_, statErr := os.Stat(configPath())
+	firstRun := os.IsNotExist(statErr)
 	c, err := loadConfig()
 	if err != nil {
 		fail("config: %v (fix or delete %s)", err, configPath())
 	}
 	loadExtraPatterns(c)
+	// First run: write the config and add the desktop icon and search entry once.
+	if firstRun && (cmd == "open" || cmd == "dashboard" || cmd == "init") {
+		if err := saveConfig(c); err == nil {
+			if err := createShortcuts(); err != nil {
+				fmt.Fprintln(os.Stderr, "shieldbug:", err)
+			}
+		}
+	}
 	switch cmd {
 	case "open", "dashboard":
 		prune(c)

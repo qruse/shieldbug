@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -169,43 +168,4 @@ func scheduleStatus() string {
 		}
 	}
 	return ""
-}
-
-// createShortcuts puts "Shieldbug" on the desktop and in the Start menu (Windows)
-// or a .desktop entry (Linux). macOS users open it from Terminal or Spotlight via the alias.
-func createShortcuts() error {
-	exe := selfPath()
-	switch runtime.GOOS {
-	case "windows":
-		script := `$s=New-Object -ComObject WScript.Shell;` +
-			`foreach($d in @([Environment]::GetFolderPath('Desktop'),(Join-Path ([Environment]::GetFolderPath('Programs')) '')) ){` +
-			`$l=$s.CreateShortcut((Join-Path $d 'Shieldbug.lnk'));$l.TargetPath=$env:SB_EXE;$l.Arguments='open';` +
-			`$l.WorkingDirectory=(Split-Path $env:SB_EXE);$l.Description='Shieldbug security check';$l.Save()}`
-		cmd := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
-		cmd.Env = append(os.Environ(), "SB_EXE="+exe)
-		hideWindow(cmd)
-		if out, err := cmd.CombinedOutput(); err != nil {
-			return fmt.Errorf("shortcut: %s", strings.TrimSpace(string(out)))
-		}
-		return nil
-	case "linux":
-		dir := filepath.Join(homeDir(), ".local", "share", "applications")
-		_ = os.MkdirAll(dir, 0o755)
-		entry := fmt.Sprintf("[Desktop Entry]\nType=Application\nName=Shieldbug\nComment=Daily AI security check\nExec=%s open\nTerminal=false\nCategories=Utility;Security;\n", exe)
-		return os.WriteFile(filepath.Join(dir, "shieldbug.desktop"), []byte(entry), 0o644)
-	default:
-		return errors.New("on macOS, run `shieldbug open` or add it to the Dock from Finder")
-	}
-}
-
-func removeShortcuts() {
-	switch runtime.GOOS {
-	case "windows":
-		script := `foreach($d in @([Environment]::GetFolderPath('Desktop'),[Environment]::GetFolderPath('Programs'))){Remove-Item (Join-Path $d 'Shieldbug.lnk') -ErrorAction SilentlyContinue}`
-		cmd := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script)
-		hideWindow(cmd)
-		_ = cmd.Run()
-	case "linux":
-		_ = os.Remove(filepath.Join(homeDir(), ".local", "share", "applications", "shieldbug.desktop"))
-	}
 }
