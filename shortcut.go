@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -19,8 +20,16 @@ import (
 //go:embed assets/icon-256.png
 var iconPNG []byte
 
+// tempBuild: started with `go run`, so this program file is deleted when it exits.
+func tempBuild(exe string) bool {
+	return strings.Contains(filepath.ToSlash(exe), "/go-build")
+}
+
 func createShortcuts() error {
 	exe := selfPath()
+	if tempBuild(exe) {
+		return errors.New("started with `go run`: build or install first (go install github.com/qruse/shieldbug@latest), then run shieldbug shortcut")
+	}
 	home := homeDir()
 	switch runtime.GOOS {
 	case "windows":

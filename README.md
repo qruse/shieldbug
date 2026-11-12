@@ -34,6 +34,8 @@ shieldbug check       # runs one check now
 shieldbug             # opens the dashboard
 ```
 
+The first `shieldbug` adds a desktop icon and a search entry (Start menu, Spotlight, app list). From a clone, build first: `go build -o shieldbug.exe .` (Windows; `-ldflags "-H=windowsgui"` hides the console window) or `go build -o shieldbug .`. `go run .` works for a quick look, but it adds no icon or schedule because its program file is temporary.
+
 Other commands: `shieldbug help`. Data lives in `~/.shieldbug/`. `shieldbug uninstall` removes the schedule, shortcuts and all data.
 
 **Cost.** One daily check with Claude Sonnet 5.5 at low effort used about 55 seconds and about $0.11 of usage in our test, counted against your own subscription or key.

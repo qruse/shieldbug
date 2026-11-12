@@ -46,7 +46,7 @@ func main() {
 	loadExtraPatterns(c)
 	// First run: write the config and add the desktop icon and search entry once.
 	if firstRun && (cmd == "open" || cmd == "dashboard" || cmd == "init") {
-		if err := saveConfig(c); err == nil {
+		if err := saveConfig(c); err == nil && !tempBuild(selfPath()) {
 			if err := createShortcuts(); err != nil {
 				fmt.Fprintln(os.Stderr, "shieldbug:", err)
 			}

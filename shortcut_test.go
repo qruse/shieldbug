@@ -8,6 +8,15 @@ import (
 	"testing"
 )
 
+func TestTempBuild(t *testing.T) {
+	if !tempBuild(`C:\Users\x\AppData\Local\Temp\go-build123\b001\exe\shieldbug.exe`) || !tempBuild("/tmp/go-build99/b001/exe/shieldbug") {
+		t.Error("go run builds must be detected")
+	}
+	if tempBuild(`C:\Users\x\go\bin\shieldbug.exe`) {
+		t.Error("installed binary is not temporary")
+	}
+}
+
 func TestMacApp(t *testing.T) {
 	home := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(home, "Desktop"), 0o755); err != nil {

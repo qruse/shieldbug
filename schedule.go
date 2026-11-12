@@ -29,6 +29,9 @@ func selfPath() string {
 
 func scheduleInstall(c Config) error {
 	exe := selfPath()
+	if tempBuild(exe) {
+		return fmt.Errorf("started with `go run`: build or install first (go install github.com/qruse/shieldbug@latest), then turn on the schedule")
+	}
 	hm := c.Schedule.DailyAt
 	if _, err := time.Parse("15:04", hm); err != nil {
 		return fmt.Errorf("bad time %q", hm)
