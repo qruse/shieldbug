@@ -91,6 +91,10 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 		}
 	}
 	r.Findings = append(r.Findings, shown...)
+	if len(items) == 0 {
+		r.Errors = append(r.Errors, "every check is turned off; nothing was sent to the AI")
+		return finish(r, start), nil
+	}
 
 	agents, err := runAgents(c)
 	if err != nil {

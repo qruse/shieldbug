@@ -5,16 +5,8 @@ import (
 	"testing"
 )
 
-func ids(items []ChecklistItem) []string {
-	var out []string
-	for _, it := range items {
-		out = append(out, it.ID)
-	}
-	return out
-}
-
-// Five core checks always run and cannot be disabled or removed; checks the
-// user adds (their own or approved AI proposals) run next to them.
+// Five core checks run unless the user turns them off (they are never
+// deleted); checks the user adds run next to them.
 func TestCoreChecks(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
@@ -31,9 +23,13 @@ func TestCoreChecks(t *testing.T) {
 	c := defaultConfig()
 	c.Checks.DisabledIDs = []string{"risky-agent-combo"}
 	act := ids(activeChecklist(c))
-	if len(act) != 5 || !slices.Contains(act, "risky-agent-combo") {
-		t.Fatalf("core must stay on: %v", act)
+	if len(act) != 4 || slices.Contains(act, "risky-agent-combo") {
+		t.Fatalf("a core check turned off must be skipped: %v", act)
 	}
+	if len(loadBase()) != 5 {
+		t.Fatal("turning off must not delete the core check")
+	}
+	c.Checks.DisabledIDs = nil
 	if removeAdded("risky-agent-combo") {
 		t.Fatal("core check removed")
 	}

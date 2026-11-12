@@ -429,10 +429,26 @@ func (s *server) handleRun(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?tab=today", http.StatusSeeOther)
 }
 
-// handleChecklist removes a check the user added. Core checks cannot be removed.
+// handleChecklist turns a core check off or on (kept in config.json), or
+// removes a check the user added. Core checks are never deleted, only skipped.
 func (s *server) handleChecklist(w http.ResponseWriter, r *http.Request) {
-	if r.FormValue("action") == "remove" {
-		removeAdded(r.FormValue("id"))
+	id := r.FormValue("id")
+	switch r.FormValue("action") {
+	case "remove":
+		removeAdded(id)
+	case "off", "on":
+		if !slices.Contains(ids(loadBase()), id) {
+			break
+		}
+		s.mu.Lock()
+		c := s.cfg
+		c.Checks.DisabledIDs = slices.DeleteFunc(slices.Clone(c.Checks.DisabledIDs), func(x string) bool { return x == id })
+		if r.FormValue("action") == "off" {
+			c.Checks.DisabledIDs = append(c.Checks.DisabledIDs, id)
+		}
+		_ = saveConfig(c)
+		s.cfg = c
+		s.mu.Unlock()
 	}
 	http.Redirect(w, r, "/?tab=checklist", http.StatusSeeOther)
 }

@@ -109,5 +109,5 @@
       "source": "base"
     }
   ],
-  "note": "Five core checks that need an AI's judgement, not a pattern match. They cannot be turned off. Add your own in ~/.shieldbug/checklist/local.json, or approve the checks your AI proposes."
+  "note": "Five core checks that need an AI's judgement, not a pattern match. Each can be turned off in the Checklist tab. Add your own in ~/.shieldbug/checklist/local.json, or approve the checks your AI proposes."
 }

@@ -176,6 +176,8 @@ button.sm,.btn.sm{padding:9px 14px;font-size:14.5px;border-radius:12px}
 .list{list-style:none;margin:0 -8px;padding:0}
 .row{display:flex;gap:14px;align-items:flex-start;padding:14px 8px;border-radius:16px}
 .row+.row{margin-top:2px}
+.row.off .t{color:var(--muted)}
+.off-tag{font-weight:700;color:var(--muted)}
 a.row:hover{background:var(--fill-2)}
 .ico{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--sub)}
 .ico svg{width:22px;height:22px}
@@ -490,7 +492,8 @@ footer a:hover{color:var(--ink)}
   <div class="card-h"><h2>{{tf $L "core_title" (len .Core)}}</h2></div>
   <p class="empty" style="margin:-6px 0 6px;font-size:15px">{{t $L "core_sub"}}</p>
   <ul class="list">
-    {{range .Core}}<li class="row"><span class="ico ok">{{template "i-lock"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}</div></div></li>{{end}}
+    {{range .Core}}{{$off := has $.Cfg.Checks.DisabledIDs .ID}}<li class="row{{if $off}} off{{end}}"><span class="ico {{if not $off}}ok{{end}}">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s">{{if $off}}<b class="off-tag">{{t $L "check_off"}}</b> · {{else}}<span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{end}}{{.Category}}</div></div>
+      <form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="{{if $off}}on{{else}}off{{end}}"><button class="sm {{if not $off}}soft{{end}}">{{if $off}}{{t $L "turn_on"}}{{else}}{{t $L "turn_off"}}{{end}}</button></form></li>{{end}}
   </ul>
 </section>
 <section class="card">

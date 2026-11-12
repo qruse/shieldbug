@@ -92,8 +92,17 @@ func saveItems(name string, items []ChecklistItem) error {
 	return writeJSON(filepath.Join(checklistDir(), name), checklistFile{Version: 2, Items: items})
 }
 
-// activeChecklist = the core checks (always) + the checks the user added,
-// minus added ones they disabled or whose category they turned off.
+func ids(items []ChecklistItem) []string {
+	var out []string
+	for _, it := range items {
+		out = append(out, it.ID)
+	}
+	return out
+}
+
+// activeChecklist = the core checks + the checks the user added, minus the
+// ones they turned off (core ones too: some people run only their own) and
+// added ones whose category they turned off.
 func activeChecklist(c Config) []ChecklistItem {
 	disabled := map[string]bool{}
 	for _, id := range c.Checks.DisabledIDs {
@@ -103,7 +112,12 @@ func activeChecklist(c Config) []ChecklistItem {
 	for _, k := range c.Checks.Categories {
 		cats[k] = true
 	}
-	out := loadBase()
+	var out []ChecklistItem
+	for _, it := range loadBase() {
+		if !disabled[it.ID] {
+			out = append(out, it)
+		}
+	}
 	for _, it := range addedChecklist() {
 		if disabled[it.ID] || (len(cats) > 0 && !cats[it.Category]) {
 			continue
