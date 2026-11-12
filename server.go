@@ -337,7 +337,6 @@ type pageData struct {
 	Update    bool // a newer program file is on disk
 	Core      []ChecklistItem
 	Added     []ChecklistItem
-	Extras    []ChecklistItem
 	Lockdown  map[string]string
 	Payload   string
 	PayloadID string
@@ -375,7 +374,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		d.Chosen = chosenAgents(cfg)
 	}
 	if tab == "checklist" {
-		d.Core, d.Added, d.Extras = loadBase(), addedChecklist(), availableExtras()
+		d.Core, d.Added = loadBase(), addedChecklist()
 	}
 	if b, err := os.ReadFile(progressPath()); err == nil {
 		d.Progress = strings.TrimSpace(string(b))
@@ -430,13 +429,9 @@ func (s *server) handleRun(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?tab=today", http.StatusSeeOther)
 }
 
-// handleChecklist adds an optional check or removes one the user added.
-// Core checks cannot be removed.
+// handleChecklist removes a check the user added. Core checks cannot be removed.
 func (s *server) handleChecklist(w http.ResponseWriter, r *http.Request) {
-	switch r.FormValue("action") {
-	case "add":
-		addExtra(r.FormValue("id"))
-	case "remove":
+	if r.FormValue("action") == "remove" {
 		removeAdded(r.FormValue("id"))
 	}
 	http.Redirect(w, r, "/?tab=checklist", http.StatusSeeOther)

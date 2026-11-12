@@ -13,37 +13,39 @@ func ids(items []ChecklistItem) []string {
 	return out
 }
 
-// Ten core checks always run; optional ones run only once added; core checks
-// cannot be disabled or removed.
-func TestCoreAndExtras(t *testing.T) {
+// Five core checks always run and cannot be disabled or removed; checks the
+// user adds (their own or approved AI proposals) run next to them.
+func TestCoreChecks(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home)
 	core := loadBase()
-	if len(core) != 10 {
-		t.Fatalf("want 10 core checks, got %d", len(core))
+	if len(core) != 5 {
+		t.Fatalf("want 5 core checks, got %d", len(core))
+	}
+	for _, it := range core {
+		if it.Kind != "ai" || it.Title["ko"] == "" || it.Fix["ko"] == "" {
+			t.Errorf("%s: incomplete item", it.ID)
+		}
 	}
 	c := defaultConfig()
-	c.Checks.DisabledIDs = []string{"agent-skip-permissions"}
+	c.Checks.DisabledIDs = []string{"risky-agent-combo"}
 	act := ids(activeChecklist(c))
-	if len(act) != 10 || !slices.Contains(act, "agent-skip-permissions") {
+	if len(act) != 5 || !slices.Contains(act, "risky-agent-combo") {
 		t.Fatalf("core must stay on: %v", act)
 	}
-	if !addExtra("disk-encryption-off") || !slices.Contains(ids(activeChecklist(c)), "disk-encryption-off") {
-		t.Fatal("added extra should be active")
-	}
-	if slices.Contains(ids(availableExtras()), "disk-encryption-off") {
-		t.Fatal("added extra should leave the available list")
-	}
-	if removeAdded("agent-skip-permissions") {
+	if removeAdded("risky-agent-combo") {
 		t.Fatal("core check removed")
 	}
-	if !removeAdded("disk-encryption-off") || len(activeChecklist(c)) != 10 {
-		t.Fatal("remove extra")
+	mine := ChecklistItem{ID: "my-check", Status: "active", Category: "ai-agents", Severity: "medium",
+		Title: map[string]string{"en": "Mine"}, Check: "x", Fix: map[string]string{"en": "y"}}
+	if err := saveItems("local.json", []ChecklistItem{mine}); err != nil {
+		t.Fatal(err)
 	}
-	for _, e := range loadExtras() {
-		if slices.Contains(ids(core), e.ID) {
-			t.Fatalf("%s is both core and extra", e.ID)
-		}
+	if !slices.Contains(ids(activeChecklist(c)), "my-check") {
+		t.Fatal("user check should be active")
+	}
+	if !removeAdded("my-check") || len(activeChecklist(c)) != 5 {
+		t.Fatal("remove user check")
 	}
 }

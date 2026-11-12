@@ -501,13 +501,6 @@ footer a:hover{color:var(--ink)}
   </ul>{{else}}<p class="empty">{{t $L "added_none"}}</p>{{end}}
   <p class="hint">{{t $L "added_hint"}}</p>
 </section>
-{{if .Extras}}<section class="card">
-  <div class="card-h"><h2>{{t $L "extras_title"}}</h2></div>
-  <ul class="list">
-    {{range .Extras}}<li class="row"><span class="ico low">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s"><span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{.Category}}</div></div>
-      <form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="add"><button class="sm">{{t $L "approve"}}</button></form></li>{{end}}
-  </ul>
-</section>{{end}}
 {{end}}
 
 {{if eq .Tab "history"}}

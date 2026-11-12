@@ -283,16 +283,17 @@ RULES
 - Be calm and concrete. Do not invent problems. Things that look fine are not mentioned.
 
 BAR FOR A FINDING (the user wants only what really matters)
-- Report something only if an attacker could realistically use it against this machine: a secret readable in plain text, an agent whose approvals are switched off entirely, an installed package named in a real advisory, a service open to the network without authentication, OS protection turned off.
+- Report something only if an attacker could realistically use it against this machine through its AI agents: an agent that takes in outside content and acts on it unapproved, a doubtful MCP server, skill or plugin, a hook that does more than it should, hidden orders in an instruction file, an installed package named in a real advisory.
+- Report only under the checklist ids below. <local_findings> whose checklist_id is not on the checklist are evidence (a bypass flag, a token in a plain file): use them for the checklist items, never report them under their own id. General PC hygiene (ports, firewall, disk encryption, updates) is out of scope.
 - Vendor-supported convenience modes are the user's choice, not findings: Claude Code "auto" permission mode (a built-in classifier reviews each action), Codex approvals with its sandbox on, allow rules the user wrote, WebFetch or WebSearch being allowed. Only explicit bypasses count: bypassPermissions, --dangerously-skip-permissions, --yolo, or danger-full-access with approval "never".
 - "Could be tighter" hardening advice is not a finding. When in doubt, leave it out. Report at most 5 findings.
 - severity "high" = act today; "medium" = a real weakness that needs one more condition to be exploited. Do not report anything you would rate "low".
 
 TASK
 1. Check each checklist item against the facts. Report only items that actually apply.
-2. Do not repeat local findings unless you add something new (a clearer fix, a matching intel item).
+2. Do not repeat local findings that are on the checklist unless you add something new (a clearer fix, a matching intel item).
 3. Match <intel> items against installed tools and versions in <facts>. Report a finding only if this machine is plausibly affected.
-4. If intel shows a new attack pattern that no checklist item covers and that the existing facts could detect, propose at most 3 new checklist items.
+4. If intel shows a new attack on AI agents that no checklist item covers, that the existing facts could detect, and that needs judgement rather than a simple pattern match, propose at most 3 new checklist items.
 5. Summarise for a non-expert in two short sentences, in English and in Korean.
 
 OUTPUT

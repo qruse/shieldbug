@@ -21,7 +21,7 @@ A daily security check for people who use AI coding agents. It runs on **the AI 
 
 It **never fixes anything by itself** and **never stays resident**. Your OS scheduler runs it once a day, and the dashboard exists only while it is open.
 
-Ten core checks always run, the ones most agent security tools agree on: permission bypass, blanket shell allow rules, hooks that download and run code, unknown or unpinned MCP servers, unknown skills and plugins, hidden instructions, keys in agent config, plaintext tokens, and today's advisories. Optional checks (open ports, OS protection, disk encryption and more) can be added from the Checklist tab. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
+Five core checks always run, chosen because they need an AI's judgement rather than a pattern match: an agent that reads outside content and acts on it without asking, MCP servers, skills and plugins from sources you cannot verify, hooks that do more than they should, hidden orders in instruction files, and installed tools named in today's advisories. Simple pattern rules (bypass flags, `curl | sh` hooks, tokens in plain files) still run, but as evidence for those five, not as findings of their own. General PC hygiene (ports, firewall, disk encryption) is left to your OS and antivirus. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
 
 ## Try it
 
@@ -62,6 +62,6 @@ AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입�
    - 분석 호출은 가린 자료만 보고, **도구가 하나도 없어서** 글로만 답할 수 있습니다.
 4. **결과를 보여 줍니다.** 가벼운 로컬 대시보드에 점수, 발견 사항, 고치는 법이 나옵니다.
 
-**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 기본 점검 10개는 항상 돕니다. 다른 에이전트 보안 도구들이 공통으로 보는 것들입니다: 허락 없는 실행, 셸 전체 허용, 코드를 내려받아 실행하는 훅, 출처 불명·버전 미고정 MCP 서버, 출처 불명 스킬·플러그인, 숨은 지시문, 설정 파일 속 키, 평문 토큰, 오늘의 보안 경고. 열린 포트·OS 보호·디스크 암호화 같은 선택 항목은 점검 목록 탭에서 추가합니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
+**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 기본 점검 5개는 항상 돕니다. 단순 검사로는 못 잡고 AI가 판단해야 하는 것만 골랐습니다: 외부 글을 읽고 묻지 않고 행동하는 에이전트, 출처를 확인할 수 없는 MCP 서버·스킬·플러그인, 해야 할 일 이상을 하는 훅, 지시 파일 속 숨은 지시, 오늘의 보안 경고에 해당하는 도구. 우회 플래그·`curl | sh` 훅·평문 토큰 같은 단순 규칙도 돌지만, 따로 지적하지 않고 이 5개를 판단하는 근거로만 씁니다. 포트·방화벽·디스크 암호화 같은 일반 PC 점검은 OS와 백신의 몫으로 둡니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
 
 설치와 사용법은 위 영어 섹션의 명령과 같습니다. 참여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 보세요.

@@ -76,19 +76,21 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	sort.Strings(r.Sections)
 	items := activeChecklist(c)
 	r.Checklist = len(items)
-	// Built-in rules only report for checks that are on the user's list.
+	// Built-in rules only report for checks that are on the user's list. The
+	// rest (a bypass flag, a token in a plain file) are not shown on their own
+	// but go to the model as evidence for the checks that are.
 	active := map[string]bool{}
 	for _, it := range items {
 		active[it.ID] = true
 	}
-	kept := local[:0]
+	hints := local
+	var shown []Finding
 	for _, f := range local {
 		if active[f.ChecklistID] {
-			kept = append(kept, f)
+			shown = append(shown, f)
 		}
 	}
-	local = kept
-	r.Findings = append(r.Findings, local...)
+	r.Findings = append(r.Findings, shown...)
 
 	agents, err := runAgents(c)
 	if err != nil {
@@ -112,7 +114,7 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	}
 
 	setProgress("analysis")
-	prompt := buildAnalysisPrompt(c, facts, local, items, r.Intel)
+	prompt := buildAnalysisPrompt(c, facts, hints, items, r.Intel)
 	if kb := float64(len(prompt)) / 1024; kb > float64(c.Limits.MaxPayloadKB) {
 		r.Errors = append(r.Errors, fmt.Sprintf("payload %.0f KB is over the %d KB limit; nothing was sent", kb, c.Limits.MaxPayloadKB))
 		return finish(r, start), nil
@@ -140,7 +142,13 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 		return finish(r, start), nil
 	}
 	r.Summary, r.SummaryKo = res.Summary, res.SummaryKo
-	r.Findings = mergeFindings(r.Findings, res.Findings)
+	var onList []Finding
+	for _, f := range res.Findings {
+		if active[f.ChecklistID] {
+			onList = append(onList, f)
+		}
+	}
+	r.Findings = mergeFindings(r.Findings, onList)
 	var props []ChecklistItem
 	for _, p := range res.Proposals {
 		props = append(props, p.item())

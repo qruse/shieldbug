@@ -1,199 +1,90 @@
 {
-  "version": 3,
+  "version": 4,
   "items": [
     {
-      "id": "agent-skip-permissions",
+      "id": "risky-agent-combo",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "An agent can read outside content and act on it without asking",
+        "ko": "에이전트가 외부 글을 읽고 묻지 않고 행동할 수 있음"
+      },
+      "check": "Put the settings of each agent together. Report when one agent can BOTH take in content an attacker could write (web fetch or browser, mail, issues and PR comments, chat, MCP servers that read those) AND run commands, write files or send data without the user approving each action (explicit bypass flags, approval_policy=never with full access, allow rules for every shell command). Raise it when that agent can also reach keys or tokens (keys in its config, plaintext tokens on disk). Explicit bypasses and blanket allow rules found by the local rules are evidence for this item. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
+      "fix": {
+        "en": "Break the chain: turn approvals back on for that agent, or remove its access to outside content, or move the keys it can reach into a keychain.",
+        "ko": "셋 중 하나를 끊으세요: 그 에이전트의 승인을 다시 켜거나, 외부 글 읽기를 빼거나, 닿는 키를 키체인으로 옮기세요."
+      },
+      "refs": [
+        "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/"
+      ],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
+      "id": "untrusted-sources",
+      "rev": 1,
+      "status": "active",
+      "category": "supply-chain",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "MCP servers, skills or plugins from sources you cannot verify",
+        "ko": "출처를 확인할 수 없는 MCP 서버·스킬·플러그인"
+      },
+      "check": "Judge where each MCP server, skill, plugin, marketplace and extension the agents load comes from: a package or repo name that imitates a known one, a publisher you cannot place, an install from a raw URL or personal fork, or a package known to be abandoned or taken over. Running without a pinned version (npx -y, uvx, @latest) only adds to a source that is already doubtful. The tool's own vendor (anthropics/*, openai/*, google/*), well-known publishers and skills synced from the user's own Claude account are fine.",
+      "fix": {
+        "en": "Remove what you cannot trace to its publisher. Pin an exact version for what you keep, and read a skill's files before installing it.",
+        "ko": "제공처를 확인할 수 없는 건 지우세요. 남길 건 정확한 버전으로 고정하고, 스킬은 설치 전에 파일을 먼저 읽어 보세요."
+      },
+      "refs": [
+        "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
+      ],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
+      "id": "hook-intent",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Hooks or launch scripts do more than they should",
+        "ko": "훅·실행 스크립트가 해야 할 일 이상을 함"
+      },
+      "check": "Read what each agent hook, notify command and agent-launching alias actually does. Report one that downloads and runs code, sends files, environment variables or keys to a host, changes other security settings, or hides what it runs (encoded or obfuscated commands). A hook that formats code, runs tests or posts a notification to a service the user already uses is fine.",
+      "fix": {
+        "en": "Delete the hook or alias, or rewrite it so it only does the one thing you need.",
+        "ko": "그 훅이나 별칭을 지우거나, 필요한 일 하나만 하도록 고치세요."
+      },
+      "refs": [],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
+      "id": "hidden-instructions",
       "rev": 2,
       "status": "active",
       "category": "ai-agents",
       "severity": "high",
       "kind": "ai",
       "title": {
-        "en": "AI agents run without permission prompts",
-        "ko": "AI 에이전트가 허락 없이 실행되도록 설정됨"
+        "en": "Instruction or skill files hide orders for the agent",
+        "ko": "지시 파일·스킬에 에이전트에게 몰래 시키는 내용이 있음"
       },
-      "check": "Look at agent settings and shell aliases/scripts for --dangerously-skip-permissions, bypassPermissions, --yolo, approval_policy=never with full access, or sandbox disabled. Only explicit bypasses count. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
-      "fix": {
-        "en": "Remove the bypass flag/mode. Allow specific safe tools instead of everything.",
-        "ko": "우회 플래그나 모드를 빼고, 필요한 도구만 골라서 허용하세요."
-      },
-      "refs": [
-        "https://snyk.io/blog/weaponizing-ai-coding-agents-for-malware-in-the-nx-malicious-package"
-      ],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "agent-wildcard-allow",
-      "rev": 3,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Agent may run any shell command or download without asking",
-        "ko": "에이전트가 묻지 않고 아무 명령이나 다운로드를 실행할 수 있음"
-      },
-      "check": "Allow rules that cover every shell command or any download: Bash, Bash(*), PowerShell(*), Bash(curl:*), Bash(wget:*) or the same in Codex/Gemini settings. Rules for specific commands (git status, npm test) are fine. If agent-skip-permissions already reports a full bypass, do not report this too. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
-      "fix": {
-        "en": "Replace the wildcard with the exact commands you actually need.",
-        "ko": "와일드카드 대신 실제로 쓰는 명령만 적으세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "agent-hooks-network",
-      "rev": 3,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Agent hooks download and run code or upload files",
-        "ko": "에이전트 훅이 코드를 내려받아 실행하거나 파일을 보냄"
-      },
-      "check": "Agent hooks (Claude Code hooks, Codex notify and similar) that download and run code (curl ... | sh, iwr ... | iex), send files or environment variables to a host, or run scripts the user did not write. A hook that only posts a notification to a service the user already uses is fine.",
-      "fix": {
-        "en": "Read every hook command. Delete hooks that download code or that you did not write yourself.",
-        "ko": "훅 명령을 하나씩 읽고, 코드를 내려받아 실행하거나 직접 만들지 않은 훅은 지우세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "mcp-unknown-servers",
-      "rev": 3,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "high",
-      "kind": "ai",
-      "title": {
-        "en": "MCP servers from sources you cannot verify",
-        "ko": "출처를 확인할 수 없는 MCP 서버"
-      },
-      "check": "MCP servers whose package or URL is not from the tool's own vendor or a well-known publisher, or whose package name imitates a known one. A missing version pin alone belongs to mcp-unpinned, not here.",
-      "fix": {
-        "en": "Remove servers you cannot trace to their publisher and the ones you no longer use.",
-        "ko": "제공처를 확인할 수 없는 서버와 안 쓰는 서버는 지우세요."
-      },
-      "refs": [
-        "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
-      ],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
-      "id": "mcp-unpinned",
-      "rev": 1,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "MCP servers run without a pinned version",
-        "ko": "버전을 고정하지 않고 실행하는 MCP 서버"
-      },
-      "check": "MCP server definitions that run npx -y pkg, uvx pkg, @latest or pip installs without an exact version, so a new release runs without review.",
-      "fix": {
-        "en": "Pin an exact version (pkg@1.2.3, pkg==1.2.3) and update on purpose.",
-        "ko": "정확한 버전(pkg@1.2.3, pkg==1.2.3)으로 고정하고, 업데이트는 확인하고 직접 하세요."
-      },
-      "refs": [
-        "https://gbhackers.com/corelight-reveals-ai-security/"
-      ],
-      "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "untrusted-extensions",
-      "rev": 1,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "high",
-      "kind": "ai",
-      "title": {
-        "en": "Skills or plugins from sources you cannot verify",
-        "ko": "출처를 확인할 수 없는 스킬·플러그인"
-      },
-      "check": "Skills, plugins, plugin marketplaces, custom agents and extensions the agents load (see agent_extensions) that do not come from the tool's own vendor, a well-known publisher or the user's own folder, or whose name imitates a known one. Vendor marketplaces (anthropics/*, openai/*, google/*) and skills synced from the user's own Claude account are fine.",
-      "fix": {
-        "en": "Remove skills and plugins you cannot trace to their publisher. Read a skill's files before installing it.",
-        "ko": "제공처를 확인할 수 없는 스킬·플러그인은 지우고, 새로 설치할 땐 파일을 먼저 읽어 보세요."
-      },
-      "refs": [
-        "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
-      ],
-      "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "hidden-instructions",
-      "rev": 1,
-      "status": "active",
-      "category": "ai-agents",
-      "severity": "high",
-      "kind": "ai",
-      "title": {
-        "en": "Instruction or skill files contain hidden or overriding instructions",
-        "ko": "지시 파일·스킬에 숨겨진 지시나 덮어쓰는 지시가 있음"
-      },
-      "check": "Lines in CLAUDE.md, AGENTS.md, GEMINI.md, skills, custom agents or commands that hide text with invisible characters, tell the agent to ignore its rules, or tell it to run, send or upload something without telling the user. Text that only explains or quotes such attacks (security notes, examples) is not a finding.",
+      "check": "Lines from CLAUDE.md, AGENTS.md, GEMINI.md, skills, custom agents and commands that hide text with invisible characters, tell the agent to ignore its rules, or tell it to run, send or upload something without the user knowing. Judge the meaning, not the words: text that explains or quotes such attacks (security notes, examples) is not a finding.",
       "fix": {
         "en": "Delete those lines. Remove the skill or file if you did not write it.",
         "ko": "그 줄을 지우고, 직접 만든 게 아니면 그 스킬이나 파일을 지우세요."
       },
       "refs": [],
       "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "secrets-in-mcp-config",
-      "rev": 1,
-      "status": "active",
-      "category": "secrets",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "API keys written in plain text inside agent/MCP config",
-        "ko": "에이전트·MCP 설정 파일에 API 키가 평문으로 적혀 있음"
-      },
-      "check": "Redacted markers ([REDACTED:...]) inside env/headers of MCP or agent configs.",
-      "fix": {
-        "en": "Move keys to the OS keychain or environment, and rotate any key that was ever committed or shared.",
-        "ko": "키는 OS 키체인이나 환경변수로 옮기고, 공유된 적 있는 키는 새로 발급하세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base"
-    },
-    {
-      "id": "plaintext-tokens",
-      "rev": 1,
-      "status": "active",
-      "category": "secrets",
-      "severity": "high",
-      "kind": "ai",
-      "title": {
-        "en": "Git or package registry tokens stored in plain files",
-        "ko": "Git·패키지 저장소 토큰이 평문 파일에 있음"
-      },
-      "check": "~/.git-credentials or credential.helper=store; auth tokens in ~/.npmrc, ~/.pypirc, ~/.netrc or ~/.docker/config.json. Any agent or install script can read these files, and stolen registry tokens are how package worms spread.",
-      "fix": {
-        "en": "Use the OS credential manager for git, short-lived granular tokens for registries, and delete tokens you no longer use.",
-        "ko": "Git은 OS 자격 증명 관리자를 쓰고, 저장소 토큰은 기간·권한이 제한된 것으로 바꾸고, 안 쓰는 토큰은 지우세요."
-      },
-      "refs": [
-        "https://www.boannews.com/news/articleView.html?idxno=147009"
-      ],
-      "added": "2026-11-12",
-      "source": "base"
+      "source": "base",
+      "updated": "2026-11-12"
     },
     {
       "id": "advisory-affected-packages",
@@ -206,7 +97,7 @@
         "en": "Installed tools match today's advisories",
         "ko": "설치된 도구가 오늘 나온 보안 경고에 해당함"
       },
-      "check": "Compare installed AI CLIs, global npm/pip packages and their versions with advisories and incident reports from the last few days.",
+      "check": "Compare installed AI CLIs, MCP servers, global npm/pip packages, editor extensions and their versions with advisories and incident reports from the last few days.",
       "fix": {
         "en": "Update or remove the affected package, then rotate tokens it could read.",
         "ko": "해당 패키지를 업데이트·삭제하고, 그 패키지가 읽을 수 있던 토큰은 새로 발급하세요."
@@ -218,5 +109,5 @@
       "source": "base"
     }
   ],
-  "note": "Ten core checks every AI-agent user should have: the ones most agent security tools agree on. They cannot be turned off; add more from extras.json or your own in ~/.shieldbug/checklist/local.json."
+  "note": "Five core checks that need an AI's judgement, not a pattern match. They cannot be turned off. Add your own in ~/.shieldbug/checklist/local.json, or approve the checks your AI proposes."
 }

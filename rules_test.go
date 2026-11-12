@@ -52,12 +52,3 @@ func TestWildcardRule(t *testing.T) {
 		t.Error("auto mode is the user's choice")
 	}
 }
-
-func TestDevService(t *testing.T) {
-	if !isDevService("ollama.exe", "11434") || !isDevService("node", "4321") || !isDevService("unknown", "8888") {
-		t.Error("AI/dev services must count")
-	}
-	if isDevService("zerotier-one_x64.exe", "9993") || isDevService("StSess.exe", "55920") {
-		t.Error("VPN and system programs are out of scope")
-	}
-}
