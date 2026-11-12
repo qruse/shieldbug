@@ -81,7 +81,7 @@ var dict = map[string][2]string{ // en, ko
 	"sent_intro":       {"This is exactly what the analysis call received. Secrets were replaced before sending.", "AI 분석에 보낸 내용 그대로예요. 비밀 값은 보내기 전에 가렸어요."},
 	"no_payload":       {"Nothing stored for this run.", "이 점검에서 저장된 내용이 없어요."},
 	"saved":            {"Saved.", "저장했어요."},
-	"scope":            {"Checks AI agent settings, secrets hygiene, open ports and OS protection on this computer. Not an antivirus.", "AI 에이전트 설정, 비밀 값 관리, 열린 포트, OS 보호 상태를 점검해요. 백신은 아니에요."},
+	"scope":            {"Checks AI agent settings, MCP servers, skills and plugins, and keys left in plain files. Not an antivirus.", "AI 에이전트 설정, MCP 서버, 스킬·플러그인, 평문으로 놓인 키를 점검해요. 백신은 아니에요."},
 	"just_now":         {"just now", "방금"},
 	"min_ago":          {"%d min ago", "%d분 전"},
 	"h_ago":            {"%d h ago", "%d시간 전"},

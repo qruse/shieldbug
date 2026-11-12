@@ -12,7 +12,7 @@ A daily security check for people who use AI coding agents. It runs on **the AI 
 
 ## What it does
 
-1. **Collects facts locally, without AI.** It looks at AI agent settings and MCP servers, plaintext keys and tokens, ports open to the network, OS updates and firewall, and installed tools and extensions.
+1. **Collects facts locally, without AI.** It looks at AI agent settings and MCP servers, skills and plugins, plaintext keys and tokens, and installed tools.
 2. **Redacts them.** Keys, tokens, passwords, your user name, host name, email and public IP are removed. A gate blocks the send if anything key-shaped survives. You can see exactly what was sent (`shieldbug payload`).
 3. **Asks your own AI, twice.**
    - The **intel** call searches the web for this week's AI-related attacks. It never sees anything from your machine.
@@ -21,7 +21,7 @@ A daily security check for people who use AI coding agents. It runs on **the AI 
 
 It **never fixes anything by itself** and **never stays resident**. Your OS scheduler runs it once a day, and the dashboard exists only while it is open.
 
-The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
+Ten core checks always run, the ones most agent security tools agree on: permission bypass, blanket shell allow rules, hooks that download and run code, unknown or unpinned MCP servers, unknown skills and plugins, hidden instructions, keys in agent config, plaintext tokens, and today's advisories. Optional checks (open ports, OS protection, disk encryption and more) can be added from the Checklist tab. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
 
 ## Try it
 
@@ -55,13 +55,13 @@ AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입�
 > 상태: **초기 알파 (v0.1.0)**. Windows 11과 Claude Code에서만 시험했습니다. 백신을 대신하는 게 아니라, 내 PC 설정의 구멍을 매일 찾아 주는 점검입니다.
 
 **하는 일**
-1. **AI 없이 PC에서 사실을 모읍니다.** AI 에이전트 설정과 MCP 서버, 평문으로 놓인 키와 토큰, 외부에 열린 포트, OS 업데이트와 방화벽, 설치된 도구를 봅니다.
+1. **AI 없이 PC에서 사실을 모읍니다.** AI 에이전트 설정과 MCP 서버, 스킬·플러그인, 평문으로 놓인 키와 토큰, 설치된 도구를 봅니다.
 2. **가립니다.** 키·토큰·비밀번호·사용자 이름·이메일·공인 IP를 지웁니다. 키처럼 생긴 게 남아 있으면 아예 보내지 않습니다. 보낸 내용은 대시보드에서 그대로 볼 수 있습니다.
 3. **내 AI에게 두 번 묻습니다.**
    - 뉴스 조사 호출은 이번 주 AI 관련 공격을 웹에서 찾고, 내 PC 정보는 전혀 보지 않습니다.
    - 분석 호출은 가린 자료만 보고, **도구가 하나도 없어서** 글로만 답할 수 있습니다.
 4. **결과를 보여 줍니다.** 가벼운 로컬 대시보드에 점수, 발견 사항, 고치는 법이 나옵니다.
 
-**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
+**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 기본 점검 10개는 항상 돕니다. 다른 에이전트 보안 도구들이 공통으로 보는 것들입니다: 허락 없는 실행, 셸 전체 허용, 코드를 내려받아 실행하는 훅, 출처 불명·버전 미고정 MCP 서버, 출처 불명 스킬·플러그인, 숨은 지시문, 설정 파일 속 키, 평문 토큰, 오늘의 보안 경고. 열린 포트·OS 보호·디스크 암호화 같은 선택 항목은 점검 목록 탭에서 추가합니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
 
 설치와 사용법은 위 영어 섹션의 명령과 같습니다. 참여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 보세요.
