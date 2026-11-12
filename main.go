@@ -94,6 +94,15 @@ func main() {
 	case "doctor":
 		doctor(c)
 	case "collect":
+		self := selfCheck()
+		fmt.Println("## self_check")
+		for _, l := range self.Lines {
+			fmt.Println(l)
+		}
+		for _, f := range self.Findings {
+			fmt.Printf("- [%s] %s — %s\n", f.Severity, f.Title, f.Evidence)
+		}
+		fmt.Println()
 		facts, local := collect(c)
 		for _, k := range sortedKeys(facts.Sections) {
 			fmt.Printf("## %s\n%s\n\n", k, facts.Sections[k])

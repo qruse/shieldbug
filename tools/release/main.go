@@ -3,7 +3,8 @@
 //	go run ./tools/release
 //
 // Windows gets a single .exe; macOS and Linux get a .tar.gz so the program
-// keeps its executable bit. SHA256SUMS.txt lists every file. Output goes to
+// keeps its executable bit. SHA256SUMS.txt lists every file, plus the
+// program inside each archive as "<archive>:shieldbug". Output goes to
 // dist/release/. Every build sets main.channel=release, which makes a
 // downloaded file install itself on first open.
 package main
@@ -46,7 +47,13 @@ func main() {
 		if t.goos == "windows" {
 			bin = filepath.Join(out, t.name)
 		}
-		ld := "-s -w -X main.channel=release"
+		// assetName lets the program find its own line in SHA256SUMS.txt (the
+		// self-check): the .exe itself, or the program inside an archive.
+		asset := t.name
+		if t.goos != "windows" {
+			asset += ":shieldbug"
+		}
+		ld := "-s -w -X main.channel=release -X main.assetName=" + asset
 		if t.goos == "windows" {
 			ld += " -H=windowsgui"
 		}
@@ -58,6 +65,7 @@ func main() {
 		}
 		file := filepath.Join(out, t.name)
 		if t.goos != "windows" {
+			sums[asset] = sha(bin)
 			if err := tarGz(file, bin, "shieldbug"); err != nil {
 				fail(err)
 			}

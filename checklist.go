@@ -31,6 +31,7 @@ type ChecklistItem struct {
 	Refs     []string          `json:"refs,omitempty"`
 	Added    string            `json:"added,omitempty"`
 	Source   string            `json:"source,omitempty"` // base, ai, user, feed
+	Locked   bool              `json:"locked,omitempty"` // always on (the self-check)
 }
 
 type checklistFile struct {
@@ -114,7 +115,7 @@ func activeChecklist(c Config) []ChecklistItem {
 	}
 	var out []ChecklistItem
 	for _, it := range loadBase() {
-		if !disabled[it.ID] {
+		if it.Locked || !disabled[it.ID] {
 			out = append(out, it)
 		}
 	}

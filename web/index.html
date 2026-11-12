@@ -178,6 +178,7 @@ button.sm,.btn.sm{padding:9px 14px;font-size:14.5px;border-radius:12px}
 .row+.row{margin-top:2px}
 .row.off .t{color:var(--muted)}
 .off-tag{font-weight:700;color:var(--muted)}
+.always{flex:none;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 a.row:hover{background:var(--fill-2)}
 .ico{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--sub)}
 .ico svg{width:22px;height:22px}
@@ -413,6 +414,7 @@ footer a:hover{color:var(--ink)}
     <div><dt>{{t $L "agent"}}</dt><dd>{{if .Run.Agent}}{{aname $L .Run.Agent}}{{else}}—{{end}}</dd></div>
     {{range .Run.Calls}}<div><dt>{{t $L "model"}}</dt><dd>{{.Model}}{{if .Effort}} · {{.Effort}}{{end}}</dd></div>{{break}}{{end}}
     <div><dt>{{t $L "lockdown"}}</dt><dd>{{if .Run.Lockdown}}{{t $L (print "lock_" .Run.Lockdown)}}{{else}}—{{end}}</dd></div>
+    {{if .Run.SelfCheck}}<div><dt>{{t $L "self_check"}}</dt><dd>{{if selfbad .Run.Findings}}{{t $L "self_bad"}}{{else}}{{t $L "self_ok"}}{{end}}</dd></div>{{end}}
     <div><dt>{{t $L "tokens"}}</dt><dd>{{tokens .Run.Calls}}</dd></div>
     {{if hasplan .Run}}<div><dt>{{t $L "plan_5h"}}</dt><dd>{{pct $L (plan5h .Run)}}</dd></div>
     <div><dt>{{t $L "plan_week"}}</dt><dd>{{pct $L (planwk .Run)}}</dd></div>{{end}}
@@ -492,8 +494,8 @@ footer a:hover{color:var(--ink)}
   <div class="card-h"><h2>{{tf $L "core_title" (len .Core)}}</h2></div>
   <p class="empty" style="margin:-6px 0 6px;font-size:15px">{{t $L "core_sub"}}</p>
   <ul class="list">
-    {{range .Core}}{{$off := has $.Cfg.Checks.DisabledIDs .ID}}<li class="row{{if $off}} off{{end}}"><span class="ico {{if not $off}}ok{{end}}">{{template "i-check"}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s">{{if $off}}<b class="off-tag">{{t $L "check_off"}}</b> · {{else}}<span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{end}}{{.Category}}</div></div>
-      <form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="{{if $off}}on{{else}}off{{end}}"><button class="sm {{if not $off}}soft{{end}}">{{if $off}}{{t $L "turn_on"}}{{else}}{{t $L "turn_off"}}{{end}}</button></form></li>{{end}}
+    {{range .Core}}{{$off := and (not .Locked) (has $.Cfg.Checks.DisabledIDs .ID)}}<li class="row{{if $off}} off{{end}}"><span class="ico {{if not $off}}ok{{end}}">{{if .Locked}}{{template "i-lock"}}{{else}}{{template "i-check"}}{{end}}</span><div class="body"><div class="t">{{.T $L}}</div><div class="s">{{if $off}}<b class="off-tag">{{t $L "check_off"}}</b> · {{else}}<span class="sev {{.Severity}}">{{sev $L .Severity}}</span> · {{end}}{{.Category}}</div></div>
+      {{if .Locked}}<span class="always" style="align-self:center">{{t $L "always_on"}}</span>{{else}}<form method="post" action="/checklist" style="align-self:center"><input type="hidden" name="csrf" value="{{$.Token}}"><input type="hidden" name="id" value="{{.ID}}"><input type="hidden" name="action" value="{{if $off}}on{{else}}off{{end}}"><button class="sm {{if not $off}}soft{{end}}">{{if $off}}{{t $L "turn_on"}}{{else}}{{t $L "turn_off"}}{{end}}</button></form>{{end}}</li>{{end}}
   </ul>
 </section>
 <section class="card">

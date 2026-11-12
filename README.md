@@ -21,7 +21,9 @@ A daily security check for people who use AI coding agents. It runs on **the AI 
 
 It **never fixes anything by itself** and **never stays resident**. Your OS scheduler runs it once a day, and the dashboard exists only while it is open.
 
-Five core checks always run, chosen because they need an AI's judgement rather than a pattern match: an agent that reads outside content and acts on it without asking, MCP servers, skills and plugins from sources you cannot verify, hooks that do more than they should, hidden orders in instruction files, and installed tools named in today's advisories. Simple pattern rules (bypass flags, `curl | sh` hooks, tokens in plain files) still run, but as evidence for those five, not as findings of their own. General PC hygiene (ports, firewall, disk encryption) is left to your OS and antivirus. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
+First comes a **self-check that cannot be turned off**: a security tool that runs every day with your trust must not become the attack. It confirms, without AI, that the program file matches the official release checksum, that the daily task and the shortcuts run this program, that the AI CLIs it starts are not in a temporary or Downloads folder, and that your own checks contain no text that steers the AI. If the program file or the daily task is wrong, the run stops there.
+
+Then five core checks, chosen because they need an AI's judgement rather than a pattern match (each can be turned off): an agent that reads outside content and acts on it without asking, MCP servers, skills and plugins from sources you cannot verify, hooks that do more than they should, hidden orders in instruction files, and installed tools named in today's advisories. Simple pattern rules (bypass flags, `curl | sh` hooks, tokens in plain files) still run, but as evidence for those five, not as findings of their own. General PC hygiene (ports, firewall, disk encryption) is left to your OS and antivirus. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
 
 ## Download
 
@@ -76,7 +78,7 @@ AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입�
    - 분석 호출은 가린 자료만 보고, **도구가 하나도 없어서** 글로만 답할 수 있습니다.
 4. **결과를 보여 줍니다.** 가벼운 로컬 대시보드에 점수, 발견 사항, 고치는 법이 나옵니다.
 
-**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 기본 점검 5개는 항상 돕니다. 단순 검사로는 못 잡고 AI가 판단해야 하는 것만 골랐습니다: 외부 글을 읽고 묻지 않고 행동하는 에이전트, 출처를 확인할 수 없는 MCP 서버·스킬·플러그인, 해야 할 일 이상을 하는 훅, 지시 파일 속 숨은 지시, 오늘의 보안 경고에 해당하는 도구. 우회 플래그·`curl | sh` 훅·평문 토큰 같은 단순 규칙도 돌지만, 따로 지적하지 않고 이 5개를 판단하는 근거로만 씁니다. 포트·방화벽·디스크 암호화 같은 일반 PC 점검은 OS와 백신의 몫으로 둡니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
+**절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 점검 전에 **끌 수 없는 자가 점검**이 먼저 돕니다. 매일 신뢰받으며 도는 보안 도구가 공격 통로가 되면 안 되니까요. 프로그램 파일이 공식 배포본 체크섬과 같은지, 매일 점검 예약과 바로가기가 이 프로그램을 실행하는지, 실행하는 AI CLI가 임시·다운로드 폴더에 있지 않은지, 내 점검 항목에 AI를 조종하는 문장이 없는지 AI 없이 확인합니다. 프로그램 파일이나 예약이 바뀌어 있으면 거기서 멈춥니다. 그다음 기본 점검 5개가 돕니다(각각 끌 수 있음). 단순 검사로는 못 잡고 AI가 판단해야 하는 것만 골랐습니다: 외부 글을 읽고 묻지 않고 행동하는 에이전트, 출처를 확인할 수 없는 MCP 서버·스킬·플러그인, 해야 할 일 이상을 하는 훅, 지시 파일 속 숨은 지시, 오늘의 보안 경고에 해당하는 도구. 우회 플래그·`curl | sh` 훅·평문 토큰 같은 단순 규칙도 돌지만, 따로 지적하지 않고 이 5개를 판단하는 근거로만 씁니다. 포트·방화벽·디스크 암호화 같은 일반 PC 점검은 OS와 백신의 몫으로 둡니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
 
 **설치:** [Releases](https://github.com/qruse/shieldbug/releases/latest)에서 파일 하나만 받으면 됩니다. Go는 필요 없습니다.
 - Windows는 `shieldbug-windows-x64.exe`를 받아서 실행하세요. 관리자 권한 없이 `%LOCALAPPDATA%\Programs\Shieldbug`에 스스로 설치하고, 바탕화면 아이콘과 시작 메뉴 항목을 만든 뒤 대시보드를 엽니다. 받은 파일은 지워도 됩니다.

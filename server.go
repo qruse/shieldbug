@@ -175,7 +175,10 @@ func parseIndex() *template.Template {
 			}
 			return false
 		},
-		"count":   countSev,
+		"count": countSev,
+		"selfbad": func(fs []Finding) bool {
+			return slices.ContainsFunc(fs, func(f Finding) bool { return f.ChecklistID == selfID })
+		},
 		"isapi":   isAPI,
 		"tf":      trf,
 		"aname":   agentName,
@@ -437,8 +440,12 @@ func (s *server) handleChecklist(w http.ResponseWriter, r *http.Request) {
 	case "remove":
 		removeAdded(id)
 	case "off", "on":
-		if !slices.Contains(ids(loadBase()), id) {
-			break
+		known := false
+		for _, it := range loadBase() {
+			known = known || (it.ID == id && !it.Locked)
+		}
+		if !known {
+			break // not a core check, or the self-check, which stays on
 		}
 		s.mu.Lock()
 		c := s.cfg

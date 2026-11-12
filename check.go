@@ -31,6 +31,7 @@ type Run struct {
 	Errors    []string    `json:"errors,omitempty"`
 	Sections  []string    `json:"sections"`
 	OS        string      `json:"os"`
+	SelfCheck []string    `json:"self_check,omitempty"` // what the self-check looked at
 }
 
 func runsDir() string      { return filepath.Join(dataDir(), "runs") }
@@ -67,6 +68,18 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 		return finish(r, start), err
 	}
 
+	// Self-check first: if Shieldbug itself was tampered with, say so and stop
+	// before it starts other programs or sends anything.
+	self := selfCheck()
+	r.SelfCheck = self.Lines
+	r.Findings = append(r.Findings, self.Findings...)
+	for _, f := range self.Findings {
+		if f.Severity == "critical" {
+			r.Errors = append(r.Errors, "self-check failed; nothing else was run")
+			return finish(r, start), nil
+		}
+	}
+
 	setProgress("collect")
 	facts, local := collect(c)
 	r.OS = facts.OS
@@ -80,9 +93,14 @@ func runCheck(c Config, scheduled bool) (*Run, error) {
 	// rest (a bypass flag, a token in a plain file) are not shown on their own
 	// but go to the model as evidence for the checks that are.
 	active := map[string]bool{}
+	var forAI []ChecklistItem // rule-only checks (the self-check) are not the model's job
 	for _, it := range items {
-		active[it.ID] = true
+		active[it.ID] = it.Kind != "rule"
+		if it.Kind != "rule" {
+			forAI = append(forAI, it)
+		}
 	}
+	items = forAI
 	hints := local
 	var shown []Finding
 	for _, f := range local {

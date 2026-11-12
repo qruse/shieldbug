@@ -2,6 +2,27 @@
   "version": 4,
   "items": [
     {
+      "id": "self-integrity",
+      "rev": 1,
+      "status": "active",
+      "category": "self",
+      "severity": "critical",
+      "kind": "rule",
+      "locked": true,
+      "title": {
+        "en": "Shieldbug itself has not been tampered with",
+        "ko": "Shieldbug 자신이 바꿔치기되지 않았는지"
+      },
+      "check": "Runs first, without AI, and cannot be turned off. The program file matches the official release checksum; the daily task and the Shieldbug shortcuts run this program and nothing else; the AI CLIs it starts are not in a temporary, Downloads or Shieldbug data folder; the user's own checks contain no text that steers the AI. If the program file or the daily task is wrong, the run stops before anything else is started or sent.",
+      "fix": {
+        "en": "Do not run that copy again. Download Shieldbug from github.com/qruse/shieldbug/releases and check the PC with your antivirus.",
+        "ko": "그 파일은 다시 실행하지 마세요. github.com/qruse/shieldbug/releases에서 새로 받고, 백신으로 PC를 검사하세요."
+      },
+      "refs": [],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
       "id": "risky-agent-combo",
       "rev": 1,
       "status": "active",

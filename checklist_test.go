@@ -12,21 +12,24 @@ func TestCoreChecks(t *testing.T) {
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home)
 	core := loadBase()
-	if len(core) != 5 {
-		t.Fatalf("want 5 core checks, got %d", len(core))
+	if len(core) != 6 {
+		t.Fatalf("want 6 core checks (5 AI + self-check), got %d", len(core))
 	}
 	for _, it := range core {
-		if it.Kind != "ai" || it.Title["ko"] == "" || it.Fix["ko"] == "" {
+		if it.Title["ko"] == "" || it.Fix["ko"] == "" || (it.Kind != "ai") != (it.ID == selfID) {
 			t.Errorf("%s: incomplete item", it.ID)
+		}
+		if it.Locked != (it.ID == selfID) {
+			t.Errorf("%s: only the self-check is locked", it.ID)
 		}
 	}
 	c := defaultConfig()
-	c.Checks.DisabledIDs = []string{"risky-agent-combo"}
+	c.Checks.DisabledIDs = []string{"risky-agent-combo", selfID}
 	act := ids(activeChecklist(c))
-	if len(act) != 4 || slices.Contains(act, "risky-agent-combo") {
-		t.Fatalf("a core check turned off must be skipped: %v", act)
+	if len(act) != 5 || slices.Contains(act, "risky-agent-combo") || !slices.Contains(act, selfID) {
+		t.Fatalf("a core check turned off is skipped, the self-check never: %v", act)
 	}
-	if len(loadBase()) != 5 {
+	if len(loadBase()) != 6 {
 		t.Fatal("turning off must not delete the core check")
 	}
 	c.Checks.DisabledIDs = nil
@@ -41,7 +44,7 @@ func TestCoreChecks(t *testing.T) {
 	if !slices.Contains(ids(activeChecklist(c)), "my-check") {
 		t.Fatal("user check should be active")
 	}
-	if !removeAdded("my-check") || len(activeChecklist(c)) != 5 {
+	if !removeAdded("my-check") || len(activeChecklist(c)) != 6 {
 		t.Fatal("remove user check")
 	}
 }
