@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "items": [
     {
       "id": "agent-skip-permissions",
@@ -25,20 +25,20 @@
       "updated": "2026-11-12"
     },
     {
-      "id": "prompt-injection-surface",
+      "id": "agent-wildcard-allow",
       "rev": 3,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Agents can read untrusted content and act without review",
-        "ko": "에이전트가 외부 글을 읽고 확인 없이 행동할 수 있음"
+        "en": "Agent may run any shell command or download without asking",
+        "ko": "에이전트가 묻지 않고 아무 명령이나 다운로드를 실행할 수 있음"
       },
-      "check": "Report only when an agent can BOTH read untrusted content (web pages, mail, issues, PR comments) AND run shell commands or write files without approval. If agent-skip-permissions already reports the same setting, add this risk to that finding instead of a separate one. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
+      "check": "Allow rules that cover every shell command or any download: Bash, Bash(*), PowerShell(*), Bash(curl:*), Bash(wget:*) or the same in Codex/Gemini settings. Rules for specific commands (git status, npm test) are fine. If agent-skip-permissions already reports a full bypass, do not report this too. Vendor-reviewed modes are the user's choice and not a finding: Claude Code auto mode (a classifier reviews each action), Codex approvals with the sandbox on.",
       "fix": {
-        "en": "Keep web reading and shell execution in separate, approval-gated steps.",
-        "ko": "웹 읽기와 명령 실행을 나누고, 실행 전에는 승인을 받게 하세요."
+        "en": "Replace the wildcard with the exact commands you actually need.",
+        "ko": "와일드카드 대신 실제로 쓰는 명령만 적으세요."
       },
       "refs": [],
       "added": "2026-11-11",
@@ -112,6 +112,48 @@
       "source": "base"
     },
     {
+      "id": "untrusted-extensions",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Skills or plugins from sources you cannot verify",
+        "ko": "출처를 확인할 수 없는 스킬·플러그인"
+      },
+      "check": "Skills, plugins, plugin marketplaces, custom agents and extensions the agents load (see agent_extensions) that do not come from the tool's own vendor, a well-known publisher or the user's own folder, or whose name imitates a known one. Vendor marketplaces (anthropics/*, openai/*, google/*) and skills synced from the user's own Claude account are fine.",
+      "fix": {
+        "en": "Remove skills and plugins you cannot trace to their publisher. Read a skill's files before installing it.",
+        "ko": "제공처를 확인할 수 없는 스킬·플러그인은 지우고, 새로 설치할 땐 파일을 먼저 읽어 보세요."
+      },
+      "refs": [
+        "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
+      ],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
+      "id": "hidden-instructions",
+      "rev": 1,
+      "status": "active",
+      "category": "ai-agents",
+      "severity": "high",
+      "kind": "ai",
+      "title": {
+        "en": "Instruction or skill files contain hidden or overriding instructions",
+        "ko": "지시 파일·스킬에 숨겨진 지시나 덮어쓰는 지시가 있음"
+      },
+      "check": "Lines in CLAUDE.md, AGENTS.md, GEMINI.md, skills, custom agents or commands that hide text with invisible characters, tell the agent to ignore its rules, or tell it to run, send or upload something without telling the user. Text that only explains or quotes such attacks (security notes, examples) is not a finding.",
+      "fix": {
+        "en": "Delete those lines. Remove the skill or file if you did not write it.",
+        "ko": "그 줄을 지우고, 직접 만든 게 아니면 그 스킬이나 파일을 지우세요."
+      },
+      "refs": [],
+      "added": "2026-11-12",
+      "source": "base"
+    },
+    {
       "id": "secrets-in-mcp-config",
       "rev": 1,
       "status": "active",
@@ -154,47 +196,6 @@
       "source": "base"
     },
     {
-      "id": "shell-history-secrets",
-      "rev": 1,
-      "status": "active",
-      "category": "secrets",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "Shell history contains keys or tokens",
-        "ko": "셸 기록에 키·토큰이 남아 있음"
-      },
-      "check": "bash, zsh, fish or PowerShell history containing values that match key or token patterns (only the file name is reported).",
-      "fix": {
-        "en": "Delete those lines and rotate the key. Set keys in environment variables or a keychain instead of typing them into commands.",
-        "ko": "그 줄을 지우고 키를 새로 발급하세요. 키는 명령에 직접 치지 말고 환경변수나 키체인에 넣으세요."
-      },
-      "refs": [],
-      "added": "2026-11-12",
-      "source": "base"
-    },
-    {
-      "id": "exposed-listeners",
-      "rev": 2,
-      "status": "active",
-      "category": "network",
-      "severity": "medium",
-      "kind": "ai",
-      "title": {
-        "en": "AI or dev services reachable from the network",
-        "ko": "AI·개발 서비스가 외부에서 접속 가능하게 열려 있음"
-      },
-      "check": "Listening TCP sockets bound to 0.0.0.0 or [::] by AI and developer services: model servers (Ollama 11434, LM Studio), MCP servers, notebooks (Jupyter 8888), dev servers and databases. System services are out of scope.",
-      "fix": {
-        "en": "Bind to 127.0.0.1, or block the port in the firewall.",
-        "ko": "127.0.0.1에만 묶거나 방화벽에서 막으세요."
-      },
-      "refs": [],
-      "added": "2026-11-11",
-      "source": "base",
-      "updated": "2026-11-12"
-    },
-    {
       "id": "advisory-affected-packages",
       "rev": 1,
       "status": "active",
@@ -217,5 +218,5 @@
       "source": "base"
     }
   ],
-  "note": "Core checks every AI-agent user should have. They cannot be turned off; add more from extras.json or your own in ~/.shieldbug/checklist/local.json."
+  "note": "Ten core checks every AI-agent user should have: the ones most agent security tools agree on. They cannot be turned off; add more from extras.json or your own in ~/.shieldbug/checklist/local.json."
 }

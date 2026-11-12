@@ -27,6 +27,32 @@ func TestHookRule(t *testing.T) {
 	}
 }
 
+func TestWildcardRule(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	count := func(text string) int {
+		var out []Finding
+		scanAgentText("settings.json", text, &out)
+		n := 0
+		for _, f := range out {
+			if f.ChecklistID == "agent-wildcard-allow" {
+				n++
+			}
+		}
+		return n
+	}
+	if count(`{"permissions":{"allow":["Bash","Read"]}}`) != 1 || count(`{"permissions":{"allow":["Bash(curl:*)"]}}`) != 1 {
+		t.Error("blanket shell allow should be flagged")
+	}
+	if count(`{"permissions":{"allow":["Bash(git status)","Read"]},"hooks":{"PreToolUse":[{"matcher":"Bash"}]}}`) != 0 {
+		t.Error("exact commands and hook matchers are fine")
+	}
+	if count(`{"permissions":{"allow":["Bash"],"defaultMode":"auto"}}`) != 0 {
+		t.Error("auto mode is the user's choice")
+	}
+}
+
 func TestDevService(t *testing.T) {
 	if !isDevService("ollama.exe", "11434") || !isDevService("node", "4321") || !isDevService("unknown", "8888") {
 		t.Error("AI/dev services must count")

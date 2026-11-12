@@ -105,6 +105,10 @@ func collect(c Config) (Facts, []Finding) {
 	add("ai_agent_configs", agentText)
 	local = append(local, agentFindings...)
 
+	extText, extFindings := collectExtensions()
+	add("agent_extensions", extText)
+	local = append(local, extFindings...)
+
 	secText, secFindings := collectSecrets()
 	add("secrets_hygiene", secText)
 	local = append(local, secFindings...)
@@ -147,8 +151,13 @@ func agentConfigPaths() []string {
 }
 
 var (
-	reBypass   = regexp.MustCompile(`(?i)(dangerously-skip-permissions|bypassPermissions|danger-full-access|dangerously-bypass-approvals|--yolo|"yolo"\s*:\s*true)`)
-	reWildcard = regexp.MustCompile(`(?i)"(Bash|PowerShell|Shell|WebFetch)\((\*|curl[^)]*|wget[^)]*|\*\*)\)"`)
+	reBypass = regexp.MustCompile(`(?i)(dangerously-skip-permissions|bypassPermissions|danger-full-access|dangerously-bypass-approvals|--yolo|"yolo"\s*:\s*true)`)
+	// Allow rules that cover every shell command ("Bash", "Bash(*)") or any download.
+	reWildcard = regexp.MustCompile(`(?i)"(Bash|PowerShell|Shell)(\((\*|\*\*|curl[^)]*|wget[^)]*|iwr[^)]*|Invoke-WebRequest[^)]*)\))?"`)
+	// Claude Code auto mode reviews each action and drops blanket shell rules.
+	reAutoMode = regexp.MustCompile(`"defaultMode"\s*:\s*"auto"`)
+	// Only the allow lists count; hook matchers also say "Bash".
+	reAllowList = regexp.MustCompile(`"(allow|allowedTools)"\s*:\s*\[[^\]]*\]`)
 	// A hook that downloads and runs code, opens a reverse shell or uploads a
 	// file. Plain notification calls (curl to a webhook) do not match.
 	reNetHook = regexp.MustCompile(`(?i)((curl|wget)[^|\n]*\|\s*(sudo\s+)?(ba|z|da)?sh\b|(iwr|irm|invoke-webrequest|invoke-restmethod)[^|\n]*\|\s*(iex|invoke-expression)\b|\$\(\s*(curl|wget)\b|\b(nc|ncat)\s[^\n]*-e\b|(curl|wget)[^\n]*(\s-d\s*@|--data(-binary)?\s*@|\s-F\s*\S*=@|\s-T\s|--upload-file|--post-file))`)
@@ -238,7 +247,8 @@ func scanAgentText(path, text string, out *[]Finding) {
 			Title: "Agent config allows running without permission prompts", TitleKo: "에이전트 설정이 허락 없는 실행을 허용함",
 			Evidence: p + ": " + m, Fix: "Remove the bypass mode and allow only the tools you need.", FixKo: "우회 모드를 빼고 필요한 도구만 허용하세요."})
 	}
-	if m := reWildcard.FindString(text); m != "" {
+	allow := strings.Join(reAllowList.FindAllString(text, -1), "\n")
+	if m := reWildcard.FindString(allow); m != "" && !reAutoMode.MatchString(text) && !claudeAutoMode() && !reBypass.MatchString(text) {
 		*out = append(*out, Finding{ChecklistID: "agent-wildcard-allow", Severity: "medium", Source: "local",
 			Title: "Agent allow-list contains a broad wildcard", TitleKo: "에이전트 허용 목록에 넓은 와일드카드가 있음",
 			Evidence: p + ": " + m, Fix: "Replace it with exact commands.", FixKo: "정확한 명령으로 바꾸세요."})
@@ -258,6 +268,16 @@ func scanAgentText(path, text string, out *[]Finding) {
 			}
 		}
 	}
+}
+
+// claudeAutoMode: the user's Claude Code settings default to auto mode.
+func claudeAutoMode() bool {
+	for _, n := range []string{"settings.json", "settings.local.json"} {
+		if t, ok := readSmall(filepath.Join(homeDir(), ".claude", n), 200_000); ok && reAutoMode.MatchString(t) {
+			return true
+		}
+	}
+	return false
 }
 
 func shellProfiles() []string {
