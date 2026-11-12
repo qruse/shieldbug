@@ -24,6 +24,8 @@ Usage:
   shieldbug collect         print the redacted local facts (no AI)
   shieldbug payload [id]    print exactly what was sent to the model
   shieldbug schedule install|remove|status
+  shieldbug install         (downloaded release) copy this file to the install
+                            folder without opening the dashboard
   shieldbug shortcut        add the desktop icon and the search entry again
                             (done on the first run; run again after moving this file)
   shieldbug uninstall       remove schedule, shortcuts and ~/.shieldbug
@@ -36,6 +38,10 @@ func main() {
 	cmd := "open"
 	if len(args) > 0 {
 		cmd = args[0]
+	}
+	// A downloaded release installs itself and continues from there.
+	if selfInstall(cmd) {
+		return
 	}
 	_, statErr := os.Stat(configPath())
 	firstRun := os.IsNotExist(statErr)
@@ -144,6 +150,12 @@ func main() {
 		}
 		fmt.Println("removed the schedule, shortcuts and", dataDir())
 		fmt.Println("delete this program file to finish:", selfPath())
+	case "install":
+		if channel == "release" {
+			fmt.Println("already installed:", selfPath())
+		} else {
+			fmt.Println("a build from source runs from where it is:", selfPath())
+		}
 	case "version", "--version", "-v":
 		fmt.Println("shieldbug", version)
 	case "help", "--help", "-h":

@@ -23,7 +23,19 @@ It **never fixes anything by itself** and **never stays resident**. Your OS sche
 
 Five core checks always run, chosen because they need an AI's judgement rather than a pattern match: an agent that reads outside content and acts on it without asking, MCP servers, skills and plugins from sources you cannot verify, hooks that do more than they should, hidden orders in instruction files, and installed tools named in today's advisories. Simple pattern rules (bypass flags, `curl | sh` hooks, tokens in plain files) still run, but as evidence for those five, not as findings of their own. General PC hygiene (ports, firewall, disk encryption) is left to your OS and antivirus. The checklist grows: when a new attack pattern appears, your AI proposes a new check and you approve or reject it.
 
-## Try it
+## Download
+
+One file, no Go needed. Get it from [Releases](https://github.com/qruse/shieldbug/releases/latest):
+
+- **Windows:** `shieldbug-windows-x64.exe`. Open it: it installs itself to `%LOCALAPPDATA%\Programs\Shieldbug` (no admin), adds a desktop icon and a Start menu entry, and opens the dashboard. Delete the downloaded file afterwards. The file is not code-signed yet, so SmartScreen may ask: **More info → Run anyway**.
+- **macOS:** `shieldbug-macos-apple-silicon.tar.gz` (M1 and later) or `-intel`. Unpack it, then right-click `shieldbug` → **Open** (not signed yet). It installs to `~/Library/Application Support/Shieldbug` and adds Shieldbug to `~/Applications`.
+- **Linux:** `tar xzf shieldbug-linux-x64.tar.gz && ./shieldbug`. It installs to `~/.local/bin`.
+
+Opening a newer download replaces the installed copy; an open dashboard picks it up on its next refresh. Check a file with `SHA256SUMS.txt`.
+
+You also need one AI you already use: `claude` (Claude Code), `codex` or `agy` (Antigravity) signed in, or an API key in `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY`.
+
+## Build from source
 
 You need [Go 1.27+](https://go.dev/dl/) and at least one of: `claude` (Claude Code), `codex`, `agy` (Antigravity), or an API key in `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY`.
 
@@ -66,4 +78,10 @@ AI 코딩 도구를 쓰는 사람을 위한 **하루 한 번 보안 점검**입�
 
 **절대 스스로 고치지 않고, 계속 떠 있지도 않습니다.** 기본 점검 5개는 항상 돕니다. 단순 검사로는 못 잡고 AI가 판단해야 하는 것만 골랐습니다: 외부 글을 읽고 묻지 않고 행동하는 에이전트, 출처를 확인할 수 없는 MCP 서버·스킬·플러그인, 해야 할 일 이상을 하는 훅, 지시 파일 속 숨은 지시, 오늘의 보안 경고에 해당하는 도구. 우회 플래그·`curl | sh` 훅·평문 토큰 같은 단순 규칙도 돌지만, 따로 지적하지 않고 이 5개를 판단하는 근거로만 씁니다. 포트·방화벽·디스크 암호화 같은 일반 PC 점검은 OS와 백신의 몫으로 둡니다. 점검목록은 새 공격이 나올 때마다 AI가 항목을 제안하고 내가 승인하면서 자랍니다.
 
-설치와 사용법은 위 영어 섹션의 명령과 같습니다. 참여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 보세요.
+**설치:** [Releases](https://github.com/qruse/shieldbug/releases/latest)에서 파일 하나만 받으면 됩니다. Go는 필요 없습니다.
+- Windows는 `shieldbug-windows-x64.exe`를 받아서 실행하세요. 관리자 권한 없이 `%LOCALAPPDATA%\Programs\Shieldbug`에 스스로 설치하고, 바탕화면 아이콘과 시작 메뉴 항목을 만든 뒤 대시보드를 엽니다. 받은 파일은 지워도 됩니다.
+- 아직 코드 서명이 없어서 SmartScreen이 막으면 **추가 정보 → 실행**을 누르세요. macOS는 압축을 풀고 `shieldbug`를 오른쪽 클릭 → **열기**로 실행하세요.
+- 새 버전 파일을 받아서 열면 설치된 것이 바뀌고, 열려 있는 대시보드는 새로고침할 때 새 버전으로 넘어갑니다.
+- 이미 쓰고 있는 AI 하나는 있어야 합니다: Claude Code, Codex, Antigravity 중 로그인된 것, 또는 API 키.
+
+소스에서 빌드하는 방법은 위 영어 섹션과 같습니다. 참여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 보세요.

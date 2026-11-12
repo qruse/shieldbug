@@ -25,8 +25,10 @@ func tempBuild(exe string) bool {
 	return strings.Contains(filepath.ToSlash(exe), "/go-build")
 }
 
-func createShortcuts() error {
-	exe := selfPath()
+func createShortcuts() error { return createShortcutsAt(selfPath()) }
+
+// createShortcutsAt points the icon and search entry at exe.
+func createShortcutsAt(exe string) error {
 	if tempBuild(exe) {
 		return errors.New("started with `go run`: build or install first (go install github.com/qruse/shieldbug@latest), then run shieldbug shortcut")
 	}
