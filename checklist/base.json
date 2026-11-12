@@ -47,14 +47,14 @@
     },
     {
       "id": "agent-hooks-network",
-      "rev": 2,
+      "rev": 3,
       "status": "active",
       "category": "ai-agents",
       "severity": "medium",
       "kind": "ai",
       "title": {
-        "en": "Agent hooks run commands that reach the network",
-        "ko": "에이전트 훅이 네트워크로 나가는 명령을 실행함"
+        "en": "Agent hooks download and run code or upload files",
+        "ko": "에이전트 훅이 코드를 내려받아 실행하거나 파일을 보냄"
       },
       "check": "Agent hooks (Claude Code hooks, Codex notify and similar) that download and run code (curl ... | sh, iwr ... | iex), send files or environment variables to a host, or run scripts the user did not write. A hook that only posts a notification to a service the user already uses is fine.",
       "fix": {
@@ -68,7 +68,7 @@
     },
     {
       "id": "mcp-unknown-servers",
-      "rev": 2,
+      "rev": 3,
       "status": "active",
       "category": "ai-agents",
       "severity": "high",
@@ -77,7 +77,7 @@
         "en": "MCP servers from sources you cannot verify",
         "ko": "출처를 확인할 수 없는 MCP 서버"
       },
-      "check": "MCP servers whose package or URL is not from the tool's own vendor or a well-known publisher, look-alike package names, or servers not used recently. A missing version pin alone belongs to mcp-unpinned, not here.",
+      "check": "MCP servers whose package or URL is not from the tool's own vendor or a well-known publisher, or whose package name imitates a known one. A missing version pin alone belongs to mcp-unpinned, not here.",
       "fix": {
         "en": "Remove servers you cannot trace to their publisher and the ones you no longer use.",
         "ko": "제공처를 확인할 수 없는 서버와 안 쓰는 서버는 지우세요."

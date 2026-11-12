@@ -149,7 +149,9 @@ func agentConfigPaths() []string {
 var (
 	reBypass   = regexp.MustCompile(`(?i)(dangerously-skip-permissions|bypassPermissions|danger-full-access|dangerously-bypass-approvals|--yolo|"yolo"\s*:\s*true)`)
 	reWildcard = regexp.MustCompile(`(?i)"(Bash|PowerShell|Shell|WebFetch)\((\*|curl[^)]*|wget[^)]*|\*\*)\)"`)
-	reNetHook  = regexp.MustCompile(`(?i)(curl|wget|invoke-webrequest|iwr |irm |Invoke-RestMethod|nc |ncat |\| *(ba)?sh)`)
+	// A hook that downloads and runs code, opens a reverse shell or uploads a
+	// file. Plain notification calls (curl to a webhook) do not match.
+	reNetHook = regexp.MustCompile(`(?i)((curl|wget)[^|\n]*\|\s*(sudo\s+)?(ba|z|da)?sh\b|(iwr|irm|invoke-webrequest|invoke-restmethod)[^|\n]*\|\s*(iex|invoke-expression)\b|\$\(\s*(curl|wget)\b|\b(nc|ncat)\s[^\n]*-e\b|(curl|wget)[^\n]*(\s-d\s*@|--data(-binary)?\s*@|\s-F\s*\S*=@|\s-T\s|--upload-file|--post-file))`)
 )
 
 func collectAgents(c Config) (string, []Finding) {
@@ -250,7 +252,7 @@ func scanAgentText(path, text string, out *[]Finding) {
 		for _, line := range strings.Split(text, "\n") {
 			if strings.Contains(line, "command") && reNetHook.MatchString(line) {
 				*out = append(*out, Finding{ChecklistID: "agent-hooks-network", Severity: "medium", Source: "local",
-					Title: "An agent hook calls the network or pipes into a shell", TitleKo: "에이전트 훅이 네트워크를 호출하거나 셸로 넘김",
+					Title: "An agent hook downloads and runs code or uploads files", TitleKo: "에이전트 훅이 코드를 내려받아 실행하거나 파일을 보냄",
 					Evidence: p + ": " + redact(strings.TrimSpace(line)), Fix: "Check that you wrote this hook; delete it if not.", FixKo: "직접 만든 훅인지 확인하고 아니면 지우세요."})
 				break
 			}
@@ -399,6 +401,22 @@ var systemProcs = map[string]bool{"system": true, "svchost.exe": true, "lsass.ex
 	"spoolsv.exe": true, "system idle process": true, "launchd": true, "mdnsresponder": true, "rapportd": true, "controlce": true,
 	"systemd": true, "systemd-resolve": true, "sshd": true, "cupsd": true, "avahi-daemon": true}
 
+// The exposed-listeners check is about AI and developer services only:
+// model servers, notebooks, MCP/dev servers and databases. VPNs, sync tools
+// and other system programs are out of scope.
+var devProcs = map[string]bool{"ollama": true, "ollama app": true, "lms": true, "lm studio": true, "llama-server": true,
+	"python": true, "python3": true, "pythonw": true, "node": true, "deno": true, "bun": true, "uvicorn": true, "gunicorn": true,
+	"jupyter": true, "jupyter-lab": true, "jupyter-notebook": true, "java": true, "ruby": true, "php": true, "dotnet": true,
+	"postgres": true, "mysqld": true, "mariadbd": true, "redis-server": true, "mongod": true, "docker-proxy": true,
+	"com.docker.backend": true, "vpnkit": true, "code": true, "cursor": true}
+var devPorts = map[string]bool{"11434": true, "1234": true, "8888": true, "7860": true, "8188": true, "3000": true, "5000": true,
+	"5173": true, "8000": true, "8080": true, "5432": true, "3306": true, "6379": true, "27017": true}
+
+func isDevService(proc, port string) bool {
+	p := strings.TrimSuffix(strings.ToLower(proc), ".exe")
+	return devProcs[p] || devPorts[port]
+}
+
 type listener struct{ addr, port, proc string }
 
 func collectListeners() (string, []Finding) {
@@ -453,7 +471,7 @@ func collectListeners() (string, []Finding) {
 		lines = append(lines, key)
 		open := l.addr == "0.0.0.0" || l.addr == "*" || l.addr == "[::]" || l.addr == "::" || l.addr == "[::]:" || l.addr == "*:"
 		item := fmt.Sprintf("%s (port %s)", l.proc, l.port)
-		if open && !systemProcs[strings.ToLower(l.proc)] && !seen[item] {
+		if open && !systemProcs[strings.ToLower(l.proc)] && isDevService(l.proc, l.port) && !seen[item] {
 			seen[item] = true
 			exposed = append(exposed, item)
 		}
@@ -463,7 +481,7 @@ func collectListeners() (string, []Finding) {
 	if len(exposed) > 0 {
 		sort.Strings(exposed)
 		out = append(out, Finding{ChecklistID: "exposed-listeners", Severity: "medium", Source: "local",
-			Title: "Programs listening on all network interfaces", TitleKo: "모든 네트워크에서 접속을 받는 프로그램이 있음",
+			Title: "AI or dev services reachable from the network", TitleKo: "AI·개발 서비스가 외부에서 접속 가능하게 열려 있음",
 			Evidence: strings.Join(exposed, ", "),
 			Fix:      "If you do not need access from other devices, bind these to 127.0.0.1 or block them in the firewall.",
 			FixKo:    "다른 기기에서 접속할 일이 없으면 127.0.0.1에만 묶거나 방화벽에서 막으세요."})
