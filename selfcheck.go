@@ -31,7 +31,7 @@ const selfID = "self-integrity"
 // from ("shieldbug-windows-x64.exe", or "<archive>.tar.gz:shieldbug").
 var assetName = ""
 
-const releaseSums = "https://github.com/qruse/shieldbug/releases/download/v%s/SHA256SUMS.txt"
+var releaseSums = "https://github.com/qruse/shieldbug/releases/download/v%s/PROGRAMS-SHA256SUMS.txt"
 
 type selfResult struct {
 	Lines    []string

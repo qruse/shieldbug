@@ -1,6 +1,9 @@
 package main
 
 import (
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,6 +18,41 @@ func TestLookupSum(t *testing.T) {
 		lookupSum(strings.NewReader(list), "shieldbug-macos-intel.tar.gz:shieldbug") != g ||
 		lookupSum(strings.NewReader(list), "shieldbug-linux-x64.tar.gz:shieldbug") != "" {
 		t.Fatal("checksum lookup")
+	}
+}
+
+// A release whose program file differs from the published checksum is a
+// critical finding; a matching one is fine.
+func TestProgramChecksum(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	mine, err := fileSHA256(selfPath())
+	if err != nil {
+		t.Fatal(err)
+	}
+	sums := ""
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { io.WriteString(w, sums) }))
+	defer srv.Close()
+	oldURL, oldCh, oldAsset := releaseSums, channel, assetName
+	defer func() { releaseSums, channel, assetName = oldURL, oldCh, oldAsset }()
+	releaseSums, channel, assetName = srv.URL+"/v%s/sums", "release", "shieldbug-windows-x64.exe"
+
+	critical := func() bool {
+		for _, f := range selfCheck().Findings {
+			if f.Severity == "critical" && strings.Contains(f.Title, "official release") {
+				return true
+			}
+		}
+		return false
+	}
+	sums = strings.Repeat("0", 64) + "  shieldbug-windows-x64.exe\n"
+	if !critical() {
+		t.Fatal("tampered program file not reported")
+	}
+	sums = mine + "  shieldbug-windows-x64.exe\n"
+	if critical() {
+		t.Fatal("matching program file reported")
 	}
 }
 
