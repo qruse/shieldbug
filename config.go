@@ -63,10 +63,10 @@ func defaultConfig() Config {
 	c.Models = map[string]string{
 		"claude":     "claude-sonnet-5-5",
 		"codex":      "gpt-6.1-terra",
-		"agy":        "gemini-3.8-flash-medium",
+		"agy":        "gemini-4-hydrogen-medium",
 		"claude-api": "claude-sonnet-5-5",
 		"openai-api": "gpt-6.1-terra",
-		"gemini-api": "gemini-3.8-flash",
+		"gemini-api": "gemini-4-hydrogen",
 	}
 	c.Effort = map[string]string{"claude": "medium", "codex": "medium", "claude-api": "medium", "openai-api": "medium", "gemini-api": "medium"}
 	c.Schedule.Enabled = true
@@ -258,11 +258,11 @@ var agentModels = map[string][]string{
 	"claude-api": {"claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-5-5", "claude-fable-5-2"},
 	"codex":      {"gpt-6.1-terra", "gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.6-luna"},
 	"openai-api": {"gpt-6.1-terra", "gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol", "gpt-6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.6-luna"},
-	"agy": {"gemini-3.8-flash-low", "gemini-3.8-flash-medium", "gemini-3.8-flash-high",
+	"agy": {"gemini-4-hydrogen-low", "gemini-4-hydrogen-medium", "gemini-4-hydrogen-high", "gemini-4-hydrogen-xhigh",
 		"gemini-4-argon-low", "gemini-4-argon-medium", "gemini-4-argon-high",
 		"claude-sonnet-5-5-low", "claude-sonnet-5-5-medium", "claude-sonnet-5-5-high",
 		"claude-opus-5-5-low", "claude-opus-5-5-medium", "claude-opus-5-5-high", "gpt-oss-120b-medium"},
-	"gemini-api": {"gemini-3.8-flash", "gemini-4-argon"},
+	"gemini-api": {"gemini-4-hydrogen", "gemini-4-argon"},
 }
 
 // modelChoices: the dropdown list for one AI, with the current value kept even

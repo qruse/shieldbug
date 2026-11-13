@@ -118,7 +118,7 @@ func TestGeminiAdapter(t *testing.T) {
 	if err != nil || text != `{"ok":2}` || u.TokensOut != 15 {
 		t.Fatalf("%q %+v %v", text, u, err)
 	}
-	if got["_path"] != "/v1beta/models/gemini-3.8-flash:generateContent" || hdr.Get("x-goog-api-key") != fakeKey {
+	if got["_path"] != "/v1beta/models/gemini-4-hydrogen:generateContent" || hdr.Get("x-goog-api-key") != fakeKey {
 		t.Fatalf("bad request: %v", got["_path"])
 	}
 	if _, has := got["tools"]; has {
